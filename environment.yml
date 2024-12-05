@@ -1,4 +1,4 @@
-name: nd.util.condaenv
+name: nd.site.condaenv
 channels:
 - conda-forge
 - defaults

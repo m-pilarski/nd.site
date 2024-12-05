@@ -7,3 +7,4 @@ public/
 .Rprofile
 .Renviron
 hugo/resources/_gen/
+_freeze/
