@@ -1,0 +1,9 @@
+/.quarto/
+**/.ipynb_checkpoints/
+condaenv/
+renv/
+public/
+.Rproj.user
+.Rprofile
+.Renviron
+hugo/resources/_gen/

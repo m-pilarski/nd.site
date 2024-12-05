@@ -1,0 +1,8 @@
+<div class="card nd-card">
+    {{- if .Get "card_img_src" -}}<img src='{{ .Get "card_img_src" }}' class='card-img-top card-image' {{- if .Get "card_img_alt" -}} alt='{{ .Get "card_img_alt" }}' {{ end }}>{{ end }}
+    {{- if .Get "card_title" -}}<div class='card-header'>{{ .Get "card_title" }}</div> {{ end }}
+    <div class="card-body">
+        <p class='card-text pb-0'>{{ .Get "card_text" }}</p>
+        {{- if .Get "card_href" -}}<a href='{{ .Get "card_href" }}' class='stretched-link'><div class="float-end"><i class='fa-solid fa-angles-right gray'></i></div></a>{{ end }}
+    </div>
+</div>

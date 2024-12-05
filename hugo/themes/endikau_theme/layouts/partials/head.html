@@ -1,0 +1,78 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ printf "%s | %s" .Title site.Title }}{{ end }}</title>
+
+{{ partialCached "head/css.html" . }}
+{{ partialCached "head/js.html" . }}
+
+{{ with resources.Get "scss/nd_site.scss" }}
+    {{ $opts := dict "transpiler" "libsass" "outputStyle" "expanded" "targetPath" "css/nd_site.css" }}
+    {{ with . | toCSS $opts }}
+        {{ if hugo.IsDevelopment }}
+            <link rel="stylesheet" href="{{ .RelPermalink }}">
+        {{ else }}  
+            {{ with . | minify | fingerprint }}
+                <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">
+            {{ end }}
+        {{ end }}
+    {{ end }}
+{{ end }}
+
+<link href="/assets/fonts/fonts.css" rel="stylesheet">
+
+{{ $js_navbar_height := resources.Get "js/navbar_height.js" | minify | fingerprint }}
+<script src="{{ $js_navbar_height.RelPermalink }}"></script>
+
+{{ $tocHeight := resources.Get "js/toc_height.js" | minify | fingerprint }}
+<script src="{{ $tocHeight.RelPermalink }}"></script>
+
+{{ $jquery := resources.Get "vendor/jquery/js/jquery.min.js" | minify | fingerprint }}
+<script src="{{ $jquery.RelPermalink }}"></script>
+
+{{ $twemoji := resources.Get "vendor/twemoji/js/twemoji.min.js" | minify | fingerprint }}
+<script src="{{ $twemoji.RelPermalink }}"></script>
+<script>
+    function twemojiParse( element ) {
+        twemoji.parse( element, { base: '/assets/vendor/twemoji/', folder: 'svg', ext: '.svg' } ); 
+    }
+    twemojiParse( document )
+    window.onload = function() { twemojiParse( document ) }
+</script>
+<style> img.emoji { cursor: pointer; height: 1em; width: 1em; margin: 0 .05em 0 .1em; vertical-align: -0.1em; } </style>
+
+{{ $bootstrap := resources.Get "vendor/bootstrap/js/bootstrap.bundle.min.js" | minify | fingerprint }}
+<script src="{{ $bootstrap.RelPermalink }}"></script>
+
+{{ $fontawesome := resources.Get "vendor/fontawesome/js/all.min.js" | minify | fingerprint }}
+<script src="{{ $fontawesome.RelPermalink }}"></script>
+
+{{ $wordcloud := resources.Get "vendor/wordcloud2/js/wordcloud2.js" | minify | fingerprint }}
+<script src="{{ $wordcloud.RelPermalink }}"></script>
+
+{{ $headroom := resources.Get "vendor/headroom/js/headroom.min.js" | minify | fingerprint }}
+<script src="{{ $headroom.RelPermalink }}"></script>
+<script type="module">
+    document.addEventListener("DOMContentLoaded", function () {
+        var pageNavbarContainer = document.querySelector("#page-navbar-container");
+        var headroom = new Headroom( pageNavbarContainer, {
+            offset: 10, tolerance: 10,
+        });
+        headroom.init();
+    });
+</script>
+<style>
+    .headroom {
+        will-change: transform;
+        transition: transform 200ms linear;
+    }
+    .headroom--pinned {
+        transform: translateY(0%);
+    }
+    .headroom--unpinned {
+        transform: translateY(-100%);
+    }
+</style>
+
+{{ $iframeResizer := resources.Get "vendor/iframe-resizer/js/iframe-resizer.parent.js" | minify | fingerprint }}
+<script src="{{ $iframeResizer.RelPermalink }}"></script>

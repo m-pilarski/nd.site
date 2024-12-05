@@ -1,0 +1,14 @@
+---
+title: "Fallstudie I"
+subtitle: "Analyse von Google News Artikeln"
+figtitle: "🔬"
+date: "2024-11-25T14:25:49+01:00"
+draft: true
+---
+
+## Beispiel
+
+```{r}
+#| output: asis
+cat(purrr::map_chr(nd.util:::nd_iframe_app("https://shiny.dsjlu.wirtschaft.uni-giessen.de/case_study-1/"), as.character), sep="\n")
+```

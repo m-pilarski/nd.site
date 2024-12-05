@@ -1,0 +1,20 @@
+project:
+  type: hugo
+  output-dir: hugo
+format:
+  hugo-md:
+    code-fold: true
+execute:
+  echo: false
+  warning: false
+  message: false
+  cache: false
+  freeze: false
+engine: knitr
+knitr:
+  opts_chunk:
+    dev: ragg_png
+    out.width: "100%"
+editor: source
+editor_options:
+  chunk_output_type: console
