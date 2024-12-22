@@ -1,7 +1,7 @@
 ---
 title: Sentimentanalyse
 subtitle: Automatisierte Erkennung von Stimmungen in Texten
-figtitle: "\U0001F321️"
+figtitle: 🌡️
 date: '2024-11-25T14:25:49+01:00'
 toc_show: true
 draft: true

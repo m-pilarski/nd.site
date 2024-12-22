@@ -14,6 +14,10 @@ toc_show: false
 
 <!-- Kommunikationsdaten umfassen Informationen, die bei der Interaktion zwischen Personen oder zwischen Personen und Geräten anfallen. Dazu gehören nicht nur die unmittelbaren Inhalte der Kommunikation, sondern auch verschiedene Metadaten wie Sender- und Empfängerinformationen, Zeitstempel, Betreffzeilen und mehr. Diese Daten können aus verschiedenen Quellen stammen, wie E-Mails, Textnachrichten, Chatprotokollen, sozialen Medien, Kundenanfragen und Kundenbefragungen. Für hessische Unternehmen können diese Kommunikationsdaten eine wertvolle Informationsquelle darstellen, deren Analyse wirtschaftlichen Mehrwert generieren kann.. -->
 
+{{{< div id="chart" style="width: 100%;">}}} {{{< /div >}}}
+<!-- <div id="chart"></div> -->
+<script src="/assets/js/wordcloud.js"></script>
+
 Kommunikationsdaten entstehen bei der Interaktion zwischen Menschen und Geräten – sei es durch E-Mails, Projektberichte, soziale Medien oder Kundenanfragen. Diese Daten enthalten wertvolle Informationen, die Unternehmen helfen können, Einblicke zu gewinnen, Prozesse zu verbessern und Entscheidungen auf einer fundierten Basis zu treffen. Doch oft bleiben diese Daten ungenutzt, da sie unstrukturiert vorliegen und ihre Analyse zeitaufwendig erscheint. Jedoch existieren computergestützte Verfahren, die die automatisierte Analyse unstrukturierter Kommunikationsdaten ermöglichen. So können große Datenmengen in kurzer Zeit ausgewertet werden. 
 
 <!-- {{{< dropcap "📜" >}}}  -->
@@ -66,3 +70,48 @@ Unsere Website bietet Ihnen eine Übersicht der vielfältigen Werkzeuge, mit den
         {{{< bs_card card_img_src="assets/img/img_example-5.jpg" card_title="Fallstudie III" card_text="Lorem Ipsum" card_href="/case_studies/case_study-3" >}}}
     {{{< /div >}}} 
 {{{< /div >}}}
+
+## Palette
+
+```{r}
+library(ggplot2)
+
+palette <- tibble::tribble(
+  ~color, ~palette,
+  "#2e2933", "base",
+  "#837591", "base",
+  "#e9ebe5", "base",
+  "#cf597e", "diverging",
+  "#e88471", "diverging",
+  "#eeb479", "diverging",
+  "#e9e29c", "diverging",
+  "#9ccb86", "diverging",
+  "#39b185", "diverging",
+  "#009392", "diverging",
+  "#f7feae", "sequential",
+  "#b7e6a5", "sequential",
+  "#7ccba2", "sequential",
+  "#46aea0", "sequential",
+  "#089099", "sequential",
+  "#00718b", "sequential",
+  "#045275", "sequential",
+)
+
+palette |> 
+  dplyr::mutate(
+    color_palette_rank = dplyr::row_number(), .by=palette
+  ) |>
+  ggplot(aes(x=color_palette_rank, y=forcats::fct_rev(palette), fill=color)) +
+  geom_tile(width=1) +
+  geom_text(aes(label=color)) +
+  scale_fill_identity() +
+  coord_equal() +
+  theme_minimal() +
+  theme(
+    axis.title=element_blank(),
+    axis.text.x=element_blank(),
+    axis.ticks.x=element_blank(),
+    panel.grid=element_blank()
+  )
+```
+

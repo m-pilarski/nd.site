@@ -1,7 +1,7 @@
 ---
 title: Fallstudie I
 subtitle: Analyse von Google News Artikeln
-figtitle: "\U0001F52C"
+figtitle: 🔬
 date: '2024-11-25T14:25:49+01:00'
 draft: true
 ---

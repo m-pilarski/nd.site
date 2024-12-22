@@ -1,6 +1,6 @@
 ---
 title: Einsatz neuer Daten in Kommunikationszusammenhängen auf Unternehmensebene
-figtitle: "\U0001F4BE"
+figtitle: 💾
 date: '2024-11-25T14:25:49+01:00'
 draft: true
 tags:
@@ -14,6 +14,9 @@ toc_show: false
 
 
 <!-- Kommunikationsdaten umfassen Informationen, die bei der Interaktion zwischen Personen oder zwischen Personen und Geräten anfallen. Dazu gehören nicht nur die unmittelbaren Inhalte der Kommunikation, sondern auch verschiedene Metadaten wie Sender- und Empfängerinformationen, Zeitstempel, Betreffzeilen und mehr. Diese Daten können aus verschiedenen Quellen stammen, wie E-Mails, Textnachrichten, Chatprotokollen, sozialen Medien, Kundenanfragen und Kundenbefragungen. Für hessische Unternehmen können diese Kommunikationsdaten eine wertvolle Informationsquelle darstellen, deren Analyse wirtschaftlichen Mehrwert generieren kann.. -->
+{{< div id=\"chart\" style=\"width: 100%;\">}} {{< /div >}}
+<!-- <div id="chart"></div> -->
+<script src="/assets/js/wordcloud.js"></script>
 
 Kommunikationsdaten entstehen bei der Interaktion zwischen Menschen und Geräten -- sei es durch E-Mails, Projektberichte, soziale Medien oder Kundenanfragen. Diese Daten enthalten wertvolle Informationen, die Unternehmen helfen können, Einblicke zu gewinnen, Prozesse zu verbessern und Entscheidungen auf einer fundierten Basis zu treffen. Doch oft bleiben diese Daten ungenutzt, da sie unstrukturiert vorliegen und ihre Analyse zeitaufwendig erscheint. Jedoch existieren computergestützte Verfahren, die die automatisierte Analyse unstrukturierter Kommunikationsdaten ermöglichen. So können große Datenmengen in kurzer Zeit ausgewertet werden.
 
@@ -48,3 +51,7 @@ Unsere Website bietet Ihnen eine Übersicht der vielfältigen Werkzeuge, mit den
 {{< bs_card card_img_src=\"assets/img/img_example-5.jpg\" card_title=\"Fallstudie III\" card_text=\"Lorem Ipsum\" card_href=\"/case_studies/case_study-3\" >}}
 {{< /div >}}
 {{< /div >}}
+
+## Palette
+
+<img src="index.markdown_strict_files/figure-markdown_strict/unnamed-chunk-2-1.png" style="width:100.0%" />

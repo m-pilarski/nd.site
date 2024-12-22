@@ -21,17 +21,23 @@
 
 <link href="/assets/fonts/fonts.css" rel="stylesheet">
 
-{{ $js_navbar_height := resources.Get "js/navbar_height.js" | minify | fingerprint }}
+{{ $js_navbar_height := resources.Get "js/navbar_height.js" | minify }}
 <script src="{{ $js_navbar_height.RelPermalink }}"></script>
+{{/*  <script src="/assets/js/navbar_height.js"></script>  */}}
 
-{{ $tocHeight := resources.Get "js/toc_height.js" | minify | fingerprint }}
+
+{{ $tocHeight := resources.Get "js/toc_height.js" | minify }}
 <script src="{{ $tocHeight.RelPermalink }}"></script>
+{{/*  <script src="/assets/js/toc_height.js"></script>  */}}
 
-{{ $jquery := resources.Get "vendor/jquery/js/jquery.min.js" | minify | fingerprint }}
-<script src="{{ $jquery.RelPermalink }}"></script>
+{{/*  {{ $jquery := resources.Get "vendor/jquery/js/jquery.min.js" | minify | fingerprint }}
+<script src="{{ $jquery.RelPermalink }}"></script>  */}}
+<script src="/assets/vendor/jquery/js/jquery.min.js"></script>
 
-{{ $twemoji := resources.Get "vendor/twemoji/js/twemoji.min.js" | minify | fingerprint }}
-<script src="{{ $twemoji.RelPermalink }}"></script>
+
+{{/*  {{ $twemoji := resources.Get "vendor/twemoji/js/twemoji.min.js" | minify | fingerprint }}
+<script src="{{ $twemoji.RelPermalink }}"></script>  */}}
+<script src="/assets/vendor/twemoji/js/twemoji.min.js"></script>
 <script>
     function twemojiParse( element ) {
         twemoji.parse( element, { base: '/assets/vendor/twemoji/', folder: 'svg', ext: '.svg' } ); 
@@ -41,17 +47,21 @@
 </script>
 <style> img.emoji { cursor: pointer; height: 1em; width: 1em; margin: 0 .05em 0 .1em; vertical-align: -0.1em; } </style>
 
-{{ $bootstrap := resources.Get "vendor/bootstrap/js/bootstrap.bundle.min.js" | minify | fingerprint }}
-<script src="{{ $bootstrap.RelPermalink }}"></script>
+{{/*  {{ $bootstrap := resources.Get "vendor/bootstrap/js/bootstrap.bundle.min.js" | minify | fingerprint }}
+<script src="{{ $bootstrap.RelPermalink }}"></script>  */}}
+<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-{{ $fontawesome := resources.Get "vendor/fontawesome/js/all.min.js" | minify | fingerprint }}
-<script src="{{ $fontawesome.RelPermalink }}"></script>
+{{/*  {{ $fontawesome := resources.Get "vendor/fontawesome/js/all.min.js" | minify | fingerprint }}
+<script src="{{ $fontawesome.RelPermalink }}"></script>  */}}
+<script src="/assets/vendor/fontawesome/js/all.min.js"></script>
 
-{{ $wordcloud := resources.Get "vendor/wordcloud2/js/wordcloud2.js" | minify | fingerprint }}
-<script src="{{ $wordcloud.RelPermalink }}"></script>
+{{/*  {{ $wordcloud2 := resources.Get "vendor/wordcloud2/js/wordcloud2.js" | minify | fingerprint }}
+<script src="{{ $wordcloud2.RelPermalink }}"></script>  */}}
+<script src="/assets/vendor/wordcloud2/js/wordcloud2.js"></script>
 
-{{ $headroom := resources.Get "vendor/headroom/js/headroom.min.js" | minify | fingerprint }}
-<script src="{{ $headroom.RelPermalink }}"></script>
+{{/*  {{ $headroom := resources.Get "vendor/headroom/js/headroom.min.js" | minify | fingerprint }}
+<script src="{{ $headroom.RelPermalink }}"></script>  */}}
+<script src="/assets/vendor/headroom/js/headroom.min.js"></script>
 <script type="module">
     document.addEventListener("DOMContentLoaded", function () {
         var pageNavbarContainer = document.querySelector("#page-navbar-container");
@@ -74,5 +84,23 @@
     }
 </style>
 
-{{ $iframeResizer := resources.Get "vendor/iframe-resizer/js/iframe-resizer.parent.js" | minify | fingerprint }}
-<script src="{{ $iframeResizer.RelPermalink }}"></script>
+{{/*  {{ $iframeResizer := resources.Get "vendor/iframe-resizer/js/iframe-resizer.parent.js" | minify | fingerprint }}
+<script src="{{ $iframeResizer.RelPermalink }}"></script>  */}}
+<script src="/assets/vendor/iframe-resizer/js/iframe-resizer.parent.js"></script>
+
+<script src="/assets/vendor/d3/js/d3.min.js"></script>
+<script src="/assets/vendor/d3-cloud/js/d3.layout.cloud.js"></script>
+
+{{/*  {{ $wordcloud := resources.Get "js/wordcloud.js" | minify }}
+<script src="{{ $wordcloud.RelPermalink }}"></script>  */}}
+
+{{/*  <script src="https://d3js.org/d3.v7.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-cloud/1.2.5/d3.layout.cloud.min.js"></script>
+
+<style>
+    #chart {
+        border: 1px solid #ccc;
+        width: 500px;
+        height: 500px;
+    }
+</style>  */}}

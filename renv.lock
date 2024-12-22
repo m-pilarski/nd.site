@@ -248,6 +248,25 @@
       ],
       "Hash": "5899f1eaa825580172bb56c08266f37c"
     },
+    "helprrr": {
+      "Package": "helprrr",
+      "Version": "0.1.0",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "helprrr",
+      "RemoteUsername": "m-pilarski",
+      "RemoteSha": "e6c3367429d1b15027242586e07f38719618dea6",
+      "Requirements": [
+        "R",
+        "fs",
+        "here",
+        "remotes",
+        "renv",
+        "utils"
+      ],
+      "Hash": "3252e1bee82d37438858150272c4ced4"
+    },
     "here": {
       "Package": "here",
       "Version": "1.0.1",
@@ -509,6 +528,20 @@
         "R"
       ],
       "Hash": "5e3c5dc0b071b21fa128676560dbe94d"
+    },
+    "remotes": {
+      "Package": "remotes",
+      "Version": "2.5.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "methods",
+        "stats",
+        "tools",
+        "utils"
+      ],
+      "Hash": "3ee025083e66f18db6cf27b56e23e141"
     },
     "renv": {
       "Package": "renv",
