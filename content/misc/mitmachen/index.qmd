@@ -1,0 +1,15 @@
+---
+title: "Jetzt mitmachen"
+subtitle: "Lorem Ipsum"
+figtitle: "🔬"
+date: "2024-11-25T14:25:49+01:00"
+draft: true
+---
+
+## Beispiel
+
+```{r}
+#| output: asis
+cat(stringi::stri_rand_lipsum(n_paragraphs=5), sep="/n")
+```
+

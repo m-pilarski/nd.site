@@ -1,13 +1,46 @@
 {{ define "main" }}
-{{/*  <h1>{{ .Title }}</h1>  */}}
-<div class="container-fluid" style="background: var(--bs-body-bg)" tabindex="0" data-bs-spy="scroll" data-bs-target="#page-toc" data-bs-smooth-scroll="true">
+
+<div class="container-fluid px-0 pb-2" style="background: #2e2933 !important;">
+    <div id="chart" style="width: 100%; height: 65vh; padding-bottom: 8rem;"></div>
+    <script src="/assets/js/wordcloud.js"></script>
+</div>
+
+<div class="container-fluid px-0" style="background: var(--bs-body-bg) !important;">
   <div class="container-xxl py-4 grid">
-    {{/*  {{ partial "toc.html" . }}  */}}
+    {{ if .Params.toc_show }}
+      {{ partial "toc.html" . }}
+    {{ end }}
     <div class="g-col-12 g-col-xl-6 g-start-xl-4 order-xl-1 nd-article">
-      {{ .Content }}
+      <div class="container-l">
+        {{ .Content }}
+      </div>
     </div>
   </div>
 </div>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+  <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+      <span style="padding-right: 10px;"><i class="fa-solid fa-at"></i></span>
+      <strong class="me-auto">Jetzt mitmachen! </strong>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+      <a href="/misc/mitmachen">Mehr Information</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  const toastLiveExample = document.getElementById("liveToast");
+  const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample, {
+    delay: 1000 * 60  // Set the timeout to 5000ms (5 seconds)
+  });
+  document.addEventListener("DOMContentLoaded", function () {
+    toastBootstrap.show();
+  });
+</script>
+
 
   {{/* Uncomment below if you need the terms partial for tags: */}}
   {{/* {{ partial "terms.html" (dict "taxonomy" "tags" "page" .) }} */}}

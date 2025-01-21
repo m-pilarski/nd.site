@@ -1,5 +1,5 @@
 function adjustNavbarPadding() {
-  var navbarContainer = document.querySelector('#page-navbar');
+  var navbarContainer = document.querySelector('#page-navbar-container');
   if (!!navbarContainer) {
   	document.body.style["padding-top"] = navbarContainer.scrollHeight + 'px';
   }
