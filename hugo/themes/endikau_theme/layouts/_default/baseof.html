@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="{{ site.Language.LanguageCode }}" dir="{{ or site.Language.LanguageDirection `ltr` }}">
 <head>
+  {{ if .IsHome }}
+    <nav class="d-block px-3 py-2 text-center text-bold skippy" id="page-announce">
+        <a href="https://getbootstrap.com/" class="text-white text-decoration-none">There's a newer version of Bootstrap!</a>
+    </nav>
+  {{ end }}
   {{ partial "head.html" . }}
 </head>
 <body style="background: #e9ebe5 !important;">

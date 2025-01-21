@@ -64,11 +64,18 @@
 <script src="/assets/vendor/headroom/js/headroom.min.js"></script>
 <script type="module">
     document.addEventListener("DOMContentLoaded", function () {
-        var pageNavbarContainer = document.querySelector("#page-navbar-container");
-        var headroom = new Headroom( pageNavbarContainer, {
+        var pageNavbar = document.querySelector("#page-navbar");
+        var headroomNavbar = new Headroom( pageNavbar, {
             offset: 10, tolerance: 10,
         });
-        headroom.init();
+        headroomNavbar.init();
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+        var pageAnnounce = document.querySelector("#page-announce");
+        var headroomAnnounce = new Headroom( pageAnnounce, {
+            offset: 10, tolerance: 10,
+        });
+        headroomAnnounce.init();
     });
 </script>
 <style>
