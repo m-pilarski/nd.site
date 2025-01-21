@@ -8,3 +8,4 @@ public/
 .Renviron
 hugo/resources/_gen/
 _freeze/
+.Rhistory
