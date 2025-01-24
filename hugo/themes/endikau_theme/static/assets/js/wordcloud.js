@@ -61,7 +61,7 @@ function draw_cloud(width, height) {
     var layout = d3.layout.cloud()
         .size([width, height])
         .words(myWords.map(function(d) { return { text: d, size: 12 + Math.random() * 48 }; }))
-        .padding(5)
+        .padding(10)
         .rotate(() => {
             const values = [-90, 0, 0, 90];
             return values[Math.floor(Math.random() * values.length)];
