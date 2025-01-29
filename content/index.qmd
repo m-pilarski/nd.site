@@ -17,7 +17,15 @@ toc_show: false
 {{{< div id="chart" >}}} {{{< /div >}}}
 <script src="/assets/js/wordcloud.js"></script>
 
-Kommunikationsdaten entstehen bei der Interaktion zwischen Menschen und Geräten – sei es durch E-Mails, Projektberichte, soziale Medien oder Kundenanfragen. Diese Daten enthalten wertvolle Informationen, die Unternehmen helfen können, Einblicke zu gewinnen, Prozesse zu verbessern und Entscheidungen auf einer fundierten Basis zu treffen. Doch oft bleiben diese Daten ungenutzt, da sie unstrukturiert vorliegen und ihre Analyse zeitaufwendig erscheint. Jedoch existieren computergestützte Verfahren, die die automatisierte Analyse unstrukturierter Kommunikationsdaten ermöglichen. So können große Datenmengen in kurzer Zeit ausgewertet werden. 
+{{{< div class="container-fluid" style="background: #e9ebe5 !important;" >}}}
+  {{{< div class="container-xxl py-4" >}}}
+    <span class="lead">
+      Kommunikationsdaten entstehen bei der Interaktion zwischen Menschen und Geräten – sei es durch E-Mails, Projektberichte, soziale Medien oder Kundenanfragen. Diese Daten enthalten wertvolle Informationen, die Unternehmen helfen können, Einblicke zu gewinnen, Prozesse zu verbessern und Entscheidungen auf einer fundierten Basis zu treffen. Doch oft bleiben diese Daten ungenutzt, da sie unstrukturiert vorliegen und ihre Analyse zeitaufwendig erscheint. Jedoch existieren computergestützte Verfahren, die die automatisierte Analyse unstrukturierter Kommunikationsdaten ermöglichen. So können große Datenmengen in kurzer Zeit ausgewertet werden. 
+    </span>
+  {{{< /div >}}}
+{{{< /div >}}}
+
+<!-- Kommunikationsdaten entstehen bei der Interaktion zwischen Menschen und Geräten – sei es durch E-Mails, Projektberichte, soziale Medien oder Kundenanfragen. Diese Daten enthalten wertvolle Informationen, die Unternehmen helfen können, Einblicke zu gewinnen, Prozesse zu verbessern und Entscheidungen auf einer fundierten Basis zu treffen. Doch oft bleiben diese Daten ungenutzt, da sie unstrukturiert vorliegen und ihre Analyse zeitaufwendig erscheint. Jedoch existieren computergestützte Verfahren, die die automatisierte Analyse unstrukturierter Kommunikationsdaten ermöglichen. So können große Datenmengen in kurzer Zeit ausgewertet werden.  -->
 
 <!-- {{{< dropcap "📜" >}}}  -->
 <!-- Da diese Daten häufig in Textform vorliegen, eröffnen computergestützte Ansätze neue Möglichkeiten zur Auswertung. Im Vergleich zur manuellen Analyse ermöglichen diese Technologien die automatisierte Bearbeitung großer Datenmengen mit angemessenem Aufwand. -->
