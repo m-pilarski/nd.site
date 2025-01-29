@@ -1,11 +1,9 @@
-<div class="g-col-12 g-col-xl-3 order-xl-2">
-    {{ if .TableOfContents }}
-    <div id="page-toc-container" class="nd-toc z-3">
-        <nav id="page-toc" aria-label="Inhaltsverzeichnis">
-            <strong class="h6 my-2">Inhaltsverzeichnis</strong>
-            <hr class="d-block my-2">
-            {{ .TableOfContents | safeHTML }}
-        </nav>
-    </div>
-    {{ end }}
+{{ if .TableOfContents }}
+<div id="page-toc-container" class="nd-toc z-3">
+    <nav id="page-toc" aria-label="Inhaltsverzeichnis">
+        <strong class="h6 my-2">Inhaltsverzeichnis</strong>
+        <hr class="d-block my-2">
+        {{ .TableOfContents | safeHTML }}
+    </nav>
 </div>
+{{ end }}

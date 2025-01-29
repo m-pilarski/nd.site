@@ -1,5 +1,7 @@
 <div class="card nd-card">
-    {{- if .Get "card_img_src" -}}<img src='{{ .Get "card_img_src" }}' class='card-img-top card-image' {{- if .Get "card_img_alt" -}} alt='{{ .Get "card_img_alt" }}' {{ end }}>{{ end }}
+    <div class="card-img-top card-image d-flex justify-content-center p-3" style="background-color: #9c9c9c;">
+        {{- if .Get "card_img_src" -}}<img src='{{ .Get "card_img_src" }}' class=' nd-card-image' {{- if .Get "card_img_alt" -}} alt='{{ .Get "card_img_alt" }}' {{ end }} >{{ end }}
+    </div>
     {{- if .Get "card_title" -}}<div class='card-header'>{{ .Get "card_title" }}</div> {{ end }}
     <div class="card-body">
         <p class='card-text pb-0'>{{ .Get "card_text" }}</p>

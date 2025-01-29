@@ -28,11 +28,11 @@ Unsere Website bietet Ihnen eine Übersicht der vielfältigen Werkzeuge, mit den
 
 ## Methoden
 
-Lorem ipsum dolor sit amet, maximus ligula. Sem turpis libero ullamcorper mauris fermentum. In libero hac in neque nunc ridiculus. Molestie at tempus phasellus ut nunc congue sagittis. Ornare ac ut lorem nisl ultricies nostra, aliquet urna. Vivamus nisl mauris vestibulum iaculis porta ac tincidunt placerat sem lacus. In semper lobortis maximus phasellus quis in non commodo. Litora aenean maecenas nascetur metus nulla tincidunt eu est sit. Volutpat maximus eget ut amet pellentesque sed enim nullam eu. Inceptos nostra habitant nunc interdum? Sollicitudin quam eget dis, ipsum praesent tristique nec congue a, in hendrerit eros in. Non dui justo tristique vitae ipsum. Pellentesque nostra pellentesque integer donec.
+Lorem ipsum dolor sit amet, hendrerit justo bibendum, sapien ut gravida ornare ipsum morbi, conubia primis nibh et. Tellus sagittis egestas eget diam pharetra curae lobortis ut nec eros. Sed leo, et consequat. Sed justo suspendisse id. Risus a vitae eget faucibus curabitur. Ad maecenas ante scelerisque duis class, luctus. Molestie enim in at conubia at adipiscing. Tempor augue orci erat mauris ac lectus, congue eros nunc scelerisque.
 
 {{< div class=\"grid pb-4\" >}}
 {{< div class=\"g-col-12 g-col-lg-6 g-col-xl-4\" >}}
-{{< bs_card_emoji emoji_code=\"1f321\" emoji_bg=\"#837591\" card_title=\"Sentimentanalyse\" card_text=\"Sentimentanalyse ist ein Verfahren der Data Science, das darauf abzielt, Meinungen, Emotionen und Einstellungen in Textdaten automatisch zu identifizieren und zu klassifizieren.\" card_href=\"/methods/sentiment\" >}}
+{{< bs_card card_img_src=\"/assets/img/drawing.svg\" card_title=\"Sentimentanalyse\" card_text=\"Sentimentanalyse ist ein Verfahren der Data Science, das darauf abzielt, Meinungen, Emotionen und Einstellungen in Textdaten automatisch zu identifizieren und zu klassifizieren.\" card_href=\"/methods/sentiment\" >}}
 {{< /div >}}
 {{< div class=\"g-col-12 g-col-lg-6 g-col-xl-4\" >}}
 {{< bs_card_emoji emoji_code=\"1f50d\" emoji_bg=\"#837591\" card_title=\"Themenmodellierung\" card_text=\"Die Themenmodellierung extrahiert automatisiert Hauptthemen aus Texten. Dies ermöglicht die Extraktion semantisch verwandter Begriffe, sowie die Gruppierung thematisch ähnlicher Dokumente.\" card_href=\"/methods/topic\" >}}
@@ -41,7 +41,7 @@ Lorem ipsum dolor sit amet, maximus ligula. Sem turpis libero ullamcorper mauris
 
 ## Fallstudien
 
-Lorem ipsum dolor sit amet, in sed neque commodo laoreet semper id tellus risus semper amet. Varius eu dolor sollicitudin. Et auctor elit at. Rhoncus porttitor in. Nullam id magna litora montes sociosqu, id amet, ut ultrices. Justo ante sed eu maecenas, at leo. Arcu sapien vehicula pellentesque ultrices et nec tempor conubia. Ut natoque, mollis nec scelerisque habitasse taciti velit ipsum et. Vivamus nec in vivamus sed consectetur phasellus mauris. At volutpat nec habitant venenatis vivamus ut phasellus. Nibh vitae sit leo vel, a felis. Velit tincidunt duis etiam fames turpis varius metus vestibulum torquent, suspendisse. Ipsum, neque vitae cubilia platea, est mauris urna in lacinia ut.
+Lorem ipsum dolor sit amet, elementum tempor orci enim non, interdum dis himenaeos. Nisi cubilia commodo, quisque non accumsan purus rutrum. In id imperdiet penatibus cras, himenaeos elementum nam quis montes, sociosqu. Ullamcorper mauris ultrices ut, sapien, in. Et lacus montes suscipit sit arcu. Egestas nascetur elementum sapien sed ac, malesuada eu efficitur faucibus eleifend nascetur. Justo sit risus etiam ut tempus sit sed. Cursus felis quam, nascetur tristique sociosqu in auctor dictumst et pellentesque orci est faucibus. Pharetra varius vestibulum erat tempor pharetra tristique elementum. Aliquet mauris ultrices aenean nec sed tristique proin varius.
 
 {{< div class=\"grid\" >}}
 {{< div class=\"g-col-12 g-col-lg-6 g-col-xl-4\" >}}
