@@ -34,7 +34,7 @@
 <script>
   const toastLiveExample = document.getElementById('liveToast');
   const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample, {
-    delay: 1000 * 60  // Set the timeout to 5000ms (5 seconds)
+    delay: 1000 * 60 /* in milliseconds */
   });
   document.addEventListener("DOMContentLoaded", function () {
     toastBootstrap.show();

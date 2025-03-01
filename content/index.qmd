@@ -18,10 +18,32 @@ toc_show: false
 <script src="/assets/js/wordcloud.js"></script> -->
 
 {{{< div class="container-fluid" style="background: #e9ebe5 !important;" >}}}
-  {{{< div class="container-xxl py-4" >}}}
-    <span class="lead">
-      Kommunikationsdaten entstehen bei der Interaktion zwischen Menschen und Geräten – sei es durch E-Mails, Projektberichte, soziale Medien oder Kundenanfragen. Diese Daten enthalten wertvolle Informationen, die Unternehmen helfen können, Einblicke zu gewinnen, Prozesse zu verbessern und Entscheidungen auf einer fundierten Basis zu treffen. Doch oft bleiben diese Daten ungenutzt, da sie unstrukturiert vorliegen und ihre Analyse zeitaufwendig erscheint. Jedoch existieren computergestützte Verfahren, die die automatisierte Analyse unstrukturierter Kommunikationsdaten ermöglichen. So können große Datenmengen in kurzer Zeit ausgewertet werden. 
-    </span>
+  {{{< div class="container-xxl py-4 grid" >}}}
+    {{{< div class="g-col-12 g-col-md-7 order-md-2" >}}}
+      {{{< span class="lead" >}}} {{{< p >}}} **Kommunikationsdaten entstehen bei der Interaktion zwischen Menschen und Geräten – sei es durch E-Mails, Projektberichte, soziale Medien oder Kundenanfragen.** {{{< /p >}}} {{{< p >}}} **Diese Daten enthalten wertvolle Informationen, die Unternehmen helfen können, Einblicke zu gewinnen, Prozesse zu verbessern und Entscheidungen auf einer fundierten Basis zu treffen. Doch oft bleiben diese Daten ungenutzt, da sie unstrukturiert vorliegen und ihre Analyse zeitaufwendig erscheint. Jedoch existieren computergestützte Verfahren, die die automatisierte Analyse unstrukturierter Kommunikationsdaten ermöglichen. So können große Datenmengen in kurzer Zeit ausgewertet werden.** {{{< /p >}}} {{{< /span >}}}
+      📧📨📄👥👤🗣️
+    {{{< /div >}}}
+    {{{< div class="g-col-12 g-col-md-5 order-md-1" >}}}
+      {{{< div class="d-flex justify-content-center" style="max-width: 500px;">}}}
+
+```{r, dev="svglite", dev.args=list(bg="transparent")}
+#| out-width: "100%"
+library(ggraph)
+library(tidygraph)
+
+graph <- as_tbl_graph(highschool)
+
+ggraph(graph) +
+  geom_edge_link(aes(colour = factor(year)), linewidth=1.5) +
+  geom_node_point(size=4) +
+  scale_edge_color_manual(values=rcartocolor::carto_pal(2, "Temps")) +
+  coord_equal() +
+  theme_void() +
+  theme(legend.position="none")
+```
+      
+      {{{< /div >}}}
+    {{{< /div >}}}
   {{{< /div >}}}
 {{{< /div >}}}
 
@@ -30,66 +52,58 @@ toc_show: false
 <!-- {{{< dropcap "📜" >}}}  -->
 <!-- Da diese Daten häufig in Textform vorliegen, eröffnen computergestützte Ansätze neue Möglichkeiten zur Auswertung. Im Vergleich zur manuellen Analyse ermöglichen diese Technologien die automatisierte Bearbeitung großer Datenmengen mit angemessenem Aufwand. -->
 
-Unsere Website bietet Ihnen eine Übersicht der vielfältigen Werkzeuge, mit denen Kommunikationsdaten analysiert und genutzt werden können. Von den Grundlagen dieser Daten über Methoden, diese zu strukturieren und auszuwerten, bis hin zu praktischen Anwendungen – entdecken Sie, wie diese Methoden dazu beitragen können, wertvolle Erkenntnisse aus Kommunikationsdaten zu gewinnen.
+{{{< div class="container-fluid" style="#background: var(--bs-body-bg) !important;" >}}}
+  {{{< div class="container-xxl py-4" >}}}
+    {{{< div class="text-white text-bg-primary rounded p-3 mb-4" >}}} 
+      Unsere Website bietet Ihnen eine Übersicht der vielfältigen Werkzeuge, mit denen Kommunikationsdaten analysiert und genutzt werden können. Von den Grundlagen dieser Daten über Methoden, diese zu strukturieren und auszuwerten, bis hin zu praktischen Anwendungen – entdecken Sie, wie diese Methoden dazu beitragen können, wertvolle Erkenntnisse aus Kommunikationsdaten zu gewinnen.
+      <!-- Auf dieser Webseite werden einige dieser **Methoden** erklärt und anhand von **Fallstudien** exemplarisch demonstriert.  -->
+    {{{< /div >}}}
+  {{{< /div >}}}
+{{{< /div >}}}
 
-
-```{r}
-# library(ggraph)
-# library(tidygraph)
-
-# set_graph_style(plot_margin = margin(1,1,1,1))
-# graph <- as_tbl_graph(highschool)
-
-# # Not specifying the layout - defaults to "auto"
-# ggraph(graph) + 
-#   geom_edge_link(aes(colour = factor(year))) + 
-#   geom_node_point() +
-#   scale_edge_color_manual(values=rcartocolor::carto_pal(2, "Temps")) +
-#   theme_void() +
-#   theme(legend.position="none") + 
-#   coord_equal()
-```
-
-{{{< div class="text-white text-bg-primary rounded p-3 mb-4" >}}} Auf dieser Webseite werden einige dieser **Methoden** erklärt und anhand von **Fallstudien** exemplarisch demonstriert. {{{< /div >}}}
+{{{< div class="container-fluid" style="background: #fefffc !important;" >}}} {{{< div class="container-xxl py-4" >}}} 
 
 ## Methoden
 
-```{r}
-#| output: asis
-cat(stringi::stri_rand_lipsum(1))
-```
+`{r} stringi::stri_rand_lipsum(1)`
 
 {{{< div class="grid pb-4" >}}} 
-    {{{< div class="g-col-12 g-col-lg-6 g-col-xl-4" >}}} 
-        {{{< bs_card card_img_src="/assets/img/drawing.svg" card_title="Sentimentanalyse" card_text="Sentimentanalyse ist ein Verfahren der Data Science, das darauf abzielt, Meinungen, Emotionen und Einstellungen in Textdaten automatisch zu identifizieren und zu klassifizieren." card_href="/methods/sentiment" >}}}
+    {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
+        {{{< bs_card card_img_src="/assets/img/drawing.svg" card_img_bg="#9c9c9c" card_title="Sentimentanalyse" card_text="Sentimentanalyse ist ein Verfahren der Data Science, das darauf abzielt, Meinungen, Emotionen und Einstellungen in Textdaten automatisch zu identifizieren und zu klassifizieren." card_href="/methods/sentiment" >}}}
     {{{< /div >}}} 
-    {{{< div class="g-col-12 g-col-lg-6 g-col-xl-4" >}}} 
+    {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
         {{{< bs_card_emoji emoji_code="1f50d" emoji_bg="#837591" card_title="Themenmodellierung" card_text="Die Themenmodellierung extrahiert automatisiert Hauptthemen aus Texten. Dies ermöglicht die Extraktion semantisch verwandter Begriffe, sowie die Gruppierung thematisch ähnlicher Dokumente." card_href="/methods/topic" >}}}
     {{{< /div >}}} 
 {{{< /div >}}} 
 
+{{{< /div >}}} {{{< /div >}}} 
+
+
+
+{{{< div class="container-fluid" >}}} {{{< div class="container-xxl py-4" >}}}
 
 ## Fallstudien
 
-```{r}
-#| output: asis
-cat(stringi::stri_rand_lipsum(1))
-```
+`{r} stringi::stri_rand_lipsum(1)`
 
 {{{< div class="grid" >}}} 
-    {{{< div class="g-col-12 g-col-lg-6 g-col-xl-4" >}}} 
+    {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
         {{{< bs_card_emoji emoji_code="1f4f0" emoji_bg="#837591" card_title="Fallstudie I" card_text="Lorem Ipsum" card_href="/case_studies/case_study-1" >}}}
     {{{< /div >}}} 
-    {{{< div class="g-col-12 g-col-lg-6 g-col-xl-4" >}}} 
+    {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
         {{{< bs_card_emoji emoji_code="1f4f0" emoji_bg="#9c9c9c" card_title="Fallstudie II" card_text="Lorem Ipsum" card_href="/case_studies/case_study-2" >}}}
     {{{< /div >}}} 
-    {{{< div class="g-col-12 g-col-lg-6 g-col-xl-4" >}}} 
+    {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
         {{{< bs_card_emoji emoji_code="1f4f0" emoji_bg="#9c9c9c" card_title="Fallstudie III" card_text="Lorem Ipsum" card_href="/case_studies/case_study-3" >}}}
     {{{< /div >}}} 
-    {{{< div class="g-col-12 g-col-lg-6 g-col-xl-4" >}}} 
+    {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
         {{{< bs_card_emoji emoji_code="1f4f0" emoji_bg="#9c9c9c" card_title="Fallstudie IV" card_text="Lorem Ipsum" card_href="/case_studies/case_study-4" >}}}
     {{{< /div >}}} 
 {{{< /div >}}}
+
+{{{< /div >}}} {{{< /div >}}}
+
+{{{< div class="container-fluid" style="background: #fefffc !important;" >}}} {{{< div class="container-xxl py-4" >}}} 
 
 ## Palette
 
@@ -135,4 +149,6 @@ palette |>
     panel.grid=element_blank()
   )
 ```
+
+{{{< /div >}}} {{{< /div >}}}
 
