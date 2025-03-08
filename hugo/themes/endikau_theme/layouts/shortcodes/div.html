@@ -1,4 +1,4 @@
-<div {{ if .Get "class" }} class='{{ .Get "class" }}' {{ end }} {{ if .Get "id" }} id='{{ .Get "id" }}' {{ end }} {{ if .Get "style" }} style='{{ .Get "style" }}' {{ end }}>
-    {{ .Inner | markdownify}}
+<div {{ if .Get "class" }} class='{{ .Get "class" }}' {{ end }} {{ if .Get "id" }} id='{{ .Get "id" }}' {{ end }} {{ if .Get "style" }} style='{{ .Get "style" | safeCSS }}' {{ end }}>
+    {{ .Inner | markdownify }}
 </div>
 {{- "" -}}

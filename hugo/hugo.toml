@@ -22,41 +22,48 @@ defaultContentLanguageInSubdir = false
         name = "Grundlagen"
         pre = "fa-solid fa-water"
         url = "/basics/"
-
     [[menu.main]]
         weight = 2
         identifier = "methods"
         name = "Methoden"
         pre = "fa-solid fa-calculator"
         url = "/methods/"
-
     [[menu.main]]
         weight = 1
         identifier = "sentiment"
         parent = "methods"
         name = "Sentimentanalyse"
         url = "/methods/sentiment/"
-
     [[menu.main]]
         weight = 2
         identifier = "topic"
         parent = "methods"
         name = "Themenmodellierung"
         url = "/methods/topic/"
-
     [[menu.main]]
         weight = 3
         identifier = "case_studies"
         name = "Fallstudien"
         pre = "fa-solid fa-earth-americas"
         url = "/case_studies/"
-
     [[menu.main]]
         weight = 1
         identifier = "case_study-1"
         parent = "case_studies"
         name = "Fallstudie I"
         url = "/case_studies/case_study-1/"
+    [[menu.main]]
+        weight = 4
+        identifier = "misc"
+        name = "Misc"
+        pre = "fa-solid fa-ellipsis"
+        url = "/misc/"
+    [[menu.main]]
+        weight = 1
+        identifier = "mitmachen"
+        parent = "misc"
+        name = "Mitmachen"
+        url = "/misc/mitmachen/"
 
     [[menu.main]]
         weight = 2
@@ -69,7 +76,6 @@ defaultContentLanguageInSubdir = false
     [markup.goldmark]
         [markup.goldmark.renderer]
             unsafe = true
-
     [markup.tableOfContents]
         startLevel = 2
         endLevel = 4
