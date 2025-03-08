@@ -52,6 +52,18 @@ defaultContentLanguageInSubdir = false
         parent = "case_studies"
         name = "Fallstudie I"
         url = "/case_studies/case_study-1/"
+    [[menu.main]]
+        weight = 4
+        identifier = "misc"
+        name = "Misc"
+        pre = "fa-solid fa-ellipsis"
+        url = "/misc/"
+    [[menu.main]]
+        weight = 1
+        identifier = "mitmachen"
+        parent = "misc"
+        name = "Mitmachen"
+        url = "/misc/mitmachen/"
 
 [markup]
     [markup.goldmark]
