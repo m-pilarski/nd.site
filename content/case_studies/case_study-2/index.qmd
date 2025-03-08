@@ -1,0 +1,29 @@
+---
+title: "Fallstudie II"
+subtitle: "Analyse von ..."
+figtitle: "🔬"
+date: "2024-11-25T14:25:49+01:00"
+draft: true
+---
+
+## Beispiel
+
+```{r}
+#| output: asis
+"hallo"
+```
+
+Hier kommt Text
+
+```{r}
+plot(1:10, 10:1)
+```
+
+```{r}
+#| output: asis
+# Hier wird die webapp eingebunden
+cat(purrr::map_chr(nd.util::nd_iframe_app(
+  "https://shiny.dsjlu.wirtschaft.uni-giessen.de/case_study-1/"
+), as.character))
+```
+

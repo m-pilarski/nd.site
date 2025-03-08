@@ -58,6 +58,13 @@ defaultContentLanguageInSubdir = false
         name = "Fallstudie I"
         url = "/case_studies/case_study-1/"
 
+    [[menu.main]]
+        weight = 2
+        identifier = "case_study-2"
+        parent = "case_studies"
+        name = "Fallstudie II"
+        url = "/case_studies/case_study-2/"
+
 [markup]
     [markup.goldmark]
         [markup.goldmark.renderer]
