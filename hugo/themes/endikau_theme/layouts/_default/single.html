@@ -30,18 +30,4 @@
   </div>
 </div>
 
-
-<script>
-  const toastLiveExample = document.getElementById('liveToast');
-  const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample, {
-    delay: 1000 * 60 /* in milliseconds */
-  });
-  document.addEventListener("DOMContentLoaded", function () {
-    toastBootstrap.show();
-  });
-</script>
-
-
-  {{/* Uncomment below if you need the terms partial for tags: */}}
-  {{/* {{ partial "terms.html" (dict "taxonomy" "tags" "page" .) }} */}}
 {{ end }}

@@ -1,1 +1,2 @@
 library(ragg)
+library(svglite)

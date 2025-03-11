@@ -10,7 +10,7 @@
                     {{ range .Site.Menus.main }}
                     {{ if .HasChildren }}
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="{{ .URL }}" id="navbarDropdown{{ .Name }}" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle px-3" href="{{ .URL }}" id="navbarDropdown{{ .Name }}" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             {{ if .Pre }}
                             {{ $icon := printf "<i class=\"%s\"></i> " .Pre | safeHTML }}
                             {{ $icon }}
@@ -28,7 +28,7 @@
                     </li>
                     {{ else }}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ .URL }}" role="button">
+                        <a class="nav-link px-3" href="{{ .URL }}" role="button">
                             {{ if .Pre }}
                             {{ $icon := printf "<i class=\"%s\"></i> " .Pre | safeHTML }}
                             {{ $icon }}

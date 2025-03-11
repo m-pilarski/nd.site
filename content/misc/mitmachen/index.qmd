@@ -1,7 +1,7 @@
 ---
 title: "Jetzt mitmachen"
 subtitle: "Lorem Ipsum"
-figtitle: "🔬"
+figtitle: "🤝"
 date: "2024-11-25T14:25:49+01:00"
 draft: true
 ---
@@ -9,7 +9,7 @@ draft: true
 ## Beispiel
 
 ```{r}
+#| echo: false
 #| output: asis
-cat(stringi::stri_rand_lipsum(n_paragraphs=5), sep="/n")
+cat(stringi::stri_rand_lipsum(5), sep="\n\n")
 ```
-

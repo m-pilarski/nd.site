@@ -61,7 +61,7 @@ ggraph(graph) +
 
 {{{< div class="grid pb-2" >}}} 
     {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
-        {{{< bs_card card_img_src="/assets/img/drawing.svg" card_img_bg="#9c9c9c" card_title="Sentimentanalyse" card_text="Sentimentanalyse ist ein Verfahren der Data Science, das darauf abzielt, Meinungen, Emotionen und Einstellungen in Textdaten automatisch zu identifizieren und zu klassifizieren." card_href="/methods/sentiment" >}}}
+        {{{< bs_card card_img_src="/assets/img/drawing2.svg" card_img_bg="#9c9c9c" card_title="Sentimentanalyse" card_text="Sentimentanalyse ist ein Verfahren der Data Science, das darauf abzielt, Meinungen, Emotionen und Einstellungen in Textdaten automatisch zu identifizieren und zu klassifizieren." card_href="/methods/sentiment" >}}}
     {{{< /div >}}} 
     {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
         {{{< bs_card_emoji emoji_code="1f50d" emoji_bg="#837591" card_title="Themenmodellierung" card_text="Die Themenmodellierung extrahiert automatisiert Hauptthemen aus Texten. Dies ermöglicht die Extraktion semantisch verwandter Begriffe, sowie die Gruppierung thematisch ähnlicher Dokumente." card_href="/methods/topic" >}}}

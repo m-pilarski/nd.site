@@ -1,38 +1,46 @@
 ---
 title: "Themenmodellierung"
-date: "2024-11-25T14:25:49+01:00"
+subtitle: "Automatische Identifikation und Strukturierung von Themen in Texten"
+figtitle: "📰"
 draft: true
-tags: 
-  - "foo"
-  - "bar"
+toc_show: true
 ---
 
-{{{< bs_card card-title="Test" card-text="Lorem Ipsum" >}}}
+## Einleitung
 
+Themenmodellierung ist eine Methode des maschinellen Lernens, mit der aus großen Textsammlungen automatisch thematische Strukturen extrahiert werden können. Dabei werden Texte so analysiert, dass latente Themen sichtbar gemacht werden, ohne dass eine vorherige Kategorisierung notwendig ist. Diese Methode ist besonders nützlich, um große Mengen unstrukturierter Daten besser zu verstehen und effizient zu organisieren.
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor 
-incididunt ut labore et dolore magna aliqua. Pellentesque eu tincidunt tortor 
-aliquam nulla facilisi cras fermentum odio. A erat nam at lectus urna duis. 
-Sed velit dignissim sodales ut eu sem. Lectus urna duis convallis convallis 
-tellus. Diam sit amet nisl suscipit adipiscing bibendum est. Sed felis eget 
-velit aliquet sagittis id consectetur. Vulputate dignissim suspendisse in est 
-ante in nibh mauris cursus. Morbi quis commodo odio aenean. Mollis nunc sed id 
-semper risus in hendrerit gravida rutrum.
+Themenmodellierung kann in verschiedenen Bereichen angewendet werden, um datengetriebene Entscheidungen zu unterstützen.
 
-<!--more-->
+{{{< fa-ul >}}}
+    {{{< fa-solid-li icon="star fa-spin" >}}}**Kundenfeedback analysieren:** Unternehmen können Kundenrezensionen, Support-Tickets oder Social-Media-Kommentare automatisch auswerten und häufige Themen identifizieren. So lassen sich Verbesserungspotenziale oder neue Kundenbedürfnisse schneller erkennen.{{{< /fa-solid-li >}}}
+    {{{< fa-solid-li icon="square-poll-vertical" >}}}**Marktforschung und Wettbewerbsanalyse:** Durch die Analyse von Nachrichtenartikeln, Blogs und Forenbeiträgen können Unternehmen Branchentrends frühzeitig erkennen und ihre Strategien entsprechend anpassen.{{{< /fa-solid-li >}}}
+    {{{< fa-solid-li  icon="envelope" >}}}**Automatische Kategorisierung von Support-Anfragen:** Unternehmen mit vielen Kundenanfragen können durch Themenmodellierung häufige Probleme identifizieren und diese automatisiert an die zuständigen Abteilungen weiterleiten. Dies verbessert die Reaktionszeit und steigert die Effizienz im Kundenservice.{{{< /fa-solid-li >}}}
+{{{< /fa-ul >}}}
 
-<i class="fa-solid fa-user"></i>
+## Ansätze zur Themenmodellierung
 
-Ac ut consequat semper viverra nam. Hac habitasse platea dictumst vestibulum 
-rhoncus. Amet porttitor eget dolor morbi non. Justo eget magna fermentum 
-iaculis eu non. Id eu nisl nunc mi ipsum faucibus vitae aliquet nec. Aliquam 
-id diam maecenas ultricies. Non sodales neque sodales ut etiam. Amet massa 
-vitae tortor condimentum lacinia quis. Erat imperdiet sed euismod nisi porta. 
-Nisl suscipit adipiscing bibendum est ultricies integer quis auctor. Viverra 
-suspendisse potenti nullam ac. Tincidunt id aliquet risus feugiat in. Varius 
-quam quisque id diam vel. Egestas erat imperdiet sed euismod nisi. Scelerisque 
-felis imperdiet proin fermentum leo vel orci porta non. Ut faucibus pulvinar 
-elementum integer. Fermentum odio eu feugiat pretium nibh ipsum consequat nisl.
+Es gibt verschiedene Ansätze zur Themenmodellierung, die je nach Anwendungsfall unterschiedliche Vor- und Nachteile bieten. Klassische Modelle basieren häufig auf Wahrscheinlichkeitsverteilungen, während moderne Methoden neuronale Netze nutzen, um semantische Zusammenhänge besser zu erfassen.
 
-{{{< bs_card card-title="Test" card-text="Lorem Ipsum" >}}}
+### Klassische probabilistische Modelle
+
+Probabilistische Modelle verwenden statistische Verfahren, um Dokumente als Mischung verschiedener Themen zu modellieren. Diese Modelle haben sich insbesondere in der automatischen Textklassifikation bewährt.
+
+LDA ist eines der bekanntesten probabilistischen Modelle für die Themenmodellierung. Es geht davon aus, dass jedes Dokument eine Mischung aus verschiedenen Themen ist und jedes Wort mit einer bestimmten Wahrscheinlichkeit zu einem dieser Themen gehört. LDA wird häufig zur automatischen Dokumentenkategorisierung und -zusammenfassung eingesetzt.
+
+### Moderne Verfahren
+
+Moderne Themenmodellierungsverfahren setzen zunehmend auf neuronale Netze und tiefgehende Sprachmodelle, um semantische Informationen noch präziser zu extrahieren.
+
+BERTopic ist ein modernes, auf neuronalen Netzen basierendes Verfahren für die Themenmodellierung. Diese Modelle ermöglichen eine präzisere Erfassung semantischer Zusammenhänge, da sie kontextuelle Wortbedeutungen besser verstehen und flexibel auf neue Themen reagieren können. Es nutzt Transformer-Modelle wie BERT, um kontextuelle Wortrepräsentationen zu erstellen, und kombiniert diese mit Clustering-Algorithmen, um thematische Gruppen zu identifizieren. BERTopic bietet gegenüber LDA einige Vorteile:
+
+## Exemplarische Anwendung mit BERTopic
+
+Auf dieser Seite können Sie ein BERTopic-Modell in Aktion erleben. Das Modell wurde auf einer Sammlung von Zeitungsartikeln trainiert, und die Ergebnisse werden in einer interaktiven Visualisierung dargestellt.
+
+### Ausprobieren
+
+Geben Sie einen beliebigen Text in das untenstehende Feld ein, und unser BERTopic-Modell wird ihn analysieren und das wahrscheinlichste Thema bestimmen.
+
+**[Freitext-Eingabefeld für Nutzereingaben]**
 

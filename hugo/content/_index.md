@@ -44,11 +44,11 @@ toc_show: false
 
 ## Methoden
 
-Lorem ipsum dolor sit amet, nam donec nisi, sed eu quis curabitur natoque nullam lorem ut montes in curabitur fames. Accumsan mi, lacus lacus nam ac iaculis in, libero at euismod scelerisque suspendisse. Sed tristique arcu sodales ac metus nec ullamcorper massa, sed lectus, nulla mollis. Et, fringilla nam neque. In magna sapien ac. Nostra tincidunt posuere purus et. Quis in, venenatis elementum lorem dictumst eu quam turpis aliquet rhoncus! Egestas, habitant non enim mus bibendum posuere sed. Vestibulum fames et justo quam donec elementum in quis tempus platea pharetra malesuada. Aliquet eu senectus convallis cum habitant sit pharetra. Cras, aliquet ac scelerisque quis egestas sapien metus mi sed tellus volutpat. Ut sit euismod in ultricies. Aliquam vehicula cum quis suspendisse magnis pulvinar scelerisque dis. Id sed diam malesuada luctus nulla.
+Lorem ipsum dolor sit amet, interdum pretium aptent justo taciti sed. Purus neque ullamcorper ante volutpat maecenas. Dolor sed eleifend proin nunc eu convallis sit ullamcorper a sit placerat. Sed laoreet lacus nulla. Accumsan sem quis at nascetur suspendisse in proin nisl, eleifend ante ac. Lectus tempor pharetra nec eros at magna phasellus ultrices in. Eu id congue et eu rutrum. In at sed in tellus non. Dictum id nec, donec eget, turpis sed fermentum himenaeos himenaeos donec. Et pellentesque facilisi, convallis scelerisque vel eleifend. In eu varius conubia cum aptent hendrerit mollis commodo ut nulla.
 
 {{< div class=\"grid pb-2\" >}}
 {{< div class=\"g-col-12 g-col-md-6 g-col-xl-4\" >}}
-{{< bs_card card_img_src=\"/assets/img/drawing.svg\" card_img_bg=\"#9c9c9c\" card_title=\"Sentimentanalyse\" card_text=\"Sentimentanalyse ist ein Verfahren der Data Science, das darauf abzielt, Meinungen, Emotionen und Einstellungen in Textdaten automatisch zu identifizieren und zu klassifizieren.\" card_href=\"/methods/sentiment\" >}}
+{{< bs_card card_img_src=\"/assets/img/drawing2.svg\" card_img_bg=\"#9c9c9c\" card_title=\"Sentimentanalyse\" card_text=\"Sentimentanalyse ist ein Verfahren der Data Science, das darauf abzielt, Meinungen, Emotionen und Einstellungen in Textdaten automatisch zu identifizieren und zu klassifizieren.\" card_href=\"/methods/sentiment\" >}}
 {{< /div >}}
 {{< div class=\"g-col-12 g-col-md-6 g-col-xl-4\" >}}
 {{< bs_card_emoji emoji_code=\"1f50d\" emoji_bg=\"#837591\" card_title=\"Themenmodellierung\" card_text=\"Die Themenmodellierung extrahiert automatisiert Hauptthemen aus Texten. Dies ermöglicht die Extraktion semantisch verwandter Begriffe, sowie die Gruppierung thematisch ähnlicher Dokumente.\" card_href=\"/methods/topic\" >}}
@@ -61,7 +61,7 @@ Lorem ipsum dolor sit amet, nam donec nisi, sed eu quis curabitur natoque nullam
 
 ## Fallstudien
 
-Lorem ipsum dolor sit amet, vulputate, placerat a phasellus ornare risus nulla fames auctor ligula. Leo magna arcu aliquet in non amet in et ac ut nec. Mauris penatibus in torquent curae ac sit viverra sit sapien. Mus in. Sed, ipsum eu mattis, turpis nibh sed condimentum. Est erat consectetur dui pellentesque purus finibus vel vestibulum eleifend ante suscipit duis. Gravida sollicitudin sociosqu fames, curae aliquam arcu purus, commodo. Aliquam augue, ultrices ridiculus commodo fusce cubilia tellus proin dolor. Cras eleifend ac et nunc class at at congue. Senectus sagittis sed neque suspendisse. Rhoncus sapien nulla sollicitudin eget sapien aliquam nibh varius velit, arcu ut.
+Lorem ipsum dolor sit amet, efficitur sit dictum, praesent litora tempus ac eu. Id, proin, velit tincidunt in tellus sit leo bibendum ligula. Platea ridiculus habitant per ut interdum sed leo in. Nisi laoreet tristique sed dis mi etiam sed nec blandit. Eget justo ipsum leo praesent! Mauris accumsan interdum eleifend ante praesent egestas habitasse ornare! Sed nisl efficitur, vestibulum pretium. Sollicitudin sed mollis, mauris orci ullamcorper pellentesque facilisis. Luctus dui urna tincidunt nec, diam. Mauris et lorem commodo morbi ac, condimentum mus enim.
 
 {{< div class=\"grid pb-2\" >}}
 {{< div class=\"g-col-12 g-col-md-6 g-col-xl-4\" >}}
