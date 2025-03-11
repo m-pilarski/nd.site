@@ -6,7 +6,29 @@ date: "2024-11-25T14:25:49+01:00"
 draft: true
 ---
 
-## Beispiel
+Wie wird Ihr Unternehmen in den Medien wahrgenommen?
+
+Möchten Sie wissen, welches Bild Ihr Unternehmen in der Öffentlichkeit zeichnet? Mit einer gezielten Analyse von Nachrichtenberichten – sowohl lokal als auch überregional – gewinnen Sie wertvolle Einblicke in die mediale Wahrnehmung.
+
+Durch die Auswertung relevanter Google News-Feeds zu spezifischen Suchbegriffen lassen sich gezielt Berichte identifizieren, die Ihr Unternehmen betreffen. Anhand moderner Text-Mining-Methoden können diese Artikel auf ihre Stimmung (Sentiment-Analyse) und die darin enthaltenen Schlüsselentitäten (Entitätenerkennung) untersucht werden.
+
+Sehen Sie sich im folgenden Beispiel an, wie diese Analyse in der Praxis funktioniert!
+
+(Button von R shiny)
+
+Unter „Sentiment“ sehen Sie, wie unsere automatisierte Analyse Nachrichtenartikel in positiv, neutral oder negativ klassifiziert. Die „Source“ gibt an, aus welcher Ursprungsquelle der Artikel stammt – direkt aus dem Google News-Feed für einen bestimmten Suchbegriff. 
+
+Zusätzlich hebt unsere automatisierte Analyse die wichtigsten Entitäten hervor:
+- Blau für Ortsnamen,
+- Grün für Personennamen,
+- Rot für Unternehmensnamen,
+- Gelb für sonstige Eigennamen.
+
+So erkennen Sie auf einen Blick, welche Akteure und Orte in einem Artikel genannt werden.
+
+Ziehen Sie mehrere zufällige Nachrichtenartikel und erleben Sie, wie die automatisierte Sentiment- und Entitätsanalyse exemplarisch funktioniert. Erkennen Sie auf einen Blick, welche Stimmung ein Artikel transportiert und welche wichtigen Akteure, Orte und Unternehmen erwähnt werden.
+
+Haben Sie noch Fragen oder wollen Sie an einer Fallstudie mitmachen? Kontaktieren Sie uns! 
 
 ```{r}
 #| output: asis
