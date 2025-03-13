@@ -1,6 +1,7 @@
 project:
   type: hugo
   output-dir: hugo
+  post-render: /bin/sh -c "cd hugo &&  hugo --buildDrafts --cleanDestinationDir"
 format:
   hugo-md:
     code-fold: true
@@ -9,7 +10,7 @@ execute:
   warning: false
   message: false
   cache: false
-  freeze: auto
+  freeze: false
 engine: knitr
 knitr:
   opts_chunk:
