@@ -9,3 +9,4 @@ public/
 hugo/resources/_gen/
 _freeze/
 .Rhistory
+hugo/content/
