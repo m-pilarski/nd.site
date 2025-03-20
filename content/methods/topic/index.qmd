@@ -8,6 +8,10 @@ toc_show: true
 
 ## Einleitung
 
+```{r}
+knitr::include_graphics(here::here("content/methods/topic/img/book.svg"))
+```
+
 Themenmodellierung ist eine Methode des maschinellen Lernens, mit der aus großen Textsammlungen automatisch thematische Strukturen extrahiert werden können. Dabei werden Texte so analysiert, dass latente Themen sichtbar gemacht werden, ohne dass eine vorherige Kategorisierung notwendig ist. Diese Methode ist besonders nützlich, um große Mengen unstrukturierter Daten besser zu verstehen und effizient zu organisieren.
 
 Themenmodellierung kann in verschiedenen Bereichen angewendet werden, um datengetriebene Entscheidungen zu unterstützen.

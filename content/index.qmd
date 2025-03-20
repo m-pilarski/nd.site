@@ -18,12 +18,15 @@ toc_show: false
 <script src="/assets/js/wordcloud.js"></script> -->
 
 {{{< div class="container-fluid pb-2" style="background: #e9ebe5 !important;" >}}}
-  {{{< div class="container-xxl py-3 grid nd-article" >}}}
-    {{{< div class="g-col-12" >}}} {{{< span class="h1" >}}} Einsatz neuer Daten in Kommunikationszusammenhängen auf Unternehmensebene (EnDiKaU) {{{< /span >}}} <br> {{{< span class="lead" >}}} ***Förderprogramm Distr@l Digitalisierung*** {{{< /span >}}} {{{< /div >}}}
-    {{{< div class="g-col-12 g-col-md-7 order-md-1" >}}}
-      {{{< p >}}} Kommunikationsdaten entstehen bei der Interaktion zwischen Menschen und Geräten - sei es durch E-Mails, Projektberichte, soziale Medien oder Kundenanfragen. {{{< /p >}}} {{{< p class="pb-3" >}}} Diese Daten enthalten wertvolle Informationen, die Unternehmen helfen können, Einblicke zu gewinnen, Prozesse zu verbessern und Entscheidungen auf einer fundierten Basis zu treffen. Doch oft bleiben diese Daten ungenutzt, da sie unstrukturiert vorliegen und ihre Analyse zeitaufwendig erscheint. Jedoch existieren computergestützte Verfahren, die die automatisierte Analyse unstrukturierter Kommunikationsdaten ermöglichen. So können große Datenmengen in kurzer Zeit ausgewertet werden. {{{< /p >}}} 
+  {{{< div class="container-xxl py-4 grid nd-article" >}}}
+    {{{< div class="g-col-12" >}}} {{{< span class="h1" >}}} Einsatz neuer Daten in Kommunikationszusammenhängen auf Unternehmensebene {{{< /span >}}} <br> {{{< span class="lead" >}}} ***Förderprogramm Distr@l Digitalisierung*** {{{< /span >}}} {{{< /div >}}}
+    {{{< div class="g-col-12 g-col-md-8 order-md-1" >}}}
+      {{{< p >}}} Kommunikationsdaten entstehen bei der Interaktion zwischen Menschen und Geräten - sei es durch E-Mails, Projektberichte, soziale Medien oder Kundenanfragen. {{{< /p >}}} {{{< p class="pb-4" >}}} Diese Daten enthalten wertvolle Informationen, die Unternehmen helfen können, Einblicke zu gewinnen, Prozesse zu verbessern und Entscheidungen auf einer fundierten Basis zu treffen. Doch oft bleiben diese Daten ungenutzt, da sie unstrukturiert vorliegen und ihre Analyse zeitaufwendig erscheint. Jedoch existieren computergestützte Verfahren, die die automatisierte Analyse unstrukturierter Kommunikationsdaten ermöglichen. So können große Datenmengen in kurzer Zeit ausgewertet werden. {{{< /p >}}} 
+      {{{< div class="text-white text-bg-primary rounded p-3" >}}} 
+        {{{< p class="p-0" >}}} Unsere Website bietet Ihnen eine Übersicht der vielfältigen Werkzeuge, mit denen Kommunikationsdaten analysiert und genutzt werden können. Von den Grundlagen dieser Daten über Methoden, diese zu strukturieren und auszuwerten, bis hin zu praktischen Anwendungen – entdecken Sie, wie diese Methoden dazu beitragen können, wertvolle Erkenntnisse aus Kommunikationsdaten zu gewinnen. {{{< /p >}}} 
+      {{{< /div >}}}
     {{{< /div >}}}
-    {{{< div class="g-col-12 g-col-md-5 order-md-2" >}}}
+    {{{< div class="g-col-12 g-col-md-4 order-md-2" >}}}
       {{{< div class="d-flex justify-content-center" style="max-width: 500px;" >}}}
 
 ```{r, dev="svglite", dev.args=list(bg="transparent")}
@@ -45,21 +48,19 @@ ggraph(graph) +
       {{{< /div >}}}
     {{{< /div >}}}
   {{{< /div >}}}
-  {{{< div class="container-xxl pb-4 nd-article" >}}}
-    {{{< div class="text-white text-bg-primary rounded p-3" >}}} 
-      {{{< p class="p-0" >}}} Unsere Website bietet Ihnen eine Übersicht der vielfältigen Werkzeuge, mit denen Kommunikationsdaten analysiert und genutzt werden können. Von den Grundlagen dieser Daten über Methoden, diese zu strukturieren und auszuwerten, bis hin zu praktischen Anwendungen – entdecken Sie, wie diese Methoden dazu beitragen können, wertvolle Erkenntnisse aus Kommunikationsdaten zu gewinnen. {{{< /p >}}} 
-      <!-- Auf dieser Webseite werden einige dieser **Methoden** erklärt und anhand von **Fallstudien** exemplarisch demonstriert.  -->
-    {{{< /div >}}}
-  {{{< /div >}}}
 {{{< /div >}}}
 
 {{{< div class="container-fluid" style="background: #fefffc !important;" >}}} {{{< div class="container-xxl py-4 nd-article" >}}} 
 
 ## Methoden
 
-`{r} stringi::stri_rand_lipsum(1)`
+<!-- `{r} stringi::stri_rand_lipsum(1)` -->
+<!-- Datenwissenschaftliche Methoden ermöglichen es, große Mengen an Textdaten zu analysieren, zu strukturieren und wertvolle Erkenntnisse daraus zu gewinnen. Verschiedene Techniken helfen dabei, Muster zu erkennen, Informationen zu kategorisieren und komplexe Zusammenhänge sichtbar zu machen. -->
 
-{{{< div class="grid pb-2" >}}} 
+{{{< div class="grid py-2" >}}} 
+    {{{< div class="g-col-12 g-col-md-6 g-col-xl-4 nd-article" >}}} 
+        {{{< p class="nd-article" >}}}`{r} stringi::stri_rand_lipsum(1)`{{{< /p >}}}
+    {{{< /div >}}} 
     {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
         {{{< bs_card card_img_src="/assets/img/drawing2.svg" card_img_bg="#9c9c9c" card_title="Sentimentanalyse" card_text="Sentimentanalyse ist ein Verfahren der Data Science, das darauf abzielt, Meinungen, Emotionen und Einstellungen in Textdaten automatisch zu identifizieren und zu klassifizieren." card_href="/methods/sentiment" >}}}
     {{{< /div >}}} 
@@ -76,9 +77,12 @@ ggraph(graph) +
 
 ## Fallstudien
 
-`{r} stringi::stri_rand_lipsum(1)`
+<!-- `{r} stringi::stri_rand_lipsum(1)` -->
 
-{{{< div class="grid pb-2" >}}} 
+{{{< div class="grid py-2" >}}} 
+    {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
+        {{{< p class="nd-article" >}}}`{r} stringi::stri_rand_lipsum(1)`{{{< /p >}}}
+    {{{< /div >}}} 
     {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
         {{{< bs_card_emoji emoji_code="1f4f0" emoji_bg="#837591" card_title="Fallstudie I" card_text="Lorem Ipsum" card_href="/case_studies/case_study-1" >}}}
     {{{< /div >}}} 
@@ -95,57 +99,57 @@ ggraph(graph) +
 
 {{{< /div >}}} {{{< /div >}}}
 
-{{{< div class="container-fluid" style="background: #fefffc !important;" >}}} {{{< div class="container-xxl py-4 nd-article" >}}} 
+<!-- {{{< div class="container-fluid" style="background: #fefffc !important;" >}}} {{{< div class="container-xxl py-4 nd-article" >}}}  -->
 
-## Palette
+<!-- ## Palette -->
 
-```{r}
-library(ggplot2)
+<!-- ```{r} -->
+<!-- library(ggplot2) -->
 
-palette <- tibble::tribble(
-  ~color, ~palette,
-  "#2e2933", "base",
-  "#837591", "base",
-  "#e9ebe5", "base",
-  "#cf597e", "diverging",
-  "#e88471", "diverging",
-  "#eeb479", "diverging",
-  "#e9e29c", "diverging",
-  "#9ccb86", "diverging",
-  "#39b185", "diverging",
-  "#009392", "diverging",
-  "#f7feae", "sequential",
-  "#b7e6a5", "sequential",
-  "#7ccba2", "sequential",
-  "#46aea0", "sequential",
-  "#089099", "sequential",
-  "#00718b", "sequential",
-  "#045275", "sequential",
-)
+<!-- palette <- tibble::tribble( -->
+<!--   ~color, ~palette, -->
+<!--   "#2e2933", "base", -->
+<!--   "#837591", "base", -->
+<!--   "#e9ebe5", "base", -->
+<!--   "#cf597e", "diverging", -->
+<!--   "#e88471", "diverging", -->
+<!--   "#eeb479", "diverging", -->
+<!--   "#e9e29c", "diverging", -->
+<!--   "#9ccb86", "diverging", -->
+<!--   "#39b185", "diverging", -->
+<!--   "#009392", "diverging", -->
+<!--   "#f7feae", "sequential", -->
+<!--   "#b7e6a5", "sequential", -->
+<!--   "#7ccba2", "sequential", -->
+<!--   "#46aea0", "sequential", -->
+<!--   "#089099", "sequential", -->
+<!--   "#00718b", "sequential", -->
+<!--   "#045275", "sequential", -->
+<!-- ) -->
 
-palette |> 
-  dplyr::mutate(
-    color_palette_rank = dplyr::row_number(), .by=palette
-  ) |>
-  ggplot(aes(x=color_palette_rank, y=forcats::fct_rev(palette), fill=color)) +
-  geom_tile(width=1) +
-  geom_text(aes(label=color), color="black", nudge_x=0.1, nudge_y=0.1) +
-  geom_text(aes(label=color), color="white", nudge_x=-0.1, nudge_y=-0.1) +
-  scale_fill_identity() +
-  coord_equal() +
-  theme_minimal() +
-  theme(
-    axis.title=element_blank(),
-    axis.text.x=element_blank(),
-    axis.ticks.x=element_blank(),
-    panel.grid=element_blank()
-  )
-```
+<!-- palette |>  -->
+<!--   dplyr::mutate( -->
+<!--     color_palette_rank = dplyr::row_number(), .by=palette -->
+<!--   ) |> -->
+<!--   ggplot(aes(x=color_palette_rank, y=forcats::fct_rev(palette), fill=color)) + -->
+<!--   geom_tile(width=1) + -->
+<!--   geom_text(aes(label=color), color="black", nudge_x=0.1, nudge_y=0.1) + -->
+<!--   geom_text(aes(label=color), color="white", nudge_x=-0.1, nudge_y=-0.1) + -->
+<!--   scale_fill_identity() + -->
+<!--   coord_equal() + -->
+<!--   theme_minimal() + -->
+<!--   theme( -->
+<!--     axis.title=element_blank(), -->
+<!--     axis.text.x=element_blank(), -->
+<!--     axis.ticks.x=element_blank(), -->
+<!--     panel.grid=element_blank() -->
+<!--   ) -->
+<!-- ``` -->
 
-## Emojis
+<!-- ## Emojis -->
 
-📧📨📄👥👤🗣️🌐📱📰📣
+<!-- 📧📨📄👥👤🗣️🌐📱📰📣 -->
 
 
-{{{< /div >}}} {{{< /div >}}}
+<!-- {{{< /div >}}} {{{< /div >}}} -->
 
