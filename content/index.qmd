@@ -59,7 +59,7 @@ ggraph(graph) +
 
 {{{< div class="grid py-2" >}}} 
     {{{< div class="g-col-12 g-col-md-6 g-col-xl-4 nd-article" >}}} 
-        {{{< p class="nd-article" >}}}`{r} stringi::stri_rand_lipsum(1)`{{{< /p >}}}
+        {{{< p class="nd-article" >}}} Von Stimmungsanalysen bis hin zu Themenerkennung – moderne Analysemethoden ermöglichen es, versteckte Botschaften in großen Textmengen aufzudecken. Wählen Sie eine Methode, um zu erfahren, wie sie funktioniert und welche Erkenntnisse sie liefern kann. {{{< /p >}}}
     {{{< /div >}}} 
     {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
         {{{< bs_card card_img_src="/assets/img/drawing2.svg" card_img_bg="#9c9c9c" card_title="Sentimentanalyse" card_text="Sentimentanalyse ist ein Verfahren der Data Science, das darauf abzielt, Meinungen, Emotionen und Einstellungen in Textdaten automatisch zu identifizieren und zu klassifizieren." card_href="/methods/sentiment" >}}}
@@ -81,7 +81,7 @@ ggraph(graph) +
 
 {{{< div class="grid py-2" >}}} 
     {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
-        {{{< p class="nd-article" >}}}`{r} stringi::stri_rand_lipsum(1)`{{{< /p >}}}
+        {{{< p class="nd-article" >}}} Unsere Fallstudien veranschaulichen, wie Technologien der Textanalyse auf reale Daten angewendet werden. Entdecken Sie konkrete Beispiele für den Einsatz von Sentimentanalyse, Themenmodellierung und weiteren Methoden. {{{< /p >}}}
     {{{< /div >}}} 
     {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
         {{{< bs_card_emoji emoji_code="1f4f0" emoji_bg="#837591" card_title="Fallstudie I" card_text="Lorem Ipsum" card_href="/case_studies/case_study-1" >}}}
