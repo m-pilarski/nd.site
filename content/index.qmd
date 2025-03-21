@@ -21,10 +21,10 @@ toc_show: false
   {{{< div class="container-xxl py-4 grid nd-article" >}}}
     {{{< div class="g-col-12" >}}} {{{< span class="h1" >}}} Einsatz neuer Daten in Kommunikationszusammenhängen auf Unternehmensebene {{{< /span >}}} <br> {{{< span class="lead" >}}} ***Förderprogramm Distr@l Digitalisierung*** {{{< /span >}}} {{{< /div >}}}
     {{{< div class="g-col-12 g-col-md-8 order-md-1" >}}}
-      {{{< p >}}} Kommunikationsdaten entstehen bei der Interaktion zwischen Menschen und Geräten - sei es durch E-Mails, Projektberichte, soziale Medien oder Kundenanfragen. {{{< /p >}}} {{{< p class="pb-4" >}}} Diese Daten enthalten wertvolle Informationen, die Unternehmen helfen können, Einblicke zu gewinnen, Prozesse zu verbessern und Entscheidungen auf einer fundierten Basis zu treffen. Doch oft bleiben diese Daten ungenutzt, da sie unstrukturiert vorliegen und ihre Analyse zeitaufwendig erscheint. Jedoch existieren computergestützte Verfahren, die die automatisierte Analyse unstrukturierter Kommunikationsdaten ermöglichen. So können große Datenmengen in kurzer Zeit ausgewertet werden. {{{< /p >}}} 
-      {{{< div class="text-white text-bg-primary rounded p-3" >}}} 
-        {{{< p class="p-0" >}}} Unsere Website bietet Ihnen eine Übersicht der vielfältigen Werkzeuge, mit denen Kommunikationsdaten analysiert und genutzt werden können. Von den Grundlagen dieser Daten über Methoden, diese zu strukturieren und auszuwerten, bis hin zu praktischen Anwendungen – entdecken Sie, wie diese Methoden dazu beitragen können, wertvolle Erkenntnisse aus Kommunikationsdaten zu gewinnen. {{{< /p >}}} 
-      {{{< /div >}}}
+      {{{< p >}}} **Kommunikationsdaten** entstehen durch E-Mails, Berichte, soziale Medien oder Kundenanfragen und enthalten wertvolle Informationen für Unternehmen. Doch oft bleiben sie ungenutzt, da sie unstrukturiert sind und ihre Analyse aufwendig erscheint. Computergestützte Verfahren ermöglichen jedoch die automatisierte Auswertung großer Datenmengen in kurzer Zeit – für bessere Einblicke und fundierte Entscheidungen. {{{< /p >}}} {{{< p class="pb-4" >}}} Hier setzt das **EnDiKaU-Projekt** der Justus-Liebig-Universität Gießen im Rahmen des **Förderprogramms Distr@l Digitalisierung** an. Ziel des Projekts ist es, **kleinen und mittelständischen Unternehmen (KMU)** Methoden der **computergestützten Textanalyse** zugänglich zu machen und **praxisnahe Anwendungsmöglichkeiten** aufzuzeigen, um eine fundierte Grundlage für den Einsatz dieser Methoden im eigenen Unternehmen zu schaffen. {{{< /p >}}} 
+      <!-- {{{< div class="text-white text-bg-primary rounded p-3" >}}} -->
+      <!--   {{{< p class="p-0" >}}} Unsere Website bietet Ihnen eine Übersicht der vielfältigen Werkzeuge, mit denen Kommunikationsdaten analysiert und genutzt werden können. Von den Grundlagen dieser Daten über Methoden, diese zu strukturieren und auszuwerten, bis hin zu praktischen Anwendungen – entdecken Sie, wie diese Methoden dazu beitragen können, wertvolle Erkenntnisse aus Kommunikationsdaten zu gewinnen. {{{< /p >}}} -->
+      <!-- {{{< /div >}}} -->
     {{{< /div >}}}
     {{{< div class="g-col-12 g-col-md-4 order-md-2" >}}}
       {{{< div class="d-flex justify-content-center" style="max-width: 500px;" >}}}
@@ -59,9 +59,7 @@ ggraph(graph) +
 
 {{{< div class="grid py-2" >}}} 
     {{{< div class="g-col-12 g-col-md-6 g-col-xl-4 nd-article" >}}} 
-        {{{< div class="pe-md-1" >}}}
-          {{{< p class="nd-article" >}}}Datenwissenschaftliche Methoden ermöglichen es, große Mengen an Textdaten zu analysieren, zu strukturieren und wertvolle Erkenntnisse daraus zu gewinnen. Verschiedene Techniken helfen dabei, Muster zu erkennen, Informationen zu kategorisieren und komplexe Zusammenhänge sichtbar zu machen.{{{< /p >}}}
-        {{{< /div >}}}
+        {{{< p class="nd-article" >}}} Von Stimmungsanalysen bis hin zu Themenerkennung – moderne Analysemethoden ermöglichen es, versteckte Botschaften in großen Textmengen aufzudecken. Wählen Sie eine Methode, um zu erfahren, wie sie funktioniert und welche Erkenntnisse sie liefern kann. {{{< /p >}}}
     {{{< /div >}}} 
     {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
         {{{< bs_card card_img_src="/assets/img/drawing2.svg" card_img_bg="#9c9c9c" card_title="Sentimentanalyse" card_text="Sentimentanalyse ist ein Verfahren der Data Science, das darauf abzielt, Meinungen, Emotionen und Einstellungen in Textdaten automatisch zu identifizieren und zu klassifizieren." card_href="/methods/sentiment" >}}}
@@ -83,7 +81,7 @@ ggraph(graph) +
 
 {{{< div class="grid py-2" >}}} 
     {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
-        {{{< p class="nd-article" >}}}`{r} stringi::stri_rand_lipsum(1)`{{{< /p >}}}
+        {{{< p class="nd-article" >}}} Unsere Fallstudien veranschaulichen, wie Technologien der Textanalyse auf reale Daten angewendet werden. Entdecken Sie konkrete Beispiele für den Einsatz von Sentimentanalyse, Themenmodellierung und weiteren Methoden. {{{< /p >}}}
     {{{< /div >}}} 
     {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
         {{{< bs_card_emoji emoji_code="1f4f0" emoji_bg="#837591" card_title="Fallstudie I" card_text="Lorem Ipsum" card_href="/case_studies/case_study-1" >}}}

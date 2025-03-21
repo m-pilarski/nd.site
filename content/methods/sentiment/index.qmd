@@ -55,9 +55,23 @@ nd_iframe_app <- function(.url, .width="100%", .height="400pt"){
 ```
 ```{r}
 ```
+
 ## Was ist Sentimentanalyse?
 
+
 Die Sentimentanalyse, auch bekannt als Stimmungsanalyse oder Opinion Mining, ist eine Methode zur automatisierten Erkennung und Bewertung der Emotionen und Meinungen, die in Textdaten zum Ausdruck kommen. Dabei ist das Ziel die Wahrnehmung eines Textes zu quantifizieren – also zu beurteilen, ob ein Text, wie beispielsweise eine Produktbewertung, ein Kundenfeedback oder ein Social-Media-Beitrag, positiv, negativ oder neutral ist. Dies wird üblicherweise auf einer Skala von -1 bis 1, also von sehr negativ bis sehr positiv.
+
+## Anwendungen 
+
+{{{< fa-ul >}}}
+    {{{< fa-solid-li icon="star"  >}}} **Markenreputation überwachen:** Behalten Sie Ihr Markenimage im Blick, indem Sie Kundenfeedback und Online-Bewertungen analysieren. {{{< /fa-solid-li >}}}
+    
+  {{{< fa-solid-li icon="lightbulb"  >}}} **Produktentwicklung und Innovation:** Durch die Analyse von Rezensionen und Feedback lassen sich wertvolle Einblicke in Bedürfnisse und Probleme von Kunden gewinnen, die als Basis für Produktentwicklung und Innovation dienen. {{{< /fa-solid-li >}}}
+    
+  {{{< fa-solid-li icon="ticket-simple" >}}} **Kundenservice verbessern:**  
+  Analysieren Sie die Stimmung in Kundenanfragen und Support-Tickets, um  den Service gezielt zu optimieren. Durch die automatische Stimmungsbewertung können kritische Fälle priorisiert und schneller gelöst werden. {{{< /fa-solid-li >}}}
+{{{< /fa-ul >}}}
+
 
 
 ## Methoden der Sentimentanalyse
@@ -73,6 +87,16 @@ Die lexikonbasierte Sentimentanalyse ist die traditionelle Form des Verfahrens, 
 Diese Lexika enthalten Wörter, die mit positiven oder negativen Gefühlen assoziiert sind, oft mit einem entsprechenden Gewicht, das die Stärke des Ausdrucks angibt.
 
 Zur Bewertung werden die Wörter des Textes mit den Einträgen des Lexikons (bspw. SentiWS oder German Polarity Clues) abgeglichen. Die aggregierten Gewichte der Wörter aus dem Lexikon geben schließlich die Gesamtstimmung des Textes wieder.
+
+{{{< div class="grid my-4" >}}} {{{< div class="g-col-12 g-col-md-8 g-start-md-4" >}}} 
+
+```{r}
+knitr::include_graphics(here::here("content/methods/sentiment/img/dict_senti.svg"))
+```
+
+{{{< /div >}}} {{{< /div >}}}
+
+
 
 #### Vor- und Nachteile
 
@@ -119,6 +143,24 @@ Im Gegensatz zu lexikonbasierten Ansätzen bieten vortrainierte Modelle, die auf
 #### Funktionsweise
 
 Diese Modelle lernen aus einer Vielzahl von Beispielen und liefern auch in unbekannten Domänen oder bei komplexen sprachlichen Strukturen, wie Sarkasmus, verlässlichere Ergebnisse. Sie sind nicht auf spezifische Lexika angewiesen und können durch Fine-Tuning flexibel an unterschiedliche Anwendungsfälle angepasst werden, was sie besonders leistungsstark und vielseitig macht.
+
+
+{{{< div class="grid my-4" >}}} {{{< div class="g-col-12 g-col-md-6 g-start-md-4" >}}} 
+
+```{r}
+knitr::include_graphics(here::here("content/methods/sentiment/img/ml_senti.svg"))
+```
+
+{{{< /div >}}} {{{< /div >}}}
+
+
+#### Vor- und Nachteile
+
+{{{< fa-ul >}}}
+    {{{< fa-solid-li icon="thumbs-up" color="#39b185" >}}} Grpße Sprachmodelle sind sehr viel besser darin die gesamte Stimmung eines Textes anhand des Kontextes auszumachen, statt nur anhand einzelner Begriffe. Damit sind sie oftmals genauer. {{{< /fa-solid-li >}}}
+    {{{< fa-solid-li icon="thumbs-down" color="#cf597e" >}}} Die Anwendung dieser Methode kostet jedoch deutlich mehr Rechenkapazität, was besonders bei großen Datenmengen problematisch werden kann. {{{< /fa-solid-li >}}}
+{{{< /fa-ul >}}}
+
 
 #### Ausprobieren
 

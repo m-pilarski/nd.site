@@ -62,7 +62,7 @@ Textdaten wie E-Mails, Kundenrezensionen oder interne Dokumente stellen viele Un
 **Natural Language Processing (NLP)** ist eine Technologie, die Computern ermöglicht, schriftliche oder gesprochene Sprache zu verstehen und zu analysieren. Sie kommt ins Spiel, wenn unstrukturierte Texte – wie E-Mails, Kundenrezensionen oder Social-Media-Beiträge – verarbeitet werden sollen. NLP wandelt diese Textdaten in strukturierte Daten um, die einfacher auszuwerten sind als in ihrer unstrukturierten Form.
 {{{< /p >}}}
 
-{{{< div class="grid my-4" >}}} {{{< div class="g-col-12 g-col-md-6 g-start-md-4" >}}} 
+{{{< div class="grid my-4" >}}} {{{< div class="g-col-12 g-col-md-8 g-start-md-4" >}}} 
 
 ```{r}
 knitr::include_graphics(here::here("content/basics/img/nlp.svg"))
@@ -70,9 +70,11 @@ knitr::include_graphics(here::here("content/basics/img/nlp.svg"))
 
 {{{< /div >}}} {{{< /div >}}}
 
+
 {{{< p class="pb-0" >}}}
 **Text Mining** ergänzt NLP, indem es darauf abzielt, Muster, Zusammenhänge und Trends in den nun strukturierten Textdaten aufzudecken. Ähnlich wie beim „Mining“ – auf Deutsch Bergbau – werden Texte nach wertvollen Inhalten durchforstet, um nützliche Erkenntnisse zu fördern. Während NLP auf das Verstehen und die Aufbereitung der Sprache fokussiert ist, nutzt Text Mining diese aufbereiteten Daten, um relevante Muster und Strukturen zu extrahieren. Gemeinsam bilden sie ein leistungsstarkes Duo: NLP bringt die Texte in eine nützliche Form, und Text Mining hebt das verborgene Wissen ans Licht.
 {{{< /p >}}}
+
 
 {{{< div class="grid my-4" >}}} {{{< div class="g-col-12 g-col-md-6 g-start-md-4" >}}} 
 
@@ -94,37 +96,36 @@ Die Kombination dieser Methoden eröffnet eine **Vielzahl von Möglichkeiten fü
 
 Der Ausgangspunkt jeder Textanalyse ist eine **Sammlung von Dokumenten bzw. Texten**, welche auch als **Korpus** bezeichnet wird. Dieser kann in der Form noch nicht für Analysen verwendet werden, denn die Texte liegen weiterhin in einem unstrukturierten Format vor. Das Hauptziel des **„Preprocessing“** (deutsch: Vorverarbeitung) ist es, den Aufwand für Computer zu reduzieren, indem man den Korpus auf das Wesentliche reduziert. Dies erlaubt für effizientere Analysen.Um aus Texten relevante Informationen zu extrahieren, müssen diese zunächst in eine für Computer leserliche Struktur gebracht werden. Hierfür werden verschiedene Schritte genommen, sodass zum Schluss eine strukturierte Version des Textes vorliegt, die für weitere Analysen genutzt werden kann. 
 
+{{{< p class="pb-0" >}}}
 In den nächsten Abschnitten werden eine Reihe von Vorverarbeitungsschritten erläutert, die je nach der verwendeten Methode unterschiedlich kombiniert werden können. Eine typische Maßnahme ist, die vorliegenden Texte in ihre einzelnen Elemente zu unterteilen, zum Beispiel in Sätze oder einzelne Wörter. Diese kleinsten Einheiten werden in der NLP-Sprache auch als **Tokens** (deutsch: Zeichen oder Symbol), bezeichnet. Entsprechend wird dieser Vorgang auch als **Tokenisierung** bezeichnet. 
+{{{< /p >}}}
 
-<center>
+
+{{{< div class="grid my-4" >}}} {{{< div class="g-col-12 g-col-md-6 g-start-md-4" >}}} 
 
 ```{r}
-#| out-width: "90%"
-#| fig-align: center
-
 knitr::include_graphics(here::here("content/basics/img/token.svg"))
 ```
-</center>
 
-<br/><br/>
+{{{< /div >}}} {{{< /div >}}}
 
 
 
 Um die Texte weiter zu vereinfachen können zum Beispiel auch alle Wörter **kleingeschrieben** werden, sodass „Heute“ und „heute“ nicht als zwei verschiedene Begriffe kategorisiert werden. Außerdem könnte man auch alle **Symbole**, wie Punkt, Komma, @, usw., entfernen. Um die Anzahl einzelner Begriffe zu reduzieren, ist es ebenfalls üblich so genannte **Stopwords** zu entfernen. Stopwords sind Begriffe, die sehr häufig in Texten verwendet werden, die jedoch wenig zum Kontext oder der Bedeutung des Textes beitragen, wie Artikel (der, die, das), Konjunktionen (und, oder, aber, ...), und viele mehr. 
 
-Um verschiedene Formen von Wörtern auf den jeweiligen Stamm, die sie miteinander Teilen zu reduzieren, können zwei Methoden verwendet werden: **Stemming** und/oder **Lemmatisierung**. Die Methoden können einzeln oder kombiniert werden, mit dem Ziel Wortstämme zu identifizieren und damit die Anzahl einzelner Begriffe in den Texten weiter zu reduzieren. **Stemming** identifiziert die **gemeinsame Basis verschiedener Wörter**, um sie damit auf diese zu reduzieren. Hierfür werden entsprechend Präfixe, Suffixe, etc. entfernt oder abgeschnitten, sodass nur der Wortstamm übrigbleibt. **Lemmatisierung** hingegen, zielt darauf ab Lemmas, also die **Grundform des Wortes**, die in einem Wörterbuch vorzufinden ist, zu identifizieren und Wörter darauf zu reduzieren. Anders als beim Stemming resultiert entsprechend immer ein lexikographisch korrektes Wort bei der Lemmatisierung, da Wörter identifiziert werden und nicht Prä- bzw. Suffixe einfach entfernt werden. 
 
-<center>
+{{{< p class="pb-0" >}}}
+Um verschiedene Formen von Wörtern auf den jeweiligen Stamm, die sie miteinander Teilen zu reduzieren, können zwei Methoden verwendet werden: **Stemming** und/oder **Lemmatisierung**. Die Methoden können einzeln oder kombiniert werden, mit dem Ziel Wortstämme zu identifizieren und damit die Anzahl einzelner Begriffe in den Texten weiter zu reduzieren. **Stemming** identifiziert die **gemeinsame Basis verschiedener Wörter**, um sie damit auf diese zu reduzieren. Hierfür werden entsprechend Präfixe, Suffixe, etc. entfernt oder abgeschnitten, sodass nur der Wortstamm übrigbleibt. **Lemmatisierung** hingegen, zielt darauf ab Lemmas, also die **Grundform des Wortes**, die in einem Wörterbuch vorzufinden ist, zu identifizieren und Wörter darauf zu reduzieren. Anders als beim Stemming resultiert entsprechend immer ein lexikographisch korrektes Wort bei der Lemmatisierung, da Wörter identifiziert werden und nicht Prä- bzw. Suffixe einfach entfernt werden. 
+{{{< /p >}}}
+
+
+{{{< div class="grid my-4" >}}} {{{< div class="g-col-12 g-col-md-6 g-start-md-4" >}}} 
 
 ```{r}
-#| out-width: "60%"
-
 knitr::include_graphics(here::here("content/basics/img/stemm_lemm.svg"))
 ```
-</center>
 
-<br/><br/>
-
+{{{< /div >}}} {{{< /div >}}}
 
 Die folgende Tabelle bietet eine **Übersicht der gängigsten Vorverarbeitungsschritte für Textdaten**, sowie kurze Beispiele dazu. 
 
