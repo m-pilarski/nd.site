@@ -7,18 +7,14 @@ format: hugo-md
 toc_show: true
 ---
 
-
 ## Datenquellen im Überblick
-
 
 Viele Unternehmen verfügen über eine Fülle an Kommunikationsdaten, die wertvolle Einblicke bieten können. Doch oft werden diese Datenquellen nicht systematisch erfasst und bleiben deshalb ungenutzt. Im Folgenden finden Sie eine Übersicht über interne und externe Textdatenquellen, die oftmals zur Verfügung stehen, sowie deren Relevanz als Informationsbasis für Unternehmen:
 
 
 ### Interne Textdaten
 
-{{{< p class="pb-0" >}}}
 Interne Datenquellen bieten Einblicke in Ihre Betriebsabläufe und die Bedürfnisse von Kunden:
-{{{< /p >}}}
 {{{< fa-ul >}}}
   {{{< fa-solid-li icon="bullhorn" >}}}	**Kundenkommunikation**: Verwaltung von Kundenanfragen und Support-Tickets, um den Service zu verbessern und Probleme schneller zu lösen.{{{< /fa-solid-li >}}}
     
@@ -34,9 +30,7 @@ Interne Datenquellen bieten Einblicke in Ihre Betriebsabläufe und die Bedürfni
 
 ### Externe Textdaten
 
-{{{< p class="pb-0" >}}}
 Externe Quellen helfen, Kundenwünsche und Marktveränderungen zu identifizieren:
-{{{< /p >}}}
 {{{< fa-ul >}}}
   {{{< fa-solid-li icon="star" >}}}		**Kundenbewertungen**: Erkennen Sie, was Ihre Kunden schätzen oder kritisieren, durch Bewertungen auf Plattformen wie Amazon, Google oder Ihrer eigenen Website. {{{< /fa-solid-li >}}}
   
@@ -49,12 +43,7 @@ Externe Quellen helfen, Kundenwünsche und Marktveränderungen zu identifizieren
 Textdaten durchziehen nahezu **alle Bereiche Ihres Unternehmens**. Das systematische Erfassen solcher Daten ist daher ein erster Schritt, um diese als **Grundlage für fundierte Entscheidungen** zu verwenden. 
 
 
-
-
-
-
 ## Aus unstrukturierten Daten Wissen schöpfen
-
 
 Textdaten wie E-Mails, Kundenrezensionen oder interne Dokumente stellen viele Unternehmen vor eine Herausforderung – sie sind unstrukturiert und dadurch vermeintlich schwer auswertbar. Das Hauptproblem von Textdaten ist, dass sie nicht von Computern gelesen werden können, da Computer nur mit Zahlen arbeiten können. Dementsprechend müssen Texte numerisch umgewandelt werden. Im folgenden Abschnitt werden Technologien näher vorgestellt, die diese Umwandlung von Text- zu numerischen Daten ermöglichen, um damit Texte als Datenquelle für weitere Analysen nutzen zu können. 
 
@@ -69,7 +58,6 @@ knitr::include_graphics(here::here("content/basics/img/nlp.svg"))
 ```
 
 {{{< /div >}}} {{{< /div >}}}
-
 
 {{{< p class="pb-0" >}}}
 **Text Mining** ergänzt NLP, indem es darauf abzielt, Muster, Zusammenhänge und Trends in den nun strukturierten Textdaten aufzudecken. Ähnlich wie beim „Mining“ – auf Deutsch Bergbau – werden Texte nach wertvollen Inhalten durchforstet, um nützliche Erkenntnisse zu fördern. Während NLP auf das Verstehen und die Aufbereitung der Sprache fokussiert ist, nutzt Text Mining diese aufbereiteten Daten, um relevante Muster und Strukturen zu extrahieren. Gemeinsam bilden sie ein leistungsstarkes Duo: NLP bringt die Texte in eine nützliche Form, und Text Mining hebt das verborgene Wissen ans Licht.
@@ -86,20 +74,16 @@ knitr::include_graphics(here::here("content/basics/img/text_mining.svg"))
 
 Die Kombination dieser Methoden eröffnet eine **Vielzahl von Möglichkeiten für Unternehmen**: Von der Optimierung des Kundenservice über die Entwicklung neuer Produkte bis hin zur Identifizierung von Markttrends. 
 
-
-
-
 <!-- Das evtl. als eigene Seite anlegen? -->
 
-## Textdaten für Analysen vorbereiten
 
+## Textdaten für Analysen vorbereiten
 
 Der Ausgangspunkt jeder Textanalyse ist eine **Sammlung von Dokumenten bzw. Texten**, welche auch als **Korpus** bezeichnet wird. Dieser kann in der Form noch nicht für Analysen verwendet werden, denn die Texte liegen weiterhin in einem unstrukturierten Format vor. Das Hauptziel des **„Preprocessing“** (deutsch: Vorverarbeitung) ist es, den Aufwand für Computer zu reduzieren, indem man den Korpus auf das Wesentliche reduziert. Dies erlaubt für effizientere Analysen.Um aus Texten relevante Informationen zu extrahieren, müssen diese zunächst in eine für Computer leserliche Struktur gebracht werden. Hierfür werden verschiedene Schritte genommen, sodass zum Schluss eine strukturierte Version des Textes vorliegt, die für weitere Analysen genutzt werden kann. 
 
 {{{< p class="pb-0" >}}}
 In den nächsten Abschnitten werden eine Reihe von Vorverarbeitungsschritten erläutert, die je nach der verwendeten Methode unterschiedlich kombiniert werden können. Eine typische Maßnahme ist, die vorliegenden Texte in ihre einzelnen Elemente zu unterteilen, zum Beispiel in Sätze oder einzelne Wörter. Diese kleinsten Einheiten werden in der NLP-Sprache auch als **Tokens** (deutsch: Zeichen oder Symbol), bezeichnet. Entsprechend wird dieser Vorgang auch als **Tokenisierung** bezeichnet. 
 {{{< /p >}}}
-
 
 {{{< div class="grid my-4" >}}} {{{< div class="g-col-12 g-col-md-6 g-start-md-4" >}}} 
 
@@ -109,15 +93,11 @@ knitr::include_graphics(here::here("content/basics/img/token.svg"))
 
 {{{< /div >}}} {{{< /div >}}}
 
-
-
 Um die Texte weiter zu vereinfachen können zum Beispiel auch alle Wörter **kleingeschrieben** werden, sodass „Heute“ und „heute“ nicht als zwei verschiedene Begriffe kategorisiert werden. Außerdem könnte man auch alle **Symbole**, wie Punkt, Komma, @, usw., entfernen. Um die Anzahl einzelner Begriffe zu reduzieren, ist es ebenfalls üblich so genannte **Stopwords** zu entfernen. Stopwords sind Begriffe, die sehr häufig in Texten verwendet werden, die jedoch wenig zum Kontext oder der Bedeutung des Textes beitragen, wie Artikel (der, die, das), Konjunktionen (und, oder, aber, ...), und viele mehr. 
-
 
 {{{< p class="pb-0" >}}}
 Um verschiedene Formen von Wörtern auf den jeweiligen Stamm, die sie miteinander Teilen zu reduzieren, können zwei Methoden verwendet werden: **Stemming** und/oder **Lemmatisierung**. Die Methoden können einzeln oder kombiniert werden, mit dem Ziel Wortstämme zu identifizieren und damit die Anzahl einzelner Begriffe in den Texten weiter zu reduzieren. **Stemming** identifiziert die **gemeinsame Basis verschiedener Wörter**, um sie damit auf diese zu reduzieren. Hierfür werden entsprechend Präfixe, Suffixe, etc. entfernt oder abgeschnitten, sodass nur der Wortstamm übrigbleibt. **Lemmatisierung** hingegen, zielt darauf ab Lemmas, also die **Grundform des Wortes**, die in einem Wörterbuch vorzufinden ist, zu identifizieren und Wörter darauf zu reduzieren. Anders als beim Stemming resultiert entsprechend immer ein lexikographisch korrektes Wort bei der Lemmatisierung, da Wörter identifiziert werden und nicht Prä- bzw. Suffixe einfach entfernt werden. 
 {{{< /p >}}}
-
 
 {{{< div class="grid my-4" >}}} {{{< div class="g-col-12 g-col-md-6 g-start-md-4" >}}} 
 

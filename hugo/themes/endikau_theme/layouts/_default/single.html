@@ -24,8 +24,7 @@
       {{ end }}
     </div>
     <div class="g-col-12 g-col-xl-6 g-start-xl-4 order-xl-1 nd-article">
-        {{ .Content }}
-      </div>
+      {{ .Content | $.Page.RenderString | replaceRE `<p>\s*</p>` "" | safeHTML }}
     </div>
   </div>
 </div>
