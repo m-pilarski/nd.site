@@ -61,6 +61,18 @@ nd_iframe_app <- function(.url, .width="100%", .height="400pt"){
 
 Die Sentimentanalyse, auch bekannt als Stimmungsanalyse oder Opinion Mining, ist eine Methode zur automatisierten Erkennung und Bewertung der Emotionen und Meinungen, die in Textdaten zum Ausdruck kommen. Dabei ist das Ziel die Wahrnehmung eines Textes zu quantifizieren – also zu beurteilen, ob ein Text, wie beispielsweise eine Produktbewertung, ein Kundenfeedback oder ein Social-Media-Beitrag, positiv, negativ oder neutral ist. Dies wird üblicherweise auf einer Skala von -1 bis 1, also von sehr negativ bis sehr positiv.
 
+## Anwendungen 
+
+{{{< fa-ul >}}}
+    {{{< fa-solid-li icon="star"  >}}} **Markenreputation überwachen:** Behalten Sie Ihr Markenimage im Blick, indem Sie Kundenfeedback und Online-Bewertungen analysieren. {{{< /fa-solid-li >}}}
+    
+  {{{< fa-solid-li icon="lightbulb"  >}}} **Produktentwicklung und Innovation:** Durch die Analyse von Rezensionen und Feedback lassen sich wertvolle Einblicke in Bedürfnisse und Probleme von Kunden gewinnen, die als Basis für Produktentwicklung und Innovation dienen. {{{< /fa-solid-li >}}}
+    
+  {{{< fa-solid-li icon="ticket-simple" >}}} **Kundenservice verbessern:**  
+  Analysieren Sie die Stimmung in Kundenanfragen und Support-Tickets, um  den Service gezielt zu optimieren. Durch die automatische Stimmungsbewertung können kritische Fälle priorisiert und schneller gelöst werden. {{{< /fa-solid-li >}}}
+{{{< /fa-ul >}}}
+
+
 
 ## Methoden der Sentimentanalyse
 
@@ -140,6 +152,14 @@ knitr::include_graphics(here::here("content/methods/sentiment/img/ml_senti.svg")
 ```
 
 {{{< /div >}}} {{{< /div >}}}
+
+
+#### Vor- und Nachteile
+
+{{{< fa-ul >}}}
+    {{{< fa-solid-li icon="thumbs-up" color="#39b185" >}}} Grpße Sprachmodelle sind sehr viel besser darin die gesamte Stimmung eines Textes anhand des Kontextes auszumachen, statt nur anhand einzelner Begriffe. Damit sind sie oftmals genauer. {{{< /fa-solid-li >}}}
+    {{{< fa-solid-li icon="thumbs-down" color="#cf597e" >}}} Die Anwendung dieser Methode kostet jedoch deutlich mehr Rechenkapazität, was besonders bei großen Datenmengen problematisch werden kann. {{{< /fa-solid-li >}}}
+{{{< /fa-ul >}}}
 
 
 #### Ausprobieren
