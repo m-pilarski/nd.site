@@ -51,7 +51,7 @@ Textdaten wie E-Mails, Kundenrezensionen oder interne Dokumente stellen viele Un
 **Natural Language Processing (NLP)** ist eine Technologie, die Computern ermöglicht, schriftliche oder gesprochene Sprache zu verstehen und zu analysieren. Sie kommt ins Spiel, wenn unstrukturierte Texte – wie E-Mails, Kundenrezensionen oder Social-Media-Beiträge – verarbeitet werden sollen. NLP wandelt diese Textdaten in strukturierte Daten um, die einfacher auszuwerten sind als in ihrer unstrukturierten Form.
 {{{< /p >}}}
 
-{{{< div class="grid my-4" >}}} {{{< div class="g-col-12 g-col-md-8 g-start-md-4" >}}} 
+{{{< div class="grid my-4" >}}} {{{< div class="g-col-12 g-col-md-8 g-start-md-3" >}}} 
 
 ```{r}
 knitr::include_graphics(here::here("content/basics/img/nlp.svg"))
@@ -64,7 +64,7 @@ knitr::include_graphics(here::here("content/basics/img/nlp.svg"))
 {{{< /p >}}}
 
 
-{{{< div class="grid my-4" >}}} {{{< div class="g-col-12 g-col-md-6 g-start-md-4" >}}} 
+{{{< div class="grid my-4" >}}} {{{< div class="g-col-8 g-start-3 g-col-md-6 g-start-md-4" >}}} 
 
 ```{r}
 knitr::include_graphics(here::here("content/basics/img/text_mining.svg"))
@@ -85,7 +85,7 @@ Der Ausgangspunkt jeder Textanalyse ist eine **Sammlung von Dokumenten bzw. Text
 In den nächsten Abschnitten werden eine Reihe von Vorverarbeitungsschritten erläutert, die je nach der verwendeten Methode unterschiedlich kombiniert werden können. Eine typische Maßnahme ist, die vorliegenden Texte in ihre einzelnen Elemente zu unterteilen, zum Beispiel in Sätze oder einzelne Wörter. Diese kleinsten Einheiten werden in der NLP-Sprache auch als **Tokens** (deutsch: Zeichen oder Symbol), bezeichnet. Entsprechend wird dieser Vorgang auch als **Tokenisierung** bezeichnet. 
 {{{< /p >}}}
 
-{{{< div class="grid my-4" >}}} {{{< div class="g-col-12 g-col-md-6 g-start-md-4" >}}} 
+{{{< div class="grid my-4" >}}} {{{< div class="g-col-12" >}}} 
 
 ```{r}
 knitr::include_graphics(here::here("content/basics/img/token.svg"))
@@ -99,7 +99,7 @@ Um die Texte weiter zu vereinfachen können zum Beispiel auch alle Wörter **kle
 Um verschiedene Formen von Wörtern auf den jeweiligen Stamm, die sie miteinander Teilen zu reduzieren, können zwei Methoden verwendet werden: **Stemming** und/oder **Lemmatisierung**. Die Methoden können einzeln oder kombiniert werden, mit dem Ziel Wortstämme zu identifizieren und damit die Anzahl einzelner Begriffe in den Texten weiter zu reduzieren. **Stemming** identifiziert die **gemeinsame Basis verschiedener Wörter**, um sie damit auf diese zu reduzieren. Hierfür werden entsprechend Präfixe, Suffixe, etc. entfernt oder abgeschnitten, sodass nur der Wortstamm übrigbleibt. **Lemmatisierung** hingegen, zielt darauf ab Lemmas, also die **Grundform des Wortes**, die in einem Wörterbuch vorzufinden ist, zu identifizieren und Wörter darauf zu reduzieren. Anders als beim Stemming resultiert entsprechend immer ein lexikographisch korrektes Wort bei der Lemmatisierung, da Wörter identifiziert werden und nicht Prä- bzw. Suffixe einfach entfernt werden. 
 {{{< /p >}}}
 
-{{{< div class="grid my-4" >}}} {{{< div class="g-col-12 g-col-md-6 g-start-md-4" >}}} 
+{{{< div class="grid my-4" >}}} {{{< div class="g-col-12 g-col-md-8 g-start-md-3" >}}} 
 
 ```{r}
 knitr::include_graphics(here::here("content/basics/img/stemm_lemm.svg"))
