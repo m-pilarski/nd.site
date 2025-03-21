@@ -59,7 +59,9 @@ ggraph(graph) +
 
 {{{< div class="grid py-2" >}}} 
     {{{< div class="g-col-12 g-col-md-6 g-col-xl-4 nd-article" >}}} 
-        {{{< p class="nd-article" >}}}`{r} stringi::stri_rand_lipsum(1)`{{{< /p >}}}
+        {{{< div class="pe-md-1" >}}}
+          {{{< p class="nd-article" >}}}Datenwissenschaftliche Methoden ermöglichen es, große Mengen an Textdaten zu analysieren, zu strukturieren und wertvolle Erkenntnisse daraus zu gewinnen. Verschiedene Techniken helfen dabei, Muster zu erkennen, Informationen zu kategorisieren und komplexe Zusammenhänge sichtbar zu machen.{{{< /p >}}}
+        {{{< /div >}}}
     {{{< /div >}}} 
     {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
         {{{< bs_card card_img_src="/assets/img/drawing2.svg" card_img_bg="#9c9c9c" card_title="Sentimentanalyse" card_text="Sentimentanalyse ist ein Verfahren der Data Science, das darauf abzielt, Meinungen, Emotionen und Einstellungen in Textdaten automatisch zu identifizieren und zu klassifizieren." card_href="/methods/sentiment" >}}}
