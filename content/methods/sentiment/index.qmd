@@ -157,8 +157,8 @@ knitr::include_graphics(here::here("content/methods/sentiment/img/ml_senti.svg")
 #### Vor- und Nachteile
 
 {{{< fa-ul >}}}
-    {{{< fa-solid-li icon="thumbs-up" color="#39b185" >}}} Grpße Sprachmodelle sind sehr viel besser darin die gesamte Stimmung eines Textes anhand des Kontextes auszumachen, statt nur anhand einzelner Begriffe. Damit sind sie oftmals genauer. {{{< /fa-solid-li >}}}
-    {{{< fa-solid-li icon="thumbs-down" color="#cf597e" >}}} Die Anwendung dieser Methode kostet jedoch deutlich mehr Rechenkapazität, was besonders bei großen Datenmengen problematisch werden kann. {{{< /fa-solid-li >}}}
+    {{{< fa-solid-li icon="thumbs-up" color="#39b185" >}}} Große Sprachmodelle sind besser darin, die Stimmung eines Textes im Gesamtkontext zu erfassen, anstatt sich nur auf einzelne Begriffe zu stützen. Dadurch liefern sie häufig genauere Ergebnisse. {{{< /fa-solid-li >}}}
+    {{{< fa-solid-li icon="thumbs-down" color="#cf597e" >}}} Die Anwendung dieser Methode erfordert jedoch deutlich mehr Rechenkapazität, was besonders bei großen Datenmengen zu Herausforderungen führen kann. {{{< /fa-solid-li >}}}
 {{{< /fa-ul >}}}
 
 
