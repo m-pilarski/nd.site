@@ -76,6 +76,8 @@ defaultContentLanguageInSubdir = false
     [markup.goldmark]
         [markup.goldmark.renderer]
             unsafe = true
+        [markup.goldmark.parser]
+            wrapStandAloneImageWithinParagraph = false
     [markup.tableOfContents]
         startLevel = 2
         endLevel = 4
