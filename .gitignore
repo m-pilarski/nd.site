@@ -10,3 +10,4 @@ hugo/resources/_gen/
 _freeze/
 .Rhistory
 hugo/content/
+content/**/*.md
