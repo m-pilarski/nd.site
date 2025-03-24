@@ -6,25 +6,28 @@ draft: true
 toc_show: true
 ---
 
-## Einleitung
+## Was ist Themenmodellierung?
 
-{{{< div class="grid" >}}} {{{< div class="g-col-12 g-col-md-4 g-start-md-5" >}}} 
+<!-- {{{< div class="grid" >}}} {{{< div class="g-col-12 g-col-md-4 g-start-md-5" >}}}  -->
 
-```{r}
-knitr::include_graphics(here::here("content/methods/topic/img/book.svg"))
-```
+<!-- ```{r} -->
+<!-- knitr::include_graphics(here::here("content/methods/topic/img/book.svg")) -->
+<!-- ``` -->
 
-{{{< /div >}}} {{{< /div >}}}
+<!-- {{{< /div >}}} {{{< /div >}}} -->
 
 Themenmodellierung ist eine Methode des maschinellen Lernens, mit der aus großen Textsammlungen automatisch thematische Strukturen extrahiert werden können. Dabei werden Texte so analysiert, dass latente Themen sichtbar gemacht werden, ohne dass eine vorherige Kategorisierung notwendig ist. Diese Methode ist besonders nützlich, um große Mengen unstrukturierter Daten besser zu verstehen und effizient zu organisieren.
 
-Themenmodellierung kann in verschiedenen Bereichen angewendet werden, um datengetriebene Entscheidungen zu unterstützen.
+
+
+## Anwendungen 
 
 {{{< fa-ul >}}}
     {{{< fa-solid-li icon="star fa-spin" >}}}**Kundenfeedback analysieren:** Unternehmen können Kundenrezensionen, Support-Tickets oder Social-Media-Kommentare automatisch auswerten und häufige Themen identifizieren. So lassen sich Verbesserungspotenziale oder neue Kundenbedürfnisse schneller erkennen.{{{< /fa-solid-li >}}}
     {{{< fa-solid-li icon="square-poll-vertical" >}}}**Marktforschung und Wettbewerbsanalyse:** Durch die Analyse von Nachrichtenartikeln, Blogs und Forenbeiträgen können Unternehmen Branchentrends frühzeitig erkennen und ihre Strategien entsprechend anpassen.{{{< /fa-solid-li >}}}
     {{{< fa-solid-li  icon="envelope" >}}}**Automatische Kategorisierung von Support-Anfragen:** Unternehmen mit vielen Kundenanfragen können durch Themenmodellierung häufige Probleme identifizieren und diese automatisiert an die zuständigen Abteilungen weiterleiten. Dies verbessert die Reaktionszeit und steigert die Effizienz im Kundenservice.{{{< /fa-solid-li >}}}
 {{{< /fa-ul >}}}
+
 
 ## Ansätze zur Themenmodellierung
 
@@ -34,7 +37,29 @@ Es gibt verschiedene Ansätze zur Themenmodellierung, die je nach Anwendungsfall
 
 Probabilistische Modelle verwenden statistische Verfahren, um Dokumente als Mischung verschiedener Themen zu modellieren. Diese Modelle haben sich insbesondere in der automatischen Textklassifikation bewährt.
 
-LDA ist eines der bekanntesten probabilistischen Modelle für die Themenmodellierung. Es geht davon aus, dass jedes Dokument eine Mischung aus verschiedenen Themen ist und jedes Wort mit einer bestimmten Wahrscheinlichkeit zu einem dieser Themen gehört. LDA wird häufig zur automatischen Dokumentenkategorisierung und -zusammenfassung eingesetzt.
+{{{< p class="pb-0" >}}}
+Latent Dirichlet Allocation (LDA) ist eines der bekanntesten probabilistischen Modelle für die Themenmodellierung. Es geht davon aus, dass jedes Dokument eine Mischung aus verschiedenen Themen ist und jedes Wort mit einer bestimmten Wahrscheinlichkeit zu einem dieser Themen gehört. Dies bedeutet, dass Dokumente nicht auf ein einziges Thema beschränkt ist, sondern vielmehr aus unterschiedlichen thematischen Anteilen bestehen können. So könnte etwa ein Dokument zu 10% dem Thema "Digitalisierung" und zu 90% dem Thema "Kundenservice" zugeordnet sein, während ein anderes Dokument dieselben Themen in einem Verhältnis von 65% zu 35% behandelt. LDA wird häufig zur automatischen Dokumentenkategorisierung und -zusammenfassung eingesetzt.
+{{{< /p >}}}
+
+{{{< div class="grid my-4" >}}} {{{< div class="g-col-12 g-col-md-10 g-start-md-2" >}}}
+
+```{r}
+knitr::include_graphics(here::here("content/methods/topic/img/lda_topic.svg"))
+```
+
+{{{< /div >}}} {{{< /div >}}}
+
+#### Vor- und Nachteile
+
+{{{< fa-ul >}}}
+    {{{< fa-solid-li icon="thumbs-up" color="#39b185" >}}} Dokumente können simultan mehrere Themen abbilden, was die Komplexität realer Texte oftmals präziser widerspiegelt. {{{< /fa-solid-li >}}}
+        {{{< fa-solid-li icon="thumbs-up" color="#39b185" >}}} Als Verfahren des unüberwachten maschinellen Lernens erfordert LDA keine vordefinierten Themenkategorien oder manuelle Klassifizierung von Trainingsdaten. {{{< /fa-solid-li >}}}
+    {{{< fa-solid-li icon="thumbs-down" color="#cf597e" >}}} Die optimale Themenanzahl muss a priori festgelegt werden, obwohl hierfür keine eindeutigen Bestimmungskriterien existieren. {{{< /fa-solid-li >}}}
+        {{{< fa-solid-li icon="thumbs-down" color="#cf597e" >}}} Die Themen müssen selbst interpretiert werden, da der Algorithmus lediglich repräsentative Begriffskombinationen ohne inhaltliche Deutung liefert.  {{{< /fa-solid-li >}}}
+         {{{< fa-solid-li icon="thumbs-down" color="#cf597e" >}}} Bei sehr kurzen Texten, wie etwa Social-Media-Beiträgen, zeigt die Methode erhebliche Schwächen in der Themenextraktion. {{{< /fa-solid-li >}}}
+{{{< /fa-ul >}}}
+
+
 
 ### Moderne Verfahren
 
