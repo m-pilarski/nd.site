@@ -23,7 +23,7 @@ Themenmodellierung ist eine Methode des maschinellen Lernens, mit der aus große
 ## Anwendungen 
 
 {{{< fa-ul >}}}
-    {{{< fa-solid-li icon="star fa-spin" >}}}**Kundenfeedback analysieren:** Unternehmen können Kundenrezensionen, Support-Tickets oder Social-Media-Kommentare automatisch auswerten und häufige Themen identifizieren. So lassen sich Verbesserungspotenziale oder neue Kundenbedürfnisse schneller erkennen.{{{< /fa-solid-li >}}}
+    {{{< fa-solid-li icon="star" >}}}**Kundenfeedback analysieren:** Unternehmen können Kundenrezensionen, Support-Tickets oder Social-Media-Kommentare automatisch auswerten und häufige Themen identifizieren. So lassen sich Verbesserungspotenziale oder neue Kundenbedürfnisse schneller erkennen.{{{< /fa-solid-li >}}}
     {{{< fa-solid-li icon="square-poll-vertical" >}}}**Marktforschung und Wettbewerbsanalyse:** Durch die Analyse von Nachrichtenartikeln, Blogs und Forenbeiträgen können Unternehmen Branchentrends frühzeitig erkennen und ihre Strategien entsprechend anpassen.{{{< /fa-solid-li >}}}
     {{{< fa-solid-li  icon="envelope" >}}}**Automatische Kategorisierung von Support-Anfragen:** Unternehmen mit vielen Kundenanfragen können durch Themenmodellierung häufige Probleme identifizieren und diese automatisiert an die zuständigen Abteilungen weiterleiten. Dies verbessert die Reaktionszeit und steigert die Effizienz im Kundenservice.{{{< /fa-solid-li >}}}
 {{{< /fa-ul >}}}
