@@ -2,7 +2,7 @@
 title: "Themenmodellierung"
 subtitle: "Automatische Identifikation und Strukturierung von Themen in Texten"
 figtitle: "📰"
-draft: true
+draft: false
 toc_show: true
 ---
 

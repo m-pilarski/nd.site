@@ -1,7 +1,7 @@
 ---
 title: 'Grundlagen'
 date: '2024-11-25T14:25:49+01:00'
-draft: true
+draft: false
 tags: ["foo", "bar"]
 format: hugo-md
 toc_show: true
