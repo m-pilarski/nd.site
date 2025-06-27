@@ -1,8 +1,8 @@
 project:
   type: hugo
   output-dir: hugo
-  # post-render: /bin/sh -c "cd hugo &&  hugo --buildDrafts --cleanDestinationDir"
-  post-render: /bin/sh -c "cd hugo &&  hugo --cleanDestinationDir"
+  post-render: /bin/sh -c "cd hugo &&  hugo --buildDrafts --cleanDestinationDir"
+  # post-render: /bin/sh -c "cd hugo &&  hugo --cleanDestinationDir"
 format:
   hugo-md:
     code-fold: true

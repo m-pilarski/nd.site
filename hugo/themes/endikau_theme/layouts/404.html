@@ -1,9 +1,17 @@
 {{ define "main" }}
-  <h1>404 Not Found</h1>
-  <p>The page you requested cannot be found.</p>
-  <p>
-    <a href="{{ .Site.Home.RelPermalink }}">
-      Return to the home page
-    </a>
-  </p>
+<div class="container-xxl mt-4 mb-4">
+  <div class="grid">
+    <div class="g-col-12 g-col-md-4">
+      <div class="d-flex justify-content-center justify-content-md-end">
+        <img src="/assets/vendor/twemoji/svg/1f573.svg" style="max-width:100px;"/>
+      </div>
+    </div>
+    <div class="g-col-12 g-col-md-8">
+      <h1>Diese Seite existiert nicht</h1>
+      <p>
+        <a href="{{ .Site.Home.RelPermalink }}">Zurück zur Startseite</a>
+      </p>
+    </div>
+  </div>
+</div>
 {{ end }}

@@ -2,7 +2,6 @@
 **/.ipynb_checkpoints/
 condaenv/
 renv/
-public/
 .Rproj.user
 .Rprofile
 .Renviron
@@ -11,3 +10,5 @@ _freeze/
 .Rhistory
 hugo/content/
 content/**/*.md
+public/
+public_serve/

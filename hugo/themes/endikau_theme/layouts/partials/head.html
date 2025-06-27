@@ -24,8 +24,8 @@
 {{ $js_navbar_height := resources.Get "js/navbar_height.js" | minify }}
 <script src="{{ $js_navbar_height.RelPermalink }}"></script>
 
-{{ $tocHeight := resources.Get "js/toc_height.js" | minify }}
-<script src="{{ $tocHeight.RelPermalink }}"></script>
+{{ $js_toc_height := resources.Get "js/toc_height.js" | minify }}
+<script src="{{ $js_toc_height.RelPermalink }}"></script>
 
 <script src="/assets/vendor/jquery/js/jquery.min.js"></script>
 
