@@ -171,11 +171,8 @@ Die Verteilung der Bewertungen zeigt, dass die meisten Bewertungen im oberen und
 ::: {.column width="70%"}
 
 ```{r}
-#| echo: false
-
 #| fig-cap: Rating distribution
 #| echo: false
-#| fig-width: 8
 #| fig-height: 5
 reviews |>
   ggplot(aes(x = Bewertung)) +
@@ -224,7 +221,6 @@ Um ein erstes Gefühl für den Inhalt der Kundenrezensionen zu bekommen, bietet 
 ```{r}
 #| fig-cap: Word frequency
 #| echo: false
-#| fig-width: 10
 #| fig-height: 5
 
 # word freq
@@ -243,7 +239,6 @@ Eine differenziertere Betrachtung liefert andere Einblicke: Während bei Smartph
 ```{r}
 #| fig-cap: Word freq per product
 #| echo: false
-#| fig-width: 10
 #| fig-height: 5
 
 review_tokens_clean |>
@@ -310,7 +305,6 @@ Um über reine Sternebewertungen hinauszugehen, wurde der Textinhalt der Rezensi
 
 ```{r}
 #| echo: false
-#| fig-width: 8
 #| fig-height: 2
 ## Sentiment Analysis
 sentiment_tokens <- vns::calc_tok_sentidict_tbl(reviews$Inhalt, 
@@ -415,7 +409,6 @@ sentiment_summary <- review_summary |>
 ```{r}
 #| fig-cap: Sentiment per product category
 #| echo: false
-#| fig-width: 8
 #| fig-height: 3
 
 sentiment_summary_per_class <-
@@ -492,7 +485,6 @@ Kopfhörer hingegen erreichen den niedrigsten Sentimentwert (-0.37) und haben zu
 ```{r}
 #| fig-cap: Sentiment per product category
 #| echo: false
-#| fig-width: 8
 #| fig-height: 2
 
 
@@ -655,7 +647,6 @@ stm_model <- stm(
 
 ```{r}
 #| warning: false
-#| fig-width: 10
 #| fig-height: 5
 #| echo: false
 
@@ -713,10 +704,8 @@ Um die zentralen Kritikpunkte in den Rezensionen zur Produktkategorie „Kopfhö
 
 
 ```{r}
-#| fig-width: 8
 #| fig-height: 3
 #| echo: false
-
 
 topic_summary <- topic_sentiment |>
   group_by(topic) |>
