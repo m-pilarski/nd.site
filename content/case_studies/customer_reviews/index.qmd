@@ -1,0 +1,787 @@
+---
+title: "Analyse von Kundenrezensionen"
+subtitle: "Wie kann Kundenfeedback effektiv zur Produktoptimierung genutzt werden?"
+figtitle: "⭐"
+date: "2024-11-25T14:25:49+01:00"
+draft: true
+---
+  
+  
+```{r}
+#| message: false
+#| output: false
+#| echo: false
+
+
+# Setup 
+
+set.seed(123)
+
+color_pal <-
+  tibble::tribble(
+  ~color, ~palette,
+  "#2e2933", "base",
+  "#837591", "base",
+  "#e9ebe5", "base",
+  "#cf597e", "diverging",
+  "#e88471", "diverging",
+  "#eeb479", "diverging",
+  "#e9e29c", "diverging",
+  "#9ccb86", "diverging",
+  "#39b185", "diverging",
+  "#009392", "diverging",
+  "#f7feae", "sequential",
+  "#b7e6a5", "sequential",
+  "#7ccba2", "sequential",
+  "#46aea0", "sequential",
+  "#089099", "sequential",
+  "#00718b", "sequential",
+  "#045275", "sequential",
+) |>
+  dplyr::mutate(
+    color_palette_rank = dplyr::row_number(), .by=palette
+  )
+
+
+library(tidyverse)
+library(tidytext)
+library(textdata)      
+library(lubridate)
+library(topicmodels)   
+library(tm)
+library(wordcloud)
+library(stopwords)
+library(ggplot2)
+
+theme_gg <- 
+  theme_minimal() +
+  theme(
+  axis.text.x = element_text(size=12),
+  axis.text.y = element_text(size = 12),
+  
+  axis.title.x = element_text(size = 14),
+  axis.title.y = element_text(size = 14),
+  title = element_text(size = 14),
+  strip.text = element_text(size = 14),
+  
+  panel.grid.major = element_blank(),
+  panel.grid.minor = element_blank(),
+  
+  panel.background = element_rect(fill = NA, colour = NA),     
+  plot.background = element_rect(fill = NA, colour = NA)     
+)
+
+theme_set(theme_gg)
+```
+
+
+Kundenrezensionen bieten wertvolle Einblicke in die Nutzung und Bewertung von Produkten, oft jedoch in unstrukturierter Form. Mittels Textanalyse lassen sich diese Informationen systematisch aufbereiten und helfen, Nutzerbedürfnisse gezielt zu erkennen.
+
+Ziel dieser Case Study ist es, ein differenziertes Bild der Kundenerfahrungen mit verschiedenen technischen Produktgruppen zu zeichnen und daraus Verbesserungspotenziale abzuleiten. Die Analyse basiert auf 3.413 deutschsprachigen Amazon-Rezensionen mit Angaben zu Bewertungstitel, Datum und Sternebewertung.
+
+```{r}
+#| echo: false
+#| message: false
+
+reviews <- read_csv("data/Amazon-Deutsch-Dataset.csv") |>
+  select(-1, -3, -author, -`web-scraper-order`, -`next`, -`Unnamed: 9`)
+
+reviews |> 
+  head(1) |> 
+  gt::gt() |> 
+  gt::tab_header(
+    title = "Beispiel einer Beobachtung aus dem Rohdatensatz"
+  ) |>
+  gt::tab_options(
+    table.width = gt::pct(100),
+    table.font.size = gt::px(13),
+    data_row.padding = gt::px(4),
+    ihtml.use_pagination = FALSE,
+    ihtml.use_text_wrapping = TRUE
+  ) 
+
+
+reviews <-
+  reviews |>
+  select(title, date, content, rating, `next-href`) |>
+  mutate(
+    Sprache = cld3::detect_language(content),
+    Produkt = str_extract(`next-href`, "(?<=amazon\\.de/).*?(?=/product-reviews)") |>
+      str_replace_all("-", " ") |>
+      URLdecode(),
+    Produkttyp = case_when(
+      str_detect(Produkt, regex("iphone|samsung|smartphone", TRUE)) ~ "Smartphone",
+      str_detect(Produkt, regex("kopfhörer|ear", TRUE)) ~ "Kopfhörer",
+      str_detect(Produkt, regex("gigaset|telefon", TRUE)) ~ "Telefonzubehör",
+      TRUE ~ "Other"
+    ),
+    Bewertung = str_extract(rating, "^\\d+,\\d+") |> 
+      str_replace(",", ".") |> 
+      as.numeric()) |>
+  filter(Sprache == "de", Produkttyp != "Other") |>
+  drop_na(Produkt) |>
+  mutate(
+     row_id = row_number(),
+     .before = title
+  ) |>
+  rename(
+    ID = row_id,
+    Titel = title,
+    Datum = date,
+    Inhalt = content,
+    URL = `next-href`
+  ) |>
+  select(-rating)
+```
+
+
+In dieser Analyse kommen überwiegend lexikon- und regelbasierte Verfahren zum Einsatz, die empfindlich auf irrelevante Inhalte reagieren. Daher ist eine gründliche Vorverarbeitung der Texte essenziell, um konsistente und aussagekräftige Ergebnisse zu gewährleisten. Die folgenden Schritte wurden dabei durchgeführt:
+
+* **Bereinigung der Sternebewertungen:** Bewertungsangaben im Fließtext wurden extrahiert und als numerische Werte gespeichert (z.B. „5,0 von 5 Sternen“ $\rightarrow$ 5).
+
+* **Tokenisierung:** Die Texte wurden in einzelne Wörter zerlegt, um eine strukturierte Analyse zu ermöglichen.
+
+* **Stopword-Filter:** Häufige, wenig aussagekräftige Wörter (z.B. „und“, „ist“, "oder") sowie produktspezifische Begriffe wurden entfernt.
+
+Diese Schritte gewährleisten, dass die nachfolgenden Analysen auf dem wesentlichen Kern der Kundenrezensionen basieren.
+
+
+
+```{r}
+#| echo: false
+# stopwords
+product_terms <- reviews$Produkt |> 
+  str_split("\\s+") |> 
+  unlist() |> 
+  tolower() |>
+  unique()
+
+# custom_stopwords <- tibble(Wort = tolower(c(read_lines("data/german_stopwords_full.txt"), product_terms)))
+custom_stopwords <- tibble(Wort = tolower(c(quanteda::stopwords(language="de", source="nltk"), product_terms)))
+
+# tokenize and clean
+review_tokens <- reviews |>
+  unnest_tokens(Wort, Inhalt)
+
+review_tokens_clean <- review_tokens |>
+  filter(!str_detect(Wort, "^\\d+$|^[sa]\\d+$|^[0-9]+[a-z]*$")) |>
+  anti_join(custom_stopwords, by = "Wort")
+
+review_tokens_clean |>
+  select(-URL) |>
+  head(5) |>
+  gt::gt() |>
+  gt::tab_header(
+    title = "Beispiel der ersten Beobachtung nach der Vorverarbeitung"
+  ) |>
+  gt::tab_options(
+    table.width = gt::pct(100),
+    table.font.size = gt::px(13),
+    data_row.padding = gt::px(4),
+    ihtml.use_pagination = FALSE,
+    ihtml.use_text_wrapping = TRUE
+  ) 
+
+```
+
+Die Verteilung der Bewertungen zeigt, dass die meisten Bewertungen im oberen und unteren Bereich liegen. Im nächsten Schritt wird ermittelt, ob bestimmte Produktkategorieren besonders positiv oder negativ bewertet wurden. 
+
+:::{.columns}
+
+::: {.column width="70%"}
+
+```{r}
+#| echo: false
+
+#| fig-cap: Rating distribution
+#| echo: false
+#| fig-width: 8
+#| fig-height: 5
+reviews |>
+  ggplot(aes(x = Bewertung)) +
+  geom_bar(fill = "#009392",
+           color = "white") +
+  labs(x = "Bewertung", y = "Anzahl") +
+  theme_gg
+```
+:::
+
+::: {.column width="30%"}
+```{r}
+#| echo: false
+
+reviews |>
+  group_by(Produkttyp) |>
+  summarise(avg_rating = mean(Bewertung, na.rm = TRUE)) |>
+  arrange(desc(avg_rating)) |> 
+  gt::gt() |> 
+  gt::fmt_number(columns = avg_rating, decimals = 2) |> 
+  gt::cols_label(
+    Produkttyp = "Produkttyp",
+    avg_rating = "Ø Bewertung"
+  ) |>
+  gt::tab_options(
+    table.width = gt::pct(100)
+  )
+```
+:::
+:::
+
+
+Dafür werden die Produktnamen aus den URLs extrahiert und manuell in drei Kategorien eingeteilt: Smartphones, Kopfhörer und Telefonzubehör. Beispiel: Aus der URL *https:://www.amazon.de/sony-kopfhoerer-mdr/product-reviews/* wird „sony kopfhoerer mdr“ extrahiert und der Kategorie "Kopfhörer" zugeordnet.
+
+
+
+Ein Blick auf den Durchschnitt der Bewertungen nach Produktkategorie zeigt zusätzlich Unterschiede in der Kundenzufriedenheit:
+
+* Die Kategorie "Telefonzubehör" (z.B.Anrufbeantworter) schneidet im Schnitt am besten ab.
+
+* Kopfhörer hingegen zeigen im Vergleich die niedrigsten Durchschnittsbewertungen.
+
+
+Um ein erstes Gefühl für den Inhalt der Kundenrezensionen zu bekommen, bietet sich eine einfache Häufigkeitsanalyse der verwendeten Begriffe an. Die erste Grafik zeigt die häufigsten Wörter über alle Produktkategorien hinweg. Begriffe wie "super", "funktioniert" und "zufrieden" lassen bereits darauf schließen, dass Kund:innen grundsätzlich positive Erfahrungen mit den Produkten machen. Sie liefern jedoch wenig tiefergehende Erkenntnisse, da sie sehr allgemein sind.
+
+```{r}
+#| fig-cap: Word frequency
+#| echo: false
+#| fig-width: 10
+#| fig-height: 5
+
+# word freq
+review_tokens_clean |>
+  count(Wort, sort = TRUE) |>
+  slice_head(n = 10) |>
+  ggplot(aes(x = reorder(Wort, n), y = n)) +
+  geom_col(show.legend = FALSE, fill = "#089099") +
+  coord_flip() +
+  labs(x = "Wort", y = "Anzahl") +
+  theme_gg
+```
+
+Eine differenziertere Betrachtung liefert andere Einblicke: Während bei Smartphones und Telefonzubehör Begriffe wie „funktioniert“ oder „super“ dominieren, tauchen bei Kopfhörern vermehrt Wörter wie „kaputt“ oder „wackelkontakt“ auf. In Kombination mit der vergleichsweise niedrigen Durchschnittsbewertung deutet dies darauf hin, dass gerade bei Kopfhörern häufiger Probleme auftreten.
+
+```{r}
+#| fig-cap: Word freq per product
+#| echo: false
+#| fig-width: 10
+#| fig-height: 5
+
+review_tokens_clean |>
+  count(Produkttyp, Wort) |>
+  group_by(Produkttyp) |>
+  slice_max(n, n = 10) |>
+  ungroup() |>
+  ggplot(aes(x = reorder_within(Wort, n, Produkttyp), y = n,
+             fill = Produkttyp)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~Produkttyp, scales = "free") +
+  scale_x_reordered() +
+  scale_fill_manual(values = color_pal |> 
+                      filter(palette == "diverging") |> 
+                      slice_head(n = n_distinct(review_tokens_clean$Produkttyp)) |> 
+                      pull(color)) +
+  coord_flip() +
+  labs(x = NULL, y = "Wortanzahl") +
+  theme_gg
+
+
+```
+
+
+<!-- Häufigkeitsanalysen zeigen dominante Begriffe, vernachlässigen jedoch deren Aussagekraft pro Kategorie. Die TF-IDF-Analyse hebt hingegen kategorietypische Begriffe hervor. Die TF-IDF-Metrik (Term Frequency–Inverse Document Frequency) gewichtet Wörter nicht nur nach ihrer Häufigkeit, sondern berücksichtigt auch, wie exklusiv sie für eine bestimmte Kategorie sind. -->
+
+<!-- In der Grafik wird deutlich: -->
+
+<!-- * Bei Headphones stehen „musik“, „kabelbruch“ und „enttäuschend“ für typische Nutzung und Schwächen. -->
+
+<!-- * Phone Accessories sind geprägt von Begriffen wie „fritzbox“, „router“ und „reichweite“. -->
+
+<!-- * Bei Smartphones dominieren Themen wie „kamera“, „apps“ und „wasserdicht“. -->
+
+<!-- Dadurch lassen sich erste Hinweise auf die zentralen Themen und Probleme pro Produktkategorie identifizieren – ein wichtiger Schritt, um die Inhalte der Rezensionen gezielter auszuwerten und in späteren Analysen (z.B. Sentiment oder Topic Modeling) weiter zu untersuchen. -->
+
+<!-- ```{r} -->
+<!-- #| fig-cap: Tfidf scores per product -->
+<!-- #| echo: false -->
+
+<!-- # TF-IDF -->
+<!-- review_tokens_clean |> -->
+<!--   count(product_type, word) |> -->
+<!--   bind_tf_idf(word, product_type, n) |> -->
+<!--   group_by(product_type) |> -->
+<!--   slice_max(tf_idf, n = 10) |> -->
+<!--   ungroup() |> -->
+<!--   ggplot(aes(x = reorder_within(word, tf_idf, product_type), y = tf_idf, -->
+<!--              fill = product_type)) + -->
+<!--   geom_col(show.legend = FALSE) + -->
+<!--   facet_wrap(~product_type, scales = "free") + -->
+<!--   scale_x_reordered() + -->
+<!--   scale_fill_manual(values = color_pal |>  -->
+<!--                       filter(palette == "diverging") |>  -->
+<!--                       slice_head(n = n_distinct(review_tokens_clean$product_type)) |>  -->
+<!--                       pull(color)) + -->
+<!--   coord_flip() + -->
+<!--   labs(x = NULL, y = "tfidf") + -->
+<!--   theme_minimal() -->
+
+
+<!-- ``` -->
+
+
+Um über reine Sternebewertungen hinauszugehen, wurde der Textinhalt der Rezensionen mithilfe einer lexikonbasierten Sentimentanalyse ausgewertet. Dabei erhielt jede Rezension einen numerischen Sentimentwert, der positive und negative Begriffe berücksichtigt.
+
+
+```{r}
+#| echo: false
+#| fig-width: 8
+#| fig-height: 2
+## Sentiment Analysis
+sentiment_tokens <- vns::calc_tok_sentidict_tbl(reviews$Inhalt, 
+                                                .sentidict_tbl = vns.data::gerpolclu_tbl)
+
+review_sentiment <- sentiment_tokens |>
+  group_by(doc_id = as.character(doc_id)) |>
+  summarise(sentiment_score = sum(tok_pol_num, na.rm = TRUE), .groups = "drop")
+
+review_summary <- reviews |>
+  mutate(ID = as.character(ID)) |>
+  left_join(review_sentiment, by = c("ID" = "doc_id")) |>
+  mutate(sentiment_score = replace_na(sentiment_score, 0))
+
+
+### Overall sentiment
+sentiment_summary <- review_summary |>
+  mutate(
+    sentiment_class = case_when(
+      sentiment_score > 0 ~ "positive",
+      sentiment_score == 0 ~ "neutral",
+      sentiment_score < 0 ~ "negative"
+    )
+  ) |>
+  summarise(
+    avg_sentiment_score = mean(sentiment_score),
+    median_sentiment_score = median(sentiment_score),
+    positive_reviews = sum(sentiment_class == "positive"),
+    negative_reviews = sum(sentiment_class == "negative"),
+    neutral_reviews = sum(sentiment_class == "neutral"),
+    total_reviews = n()
+  ) |>
+  mutate(
+    perc_positive = positive_reviews / total_reviews * 100,
+    perc_negative = negative_reviews / total_reviews * 100,
+    perc_neutral = neutral_reviews / total_reviews * 100
+  )
+
+
+# sentiment_summary |>
+#   select(perc_positive, perc_negative, perc_neutral) |>
+#   pivot_longer(everything(), names_to = "sentiment", values_to = "percent") |>
+#   mutate(
+#     sentiment = recode(sentiment,
+#                        perc_positive = "Positiv",
+#                        perc_negative = "Negativ",
+#                        perc_neutral = "Neutral")
+#   ) |>
+#   ggplot(aes(x = "", y = percent, fill = sentiment)) +
+#   geom_col(width = 0.6) +
+#   coord_flip(clip = "off") +
+#   geom_text(
+#     aes(label = paste0(round(percent, 1), "%")),
+#     position = position_stack(vjust = 0.5),
+#     color = "black", size = 4
+#   ) +
+#   scale_fill_manual(values = c("Positiv" = "#39b185", "Negativ" = "#cf597e", "Neutral" = "#e9e29c")) +
+#   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+#   labs(y = "Anteil der Bewertungen", x = NULL) +
+#   theme_gg +
+#   theme(
+#     panel.grid.major = element_line(),
+#     legend.title = element_blank(),
+#     legend.text = element_text(size = 12)
+#   )
+
+```
+
+
+<!-- Die Sentimentanalyse ergibt einen durchschnittlichen Sentimentwert von -0.08, was auf eine leicht negative Grundstimmung der Bewertungen hinweist. -->
+
+<!-- Die Verteilung der Sentimentklassen zeigt: -->
+
+<!-- * 46% der Rezensionen enthalten überwiegend positive Begriffe, -->
+
+<!-- * 43% zeigen eine negative Sprachverwendung, -->
+
+<!-- * 11% bleiben sprachlich neutral. -->
+
+
+<!-- # ```{r} -->
+<!-- # #| fig-cap: Sentiment per rating score -->
+<!-- # #| echo: false -->
+<!-- #  -->
+<!-- # review_summary |> -->
+<!-- #   group_by(Bewertung) |> -->
+<!-- #   summarise(avg_sentiment = mean(sentiment_score, na.rm = TRUE)) |> -->
+<!-- #   ggplot(aes(x = factor(Bewertung), y = avg_sentiment)) + -->
+<!-- #   geom_col(fill = "#cf597e") + -->
+<!-- #   labs( -->
+<!-- #     x = "Bewertung", -->
+<!-- #     y = "Sentiment" -->
+<!-- #   ) + -->
+<!-- #   theme_gg -->
+<!-- # ``` -->
+<!-- #  -->
+<!-- #  -->
+<!-- # Ein Vergleich der Sentimentwerte mit den Bewertungen der Kund:innen zeigt eine klare Tendenz: Mit steigender Sternebewertung nimmt auch das durchschnittliche Sentiment zu. -->
+
+
+
+```{r}
+#| fig-cap: Sentiment per product category
+#| echo: false
+#| fig-width: 8
+#| fig-height: 3
+
+sentiment_summary_per_class <-
+  review_summary |>
+  mutate(
+    sentiment_class = case_when(
+      sentiment_score > 0 ~ "Positive",
+      sentiment_score == 0 ~ "Neutral",
+      sentiment_score < 0 ~ "Negative"
+    )
+  ) |>
+  group_by(Produkttyp) |>
+  summarise(
+    avg_sentiment_score = mean(sentiment_score),
+    median_sentiment_score = median(sentiment_score),
+    positive_reviews = sum(sentiment_class == "Positive"),
+    negative_reviews = sum(sentiment_class == "Negative"),
+    neutral_reviews  = sum(sentiment_class == "Neutral"),
+    total_reviews    = n(),
+    perc_positive    = positive_reviews / total_reviews * 100,
+    perc_negative    = negative_reviews / total_reviews * 100,
+    perc_neutral     = neutral_reviews / total_reviews * 100,
+    .groups = "drop"
+  ) |>
+   select(Produkttyp, avg_sentiment_score, perc_positive, perc_negative, perc_neutral) |>
+  pivot_longer(cols = starts_with("perc_"), names_to = "sentiment", values_to = "percentage") |>
+  mutate(
+  sentiment = str_remove(sentiment, "perc_"),
+  sentiment = recode(sentiment,
+    positive = "Positiv",
+    negative = "Negativ",
+    neutral = "Neutral"
+  )
+)
+
+
+ggplot(sentiment_summary_per_class, aes(x = Produkttyp, y = percentage, fill = sentiment)) +
+  geom_col(width = 0.6) +
+  geom_text(
+    data = sentiment_summary_per_class |>
+      group_by(Produkttyp) |>
+      summarise(label = paste0("Ø Sentiment: ", round(mean(avg_sentiment_score), 2))),
+    aes(x = Produkttyp, y = 97.5, label = label),
+    inherit.aes = FALSE,
+    size = 4,
+    hjust = 1,
+    col = "white"
+  ) +
+  coord_flip(clip = "off") +
+  scale_fill_manual(values = c("Positiv" = "#39b185", "Negativ" = "#cf597e", "Neutral" = "#e9e29c")) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05)), limits = c(0, 105)) +
+  labs(
+    x = NULL,
+    fill = NULL,
+    y = "Prozent"
+  ) +
+  theme_gg +
+  theme(
+    legend.text = element_text(size = 12)
+  )
+
+
+
+```
+
+Um die Stimmung in den Rezensionen je Produktkategorie besser einordnen zu können, wurden die Anteile positiver, negativer und neutraler Bewertungen berechnet und in einem Vergleichsdiagramm nach Produktgruppen visualisiert.
+
+Die Kateogire "Telefonzubehör" sticht positiv hervor: Sie weist nicht nur den höchsten durchschnittlichen Sentimentwert auf (+0.45), sondern auch den größten Anteil an positiv formulierten Rezensionen (52%).
+
+Kopfhörer hingegen erreichen den niedrigsten Sentimentwert (-0.37) und haben zugleich den geringsten Anteil an positiven Kommentaren (38%). Diese Ergebnisse decken sich mit den bisherigen Beobachtungen.
+
+
+
+```{r}
+#| fig-cap: Sentiment per product category
+#| echo: false
+#| fig-width: 8
+#| fig-height: 2
+
+
+bigrams_worst <- reviews |>
+  filter(Produkttyp == "Kopfhörer") |>
+  unnest_tokens(bigram, Inhalt, token = "ngrams", n = 2) |>
+  separate(bigram, into = c("word1", "word2"), sep = " ") |>
+  filter(!word1 %in% custom_stopwords$Wort,
+         !word2 %in% custom_stopwords$Wort,
+         !str_detect(word1, "^\\d+$"),
+         !str_detect(word2, "^\\d+$")) |>
+  unite(bigram, word1, word2, sep = "_")
+
+bigrams_worst |>
+  count(bigram, sort = TRUE) |>
+  slice_max(n, n = 3) |>
+  ggplot(aes(x = reorder(bigram, n), y = n)) +
+  geom_col(fill = "#46aea0") +
+  coord_flip() +
+  labs(x = NULL, y = "Anzahl") +
+  theme_gg
+
+```
+
+Eine Analyse der am häufigsten vorkommenden Wortpaare (Bigrams) in den Rezensionen für Kopfhörer offenbart ein zentrales Problem: 
+
+Wortpaare wie „kaputt gegangen“, „monaten kaputt“, oder „kurzer zeit“ zeigen, dass viele Bewertungen auf schnelle Defekte und kurze Lebensdauer hinweisen. Kund:innen berichten von frühzeitigen Ausfällen, oft bereits nach wenigen Wochen oder Monaten.
+
+Welche konkreten Themen die Konsumenten bezüglich der Produktkategorie "Kopfhörer" beschäftigt, wird im nächsten Schritt mithilfe einer Themenmodellierung betrachtet.
+
+
+<!-- # ```{r} -->
+<!-- # # TM for worst performing (in sentiment) product category -->
+<!-- #  -->
+<!-- # reviews_worst <- review_tokens_clean |> -->
+<!-- #   filter(product_type == "Headphones") |> -->
+<!-- #   mutate( -->
+<!-- #     lemmata = textstem::lemmatize_words(word), -->
+<!-- #     stem = SnowballC::wordStem(lemmata, language = "de") -->
+<!-- #   ) -->
+<!-- #  -->
+<!-- # review_words_worst <- reviews_worst |> -->
+<!-- #   count(row_id, stem) -->
+<!-- #  -->
+<!-- # dtm_worst <- review_words_worst |> -->
+<!-- #   cast_dtm(document = row_id, term = stem, value = n) -->
+<!-- #  -->
+<!-- # set.seed(123) -->
+<!-- # lda_worst <- LDA(dtm_worst, k = 4, control = list(seed = 123), method="Gibbs") -->
+<!-- #  -->
+<!-- # top_terms_worst <- tidy(lda_worst, matrix = "beta") |> -->
+<!-- #   group_by(topic) |> -->
+<!-- #   slice_max(beta, n = 15) |> -->
+<!-- #   summarise(terms = paste(term, collapse = ", ")) |> -->
+<!-- #   arrange(topic) -->
+<!-- #  -->
+<!-- # top_terms_worst -->
+<!-- #  -->
+<!-- #  -->
+<!-- # ``` -->
+
+
+
+<!-- Um die inhaltlichen Schwerpunkte der Rezensionen gezielt herauszuarbeiten, wurde ein Themenmodell (LDA) mit fünf Themen für die Kategorie Kopfhörer berechnet. Die wichtigsten Begriffe pro Thema lassen sich wie folgt zusammenfassen: -->
+
+<!-- * Klang: Begriffe wie sound, ohr, zeit, gebrauch, soundqualitat, enttäuscht deuten darauf hin, dass viele Bewertungen sich auf Klangqualität im Alltag beziehen – oft verbunden mit nicht erfüllten Erwartungen. -->
+
+<!-- * Preis-Leistung: Diese Gruppe umfasst Wörter wie preis, kabel, okay, recht, halt, klangqualitat. Es geht um Zufriedenheit im Verhältnis zum Preis, aber auch um technische Details wie Kabelverbindungen. -->
+
+<!-- * Funktion: Wörter wie funktioniert, klang, bass, sitz, empfehl und musik legen nahe, dass sich dieses Thema auf Benutzerkomfort und Klangwahrnehmung im täglichen Einsatz konzentriert – tendenziell positiver gefärbt. -->
+
+<!-- * Defekte: Die stärksten negativen Hinweise finden sich hier: kaputt, schlecht, defekt, kabelbruch, stern. Dieses Thema bündelt technische Ausfälle, enttäuschte Erwartungen und Rückgaben. -->
+
+<!-- Die Themenmodellierung bestätigt und vertieft die bisherigen Erkenntnisse. Neben allgemeinem Feedback zu Klang und Preis rücken besonders frühzeitige Defekte und Wackelkontakte in den Vordergrund. -->
+
+
+
+
+<!-- ```{r} -->
+
+<!-- review_topics_worst <- tidy(lda_worst, matrix = "gamma") -->
+
+<!-- row_id_map_worst <- tibble(document = rownames(dtm_worst), row_id = rownames(dtm_worst)) -->
+
+<!-- review_sentiment_by_topic_worst <- review_topics_worst |> -->
+<!--   group_by(document) |> -->
+<!--   slice_max(order_by = gamma, n = 1) |> -->
+<!--   ungroup() |> -->
+<!--   left_join(row_id_map_worst, by = "document") |> -->
+<!--   left_join(review_summary |> select(row_id, sentiment_score), by = "row_id") -->
+
+<!-- topic_labels_worst <- c( -->
+<!--   "1" = "Klang", -->
+<!--   "2" = "Preis-Leistung", -->
+<!--   "3" ="Funktion", -->
+<!--   "4" = "Defekte" -->
+<!-- ) -->
+
+
+<!-- # Sentiment per topic -->
+<!-- review_sentiment_by_topic_worst |> -->
+<!--   group_by(topic) |> -->
+<!--   summarise( -->
+<!--     avg_sentiment = mean(sentiment_score, na.rm = TRUE), -->
+<!--     n_reviews = n() -->
+<!--   ) |> -->
+<!--   arrange(avg_sentiment) |> -->
+<!--   mutate(topic_label = topic_labels_worst[as.character(topic)])  -->
+
+
+<!-- ``` -->
+
+
+
+
+```{r}
+#| echo: false
+#| message: false
+#| results: hide
+#| warning: false
+
+library(stm)
+
+docs_worst <- review_tokens_clean |>
+  filter(Produkttyp == "Kopfhörer") |>
+  group_by(ID) |>
+  summarise(text = paste(Wort, collapse = " "), .groups = "drop")
+
+meta_worst <- reviews |>
+  filter(Produkttyp == "Kopfhörer") |>
+  select(ID, Bewertung, Datum) |>
+  mutate(Bewertung = as.factor(Bewertung))
+
+processed <- textProcessor(
+  documents = docs_worst$text,
+  metadata = meta_worst,
+  language = "de"
+)
+
+out <- prepDocuments(
+  documents = processed$documents,
+  vocab = processed$vocab,
+  meta = processed$meta,
+  verbose = FALSE
+)
+
+stm_model <- stm(
+  documents = out$documents,
+  vocab = out$vocab,
+  K = 3,
+  prevalence = ~ Bewertung,
+  data = out$meta,
+  init.type = "Spectral",
+  verbose = FALSE,
+  seed = 123
+)
+```
+
+
+
+```{r}
+#| warning: false
+#| fig-width: 10
+#| fig-height: 5
+#| echo: false
+
+
+tidy_topics <- tidy(stm_model)
+
+top_frex <- tidy_topics |>
+  group_by(topic) |>
+  slice_max(beta, n = 7) |> 
+  ungroup()
+
+topic_labels <- c(
+  "1" = "Preis-Leistung",
+  "2" = "Qualität",
+  "3" = "Verarbeitung der Kabel"
+)
+
+ggplot(top_frex, aes(x = reorder_within(term, beta, topic), y = beta, fill = factor(topic))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ topic, scales = "free", labeller = as_labeller(topic_labels)) +
+  scale_x_reordered() +
+  coord_flip() +
+  theme_minimal() +
+  labs(x = "Repräsentative Begriffe", y = "Gewichtung") +
+  scale_fill_manual(values = color_pal |> 
+                      filter(palette == "diverging") |> 
+                      slice_head(n = n_distinct(top_frex$topic)) |> 
+                      pull(color)) +
+  theme_gg
+
+
+
+topic_assignments <- as_tibble(stm_model$theta) |>
+  mutate(ID = out$meta$ID) |>
+  pivot_longer(
+    cols = starts_with("V"),
+    names_to = "topic",
+    names_prefix = "V",
+    names_transform = list(topic = as.integer),
+    values_to = "gamma"
+  ) |>
+  group_by(ID) |>
+  slice_max(order_by = gamma, n = 1) |>
+  ungroup()
+
+topic_sentiment <- topic_assignments |>
+  mutate(ID = as.character(ID)) |>  
+  left_join(
+    review_summary |> select(ID, sentiment_score),
+    by = "ID"
+  )
+```
+
+
+
+Um die zentralen Kritikpunkte in den Rezensionen zur Produktkategorie „Kopfhörer“ präziser herauszuarbeiten, wurde ein "Structural Topic Modelling" (STM) berechnet. Diese Methode bietet die Möglichkeit andere Faktoren, die die Themen beeinflussen könnten, zu berücksichtigen, wie die Bewertungen der Kund:innen und das Datum, an dem die Rezension verfasst wurde. Dabei stechen drei thematische Schwerpunkte heraus: **Preis-Leistung**, **Qualität**, und **Verarbeitung der Kabel**.
+
+
+
+```{r}
+#| fig-width: 8
+#| fig-height: 3
+#| echo: false
+
+
+topic_summary <- topic_sentiment |>
+  group_by(topic) |>
+  summarise(
+    avg_sentiment = mean(sentiment_score, na.rm = TRUE),
+    n_reviews = n()
+  ) |>
+  arrange(avg_sentiment) |>
+  left_join(
+    tibble(
+      topic = c(1, 2, 3),
+      topic_label = c("Preis-Leistung", "Qualität", "Verarbeitung der Kabel")
+    ),
+    by = "topic"
+  ) |>
+  select(topic_label, avg_sentiment, n_reviews)
+
+
+topic_summary |>
+  ggplot(aes(x = reorder(topic_label, avg_sentiment), y = avg_sentiment, fill = topic_label)) +
+  geom_col(show.legend = FALSE) +
+  scale_y_continuous(limits = c(min(topic_summary$avg_sentiment) - 0.1, 0)) +
+  labs(
+    x = NULL,
+    y = "Ø Sentimentwert",
+  ) +
+  coord_flip() +
+    scale_fill_manual(values = color_pal |> 
+                      filter(palette == "diverging") |> 
+                      slice_head(n = n_distinct(top_frex$topic)) |> 
+                      pull(color)) +
+  theme_gg
+```
+
+
+Die Analyse der Sentimentwerte zeigt: Die größte Unzufriedenheit äußert sich bezüglich der Kabel der Kopfhörer, die meist kurz nach dem Kauf kaputt gehen. Auch die Themen Qualität und Preis-Leistung werden kritisch bewertet, allerdings nicht in dem Maße wie die fehlerhafte Verarbeitung der Kabel. Der Anbieter sollte gezielt an der Produktqualität arbeiten, um die Zufriedenheit der Kund:innen nachhaltig zu verbessern.
+
+### Fazit
+
+Kundenrezensionen liefern wertvolle Hinweise auf Produktqualität, Nutzererwartungen und Verbesserungspotenziale. Unternehmen können diese Einsichten nutzen, um gezielt Produktmängel zu beheben und ihre Angebote kundenorientierter weiterzuentwickeln.
+
+
