@@ -53,25 +53,27 @@ library(wordcloud)
 library(stopwords)
 library(ggplot2)
 
-theme_gg <- 
-  theme_minimal() +
-  theme(
-  axis.text.x = element_text(size=12),
-  axis.text.y = element_text(size = 12),
-  
-  axis.title.x = element_text(size = 14),
-  axis.title.y = element_text(size = 14),
-  title = element_text(size = 14),
-  strip.text = element_text(size = 14),
-  
-  panel.grid.major = element_blank(),
-  panel.grid.minor = element_blank(),
-  
-  panel.background = element_rect(fill = NA, colour = NA),     
-  plot.background = element_rect(fill = NA, colour = NA)     
-)
 
-theme_set(theme_gg)
+library(tidyverse)
+library(gt)
+
+ggplot2::theme_set(`+`(
+  ggplot2::theme_minimal(base_size=14, base_family="Open Sans"),
+  ggplot2::theme(
+    axis.text.x=ggplot2::element_text(size=12),
+    axis.text.y=ggplot2::element_text(size = 12),
+    axis.title.x=ggplot2::element_text(size = 14),
+    axis.title.y=ggplot2::element_text(size = 14),
+    title=ggplot2::element_text(size = 14),
+    strip.text=ggplot2::element_text(size = 14),
+    panel.grid.major=ggplot2::element_blank(),
+    panel.grid.minor=ggplot2::element_blank(),
+    panel.background=ggplot2::element_rect(fill = NA, colour = NA),     
+    plot.background=ggplot2::element_rect(fill = NA, colour = NA) 
+  )
+))
+
+theme_gg <- ggplot2::theme_get()
 ```
 
 
@@ -99,7 +101,6 @@ reviews |>
     ihtml.use_pagination = FALSE,
     ihtml.use_text_wrapping = TRUE
   ) 
-
 
 reviews <-
   reviews |>
@@ -395,9 +396,9 @@ sentiment_summary <- review_summary |>
 #   labs(y = "Anteil der Bewertungen", x = NULL) +
 #   theme_gg +
 #   theme(
-#     panel.grid.major = element_line(),
-#     legend.title = element_blank(),
-#     legend.text = element_text(size = 12)
+#     panel.grid.major = ggplot2::element_line(),
+#     legend.title = ggplot2::element_blank(),
+#     legend.text = ggplot2::element_text(size = 12)
 #   )
 
 ```
@@ -497,7 +498,7 @@ ggplot(sentiment_summary_per_class, aes(x = Produkttyp, y = percentage, fill = s
   ) +
   theme_gg +
   theme(
-    legend.text = element_text(size = 12)
+    legend.text = ggplot2::element_text(size = 12)
   )
 
 

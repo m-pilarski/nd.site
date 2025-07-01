@@ -18,7 +18,7 @@ knitr:
     out.width: "100%"
     # dev: ragg_png
     dev: svglite
-    # dev.args: { scaling: 0.5 }
+    dev.args: { scaling: 1, bg: "transparent" }
 editor: source
 editor_options:
   chunk_output_type: console
