@@ -12,3 +12,4 @@ hugo/content/
 content/**/*.md
 public/
 public_serve/
+content/**/*_cache/
