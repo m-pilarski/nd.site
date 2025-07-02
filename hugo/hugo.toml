@@ -54,16 +54,16 @@ defaultContentLanguageInSubdir = false
         url = "/case_studies/customer_reviews/"
     [[menu.main]]
         weight = 2
-        identifier = "case_studies-case_study_1"
+        identifier = "case_studies-case_study-1"
         parent = "case_studies"
         name = "Fallstudie I"
-        url = "/case_studies/case_study_1/"
+        url = "/case_studies/case_study-1/"
     [[menu.main]]
         weight = 3
-        identifier = "case_studies-case_study_2"
+        identifier = "case_studies-case_study-2"
         parent = "case_studies"
         name = "Fallstudie II"
-        url = "/case_studies/case_study_2/"
+        url = "/case_studies/case_study-2/"
     # [[menu.main]]
     #     weight = 4
     #     identifier = "misc"

@@ -230,7 +230,7 @@ function cloudFontSize(d) {
 }
 
 function cloudRotate() {
-  return (~~(Math.random() * 6) - 3) * 30;
+  return (~~(random() * 6) - 3) * 30;
 }
 
 function cloudPadding() {

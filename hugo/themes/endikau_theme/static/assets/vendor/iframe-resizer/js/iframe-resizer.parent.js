@@ -13,7 +13,7 @@
  * 
  *  @see         {@link https://iframe-resizer.com}
  * 
- *  @copyright  (c) 2013 - 2024, David J. Bradshaw. All rights reserved.
+ *  @copyright  (c) 2013 - 2025, David J. Bradshaw. All rights reserved.
  */
 
 
