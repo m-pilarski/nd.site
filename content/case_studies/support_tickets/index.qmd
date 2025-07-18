@@ -1,0 +1,778 @@
+---
+title: "Analyse von Support-Tickets"
+subtitle: "Wie maschinelles Lernen hilft, dringende Kundenanliegen frühzeitig zu erkennen."
+figtitle: "📩"
+date: "2024-11-25T14:25:49+01:00"
+draft: true
+execute:
+  echo: false
+  message: false
+  cache: true
+---
+
+
+```{r}
+#| cache: false
+
+# Setup 
+set.seed(123)
+
+library(tidyverse)
+library(tidytext)
+library(textdata)      
+library(lubridate)
+library(topicmodels)   
+library(tm)
+library(wordcloud)
+library(stopwords)
+library(ggplot2)
+library(textrecipes)
+library(gt)
+
+calc_panel_margin_y_in <- function(.plot_obj){
+  .plot_obj <<- .plot_obj
+  .plot_obj |> 
+    plottr::calc_element_margin_data() |> 
+    dplyr::filter(
+      stringi::stri_detect_regex(name, "^panel(-\\d+)*$")
+    ) |> 
+    dplyr::summarize(
+      margin_top = min(plottr:::unit_to_mm(margin_top)), 
+      margin_bottom = min(plottr:::unit_to_mm(margin_bottom))
+    ) |> 
+    with(unit(margin_bottom + margin_top, "mm")) |> 
+    grid::convertUnit("in", valueOnly=TRUE)
+
+}
+
+ggplot2::theme_set(`+`(
+  ggplot2::theme_minimal(base_size=14, base_family="Open Sans"),
+  ggplot2::theme(
+    axis.text.x=ggplot2::element_text(size=12),
+    axis.text.y=ggplot2::element_text(size = 12),
+    axis.title.x=ggplot2::element_text(size = 14),
+    axis.title.y=ggplot2::element_text(size = 14),
+    title=ggplot2::element_text(size = 14),
+    strip.text=ggplot2::element_text(size = 14),
+    panel.grid.major=ggplot2::element_blank(),
+    panel.grid.minor=ggplot2::element_blank(),
+    panel.background=ggplot2::element_rect(fill = NA, colour = NA),     
+    plot.background=ggplot2::element_rect(fill = NA, colour = NA) 
+  )
+))
+
+theme_gg <- ggplot2::theme_get()
+```
+
+  
+```{r}
+# #| message: false
+# #| output: false
+# 
+# color_pal <-
+#   tibble::tribble(
+#   ~color, ~palette,
+#   "#2e2933", "base",
+#   "#837591", "base",
+#   "#e9ebe5", "base",
+#   "#cf597e", "diverging",
+#   "#e88471", "diverging",
+#   "#eeb479", "diverging",
+#   "#e9e29c", "diverging",
+#   "#9ccb86", "diverging",
+#   "#39b185", "diverging",
+#   "#009392", "diverging",
+#   "#f7feae", "sequential",
+#   "#b7e6a5", "sequential",
+#   "#7ccba2", "sequential",
+#   "#46aea0", "sequential",
+#   "#089099", "sequential",
+#   "#00718b", "sequential",
+#   "#045275", "sequential",
+# ) |>
+#   dplyr::mutate(
+#     color_palette_rank = dplyr::row_number(), .by=palette
+#   ) 
+# 
+# 
+# library(tidyverse)
+# library(tidytext)
+# library(textdata)      
+# library(lubridate)
+# library(topicmodels)   
+# library(tm)
+# library(wordcloud)
+# library(stopwords)
+# library(ggplot2)
+# library(textrecipes)
+# library(tidymodels)
+# 
+# # TODO: add colors from webapp, to color the plots cohesively
+```
+
+
+
+
+Täglich erreichen Unternehmen zahlreiche Anfragen, Beschwerden oder sonstige Mitteilungen. Um diese effizient zu verwalten, kommen Support-Systeme zum Einsatz, die Kundenanliegen strukturieren und kategorisieren.
+
+In diesem Fallbeispiel zeigen wir, wie sich Methoden der Textanalyse und des maschinellen Lernens nutzen lassen, um Support-Tickets automatisiert nach ihrer Dringlichkeit zu klassifizieren. Ziel ist es, besonders wichtige Anfragen frühzeitig zu erkennen und die Kundenzufriedenheit gezielt zu steigern.
+
+Dabei konzentrieren wir uns bewusst vor allem auf textbasierte Variablen, um zu demonstrieren, dass bereits auf dieser Basis leistungsfähige Klassifikationsmodelle entwickelt werden können.
+
+
+
+```{r}
+#| echo: false
+#| message: false
+
+
+support <-
+  read_rds("data/german_customer_support_tickets.rds") |>
+  mutate(
+    row_id = row_number() |> 
+      as.character(),
+    .before = subject
+  ) |>
+  mutate(
+    urgency = if_else(type %in% c("Incident", "Problem"), "hoch", "gering")
+  ) |>
+  select(-paste0("tag_", 1:8), 
+         -answer, 
+         -type, 
+         -priority, 
+         -version, 
+         -detected_language, 
+         -language_mismatch) |>
+  rename(
+    ID = row_id,
+    Betreff = subject,
+    Nachricht = message,
+    Bereich = queue,
+    Sprache = language,
+    Dringlichkeit = urgency
+  ) |>
+    mutate(
+    Bereich = case_when(
+      Bereich == "Billing and Payments" ~ "Abrechnung und Zahlungen",
+      Bereich == "Customer Service" ~ "Kundenservice",
+      Bereich == "General Inquiry" ~ "Allgemeine Anfrage",
+      Bereich == "Human Resources" ~ "Personalabteilung",
+      Bereich == "IT Support" ~ "IT-Support",
+      Bereich == "Product Support" ~ "Produktsupport",
+      Bereich == "Returns and Exchanges" ~ "Rückgaben und Umtausch",
+      Bereich == "Sales and Pre-Sales" ~ "Vertrieb und Vorverkauf",
+      Bereich == "Service Outages and Maintenance" ~ "Wartung und Störungen",
+      Bereich == "Technical Support" ~ "Technischer Support",
+      TRUE ~ Bereich  
+    )
+  )
+
+
+support |> 
+  head(2) |> 
+  gt::gt() |> 
+  gt::tab_header(
+    title = "Beispiel der ersten Beobachtungen aus dem Rohdatensatz"
+  ) |>
+  gt::tab_options(
+    table.width = gt::pct(100),
+    table.font.size = gt::px(13),
+    data_row.padding = gt::px(4),
+    ihtml.use_pagination = FALSE,
+    ihtml.use_text_wrapping = TRUE
+  ) 
+```
+
+
+Bevor wir mit der Modellierung beginnen, schauen wir uns den Datensatz etwas genauer an, um ein besseres Verständnis für die enthaltenen Texte zu gewinnen. Insbesondere bei textbasierten Daten bietet es sich an, zunächst Worthäufigkeiten zu betrachten, um zentrale Begriffe und mögliche Muster zu erkennen.
+
+Dabei entfernen wir sogenannte Stoppwörter, also sehr häufige Wörter ohne inhaltliche Aussagekraft. Zusätzlich bereinigen wir die Texte um wiederkehrende Begrüßungen wie „Sehr geehrtes Support-Team“ oder "Sehr geehrter Kundenservice", da auch diese keinen Beitrag zur inhaltlichen Analyse leisten.
+
+
+
+```{r}
+#| echo: false
+#| message: false
+
+custom_stopwords <- tibble(word = tolower(c(
+  read_lines("data/german_stopwords_full.txt"), 
+  "sehr", 
+  "geehrtes", 
+  "support", 
+  "kundensupport", 
+  "team", 
+  "kundendienstteam",
+  "kundenservice",
+  "nachricht",
+  "kundendienst", 
+  "hoffe", 
+  "erreicht")))
+
+support_tokens_clean <- support |>
+    mutate(Nachricht = str_replace_all(Nachricht, "\\\\n", " "),
+           Nachricht = str_to_lower(Nachricht)) |>
+  unnest_tokens(word, Nachricht) |>
+  filter(
+    !str_detect(word, "^\\d+$|^[sa]\\d+$|^[0-9]+[a-z]*$"),
+    !word %in% custom_stopwords$word
+  )
+
+support_tokens_clean |> 
+  head(5) |> 
+  gt::gt() |> 
+  gt::tab_header(
+    title = "Beispiel der ersten Beobachtung nach dem Preprocessing"
+  ) |>
+  gt::tab_options(
+    table.width = gt::pct(100),
+    table.font.size = gt::px(13),
+    data_row.padding = gt::px(4),
+    ihtml.use_pagination = FALSE,
+    ihtml.use_text_wrapping = TRUE
+  ) 
+```
+
+
+Das Endresultat ist ein Datensatz in dem jedes Wort eine eigene Zeile darstellt. Welche Begriffe zu welcher Nachrichten gehören, können wir an der ID ausmachen. Hier sind die ersten 5 Begriffe, die nach der Textbereinigung übrig geblieben sind, der ersten Nachricht. 
+
+
+```{r}
+#| fig-cap: Word Frequency
+#| fig-height: 2.263476
+
+# word freq
+top_words <- support_tokens_clean |>
+  count(word, sort = TRUE) 
+
+freq_plot<-
+  top_words |>
+  slice_head(n = 10) |>
+  ggplot(aes(x = reorder(word, n), y = n)) +
+  geom_col(show.legend = FALSE, fill="#837591") +
+  coord_flip() +
+  labs(x = "Wort", y = "Anzahl") +
+  theme_minimal()
+
+if(interactive()){
+  7 * 0.25 + calc_panel_margin_y_in(freq_plot)
+}
+
+freq_plot
+```
+
+
+Die zehn häufigsten Begriffe im Datensatz deuten darauf hin, dass der Kundenservice vor allem bei technischen Problemen oder Fragen zur Software kontaktiert wird. Allerdings wird hiermit noch nicht deutlich, welche Begriffe dringendere Nachrichten darstellen. Dazu betrachten wir in der nächsten Abbildung die häufigsten Begriffe nach Dringlichkeit. 
+
+
+
+```{r}
+#| fig-cap: Word Frequency per Urgency Class
+#| fig-height: 2.498452
+
+freq_per_class_plot <-
+  support_tokens_clean |>
+  count(Dringlichkeit, word, sort = TRUE) |>
+  group_by(Dringlichkeit) |>
+  slice_max(n, n = 10) |>
+  ungroup() |>
+  ggplot(aes(x = reorder_within(word, n, Dringlichkeit), 
+             y = n, fill = Dringlichkeit)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~Dringlichkeit, scales = "free_y") +
+  scale_x_reordered() +
+  coord_flip() +
+  theme_minimal() +
+  scale_fill_manual(values = 
+                      c(
+                        "gering" = "#39b185",
+                        "hoch" = "#cf597e"
+                      )) +
+  labs(
+    x = NULL,
+    y = "Häufigkeit"
+  )
+
+if(interactive()){
+  7 * 0.25 + calc_panel_margin_y_in(freq_per_class_plot)
+}
+
+freq_per_class_plot
+```
+
+
+Es lassen sich klare inhaltliche Unterschiede zwischen den Klassen erkennen:
+
+{{{< fa-ul >}}}
+  {{{< fa-solid-li icon="comment-dots" >}}} In weniger dringlichen Nachrichten (links) stehen eher allgemeine oder informative Begriffe im Vordergrund, wie z.B. „informationen“, „freue“, „integration“ oder „unterstützung“. Diese Anfragen deuten auf Interesse, Verbesserungsvorschläge oder Rückfragen hin.{{< /fa-solid-li >}}}
+
+  {{{< fa-solid-li icon="triangle-exclamation" >}}} In hoch dringlichen Nachrichten (rechts) dominieren dagegen Begriffe wie „problem“, „software“, „beheben“, „lösung“ oder „ursache“. Diese Begriffe weisen auf technische Schwierigkeiten oder akute Störungen hin, die eine schnelle Reaktion erfordern.{{{< /fa-solid-li >}}}
+{{{< /fa-ul >}}}
+
+Neben der Betrachtung der häufigsten Begriffe ist es oft noch aufschlussreicher, charakteristische Wörter pro Klasse zu identifizieren. Die TF-IDF-Methode hebt dabei Begriffe hervor, die besonders typisch für eine Klasse sind, aber in anderen weniger häufig vorkommen. So lassen sich sprachliche Muster erkennen, die beim automatisierten Erkennen der Dringlichkeit besonders hilfreich sind. Die folgende Grafik zeigt die jeweils 10 prägnantesten Begriffe pro Klasse.
+
+
+```{r}
+#| fig-cap: TF-IDF per Urgency Class
+#| fig-height: 2.498452
+
+tfidf_plot <-
+  support_tokens_clean |>
+  count(Dringlichkeit, word) |>
+  bind_tf_idf(word, Dringlichkeit, n) |>
+  group_by(Dringlichkeit) |>
+  slice_max(tf_idf, n = 10) |>
+  ungroup() |>
+  ggplot(aes(x = reorder_within(word, tf_idf, Dringlichkeit), 
+                        y = tf_idf, fill = Dringlichkeit)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~Dringlichkeit, scales = "free") +
+  scale_x_reordered() +
+  coord_flip() +
+  theme_minimal() +
+   scale_fill_manual(values = 
+                      c(
+                        "gering" = "#39b185",
+                        "hoch" = "#cf597e"
+                      )) +
+  labs(
+    y = "TF-IDF Wert",
+    x = NULL
+  )
+
+
+if(interactive()){
+  7 * 0.25 + calc_panel_margin_y_in(tfidf_plot)
+}
+
+tfidf_plot
+```
+
+
+Um die Dringlichkeit von Nachrichten automatisch einschätzen zu können, müssen aus dem Text sinnvolle Merkmale gewonnen werden. Dabei helfen sprachliche Hinweise wie Ausrufezeichen, Fragen oder die durchschnittliche Wortlänge. Solche Merkmale lassen sich mit sogenannten "Regular Expressions" erkennen. Das sind spezielle Suchmuster, mit denen bestimmte Zeichenfolgen im Text gezielt gefunden und gezählt werden können, etwa Ausrufezeichen oder Fragewörter.
+
+Im nächsten Schritt bereiten wir die Texte entsprechend vor und erstellen verschiedene Merkmale, die später als Grundlage für das Modell dienen.
+
+
+```{r}
+support_clean <- support |>
+  mutate(
+    Zeichenanzahl = str_length(Nachricht),
+    `Anzahl Ausrufezeichen` = str_count(Nachricht, "!"),
+    Wortanzahl = str_count(Nachricht, "\\w+"),
+    Frage = str_detect(Nachricht, "\\?") |> factor(),
+    Wortlänge = str_extract_all(Nachricht, "\\w+") |> 
+      map_dbl(~ mean(nchar(.x), na.rm = TRUE)),
+    `Betreff vorhanden` = (!is.na(Betreff) & str_length(str_trim(Betreff)) > 0) |> factor(), 
+    Nachricht = str_replace_all(Nachricht, "\\\\n", " "),
+    Nachricht = str_to_lower(Nachricht),
+    Nachricht = str_remove_all(Nachricht, "\\b\\d+\\b|\\b[sa]\\d+\\b|\\b[0-9]+[a-z]*\\b"),
+    Nachricht = str_remove_all(Nachricht, paste0("\\b(", paste(custom_stopwords$word, collapse = "|"), ")\\b")),
+    Nachricht = str_squish(Nachricht),
+    Nachricht = str_replace_all(Nachricht, "[[:punct:]]", " "),
+    Nachricht = str_replace_all(Nachricht, "\\s+", " "),
+    Nachricht = str_trim(Nachricht)
+  ) |>
+  mutate(Zeichenanzahl = str_length(Nachricht)) |>
+  filter(Zeichenanzahl >= 10)
+
+
+comp_table <- support_clean |>
+  group_by(Dringlichkeit) |>
+  summarise(
+    `Ø Zeichenanzahl` = mean(Zeichenanzahl, na.rm = TRUE),
+    `Ø Wortanzahl` = mean(Wortanzahl, na.rm = TRUE),
+    `Ø Wortlänge` = mean(Wortlänge, na.rm = TRUE),
+    `Ø Ausrufezeichen` = mean(`Anzahl Ausrufezeichen`, na.rm = TRUE),
+    `Fragenanteil (%)` = mean(as.numeric(Frage) == 1, na.rm = TRUE) * 100,
+    `Betreff vorhanden (%)` = mean(as.numeric(`Betreff vorhanden`) == 1, na.rm = TRUE) * 100,
+    .groups = "drop"
+  )
+
+
+comp_table |>
+  gt::gt() |>
+  gt::tab_header(
+    title = "Vergleich sprachlicher Merkmale nach Dringlichkeit"
+  ) |>
+  gt::fmt_number(
+    columns = where(is.numeric),
+    decimals = 2
+  )
+
+```
+
+
+Ein Vergleich sprachlicher Merkmale zeigt deutliche Unterschiede zwischen dringenden und weniger dringenden Nachrichten. Besonders auffällig ist der Fragenanteil: Während nur etwa 39% der weniger dringenden Nachrichten eine Frage enthalten, liegt dieser Anteil bei dringenden Nachrichten bei über 92%. Auch die durchschnittliche Wortlänge ist bei dringenden Anliegen leicht erhöht.
+
+Andere Merkmale wie Zeichen- und Wortanzahl oder die Häufigkeit von Ausrufezeichen unterscheiden sich dagegen kaum. Der Anteil an Nachrichten mit Betreff ist in beiden Klassen nahezu identisch. Diese Unterschiede deuten darauf hin, dass dringende Nachrichten sprachlich oft direkter formuliert sind und klarere Handlungsaufforderungen enthalten. 
+
+
+Ein weiteres Merkmal, das für die Modellierung interessant sein könnte, ist die sprachliche Stimmung (Sentiment): Ist der Ton der Nachricht eher positiv oder negativ? Dazu führen wir eine einfache lexikonbasierte Sentimentanalyse durch. Dabei wird jeder Nachricht ein Wert zugewiesen, der die Summe der positiven und negativen Begriffe widerspiegelt. 
+
+
+```{r}
+
+## Sentiment Analysis
+
+sentiment_tokens <- vns::calc_tok_sentidict_tbl(
+  support_clean$Nachricht,
+  .sentidict_tbl = vns.data::sentiws_tbl
+)
+
+support_summary <- support_clean |>
+  left_join(
+    sentiment_tokens |>
+      group_by(doc_id = as.character(doc_id)) |>
+      summarise(Sentimentwert = sum(tok_pol_num, na.rm = TRUE), .groups = "drop"),
+    by = c("ID" = "doc_id")
+  ) |>
+  mutate(
+  Sentimentwert = replace_na(Sentimentwert, 0),
+  sentiment_class = case_when(
+    Sentimentwert > 0 ~ "positiv",
+    Sentimentwert < 0 ~ "negativ",
+    TRUE ~ "neutral"
+  )
+)
+
+
+
+sentiment_summary <- support_summary |>
+  summarise(
+    avg_sentiment_score = mean(Sentimentwert),
+    median_sentiment_score = median(Sentimentwert),
+    positive_reviews = sum(sentiment_class == "positiv"),
+    negative_reviews = sum(sentiment_class == "negativ"),
+    neutral_reviews = sum(sentiment_class == "neutral"),
+    total_reviews = n()
+  ) |>
+  mutate(
+    perc_positive = positive_reviews / total_reviews * 100,
+    perc_negative = negative_reviews / total_reviews * 100,
+    perc_neutral = neutral_reviews / total_reviews * 100
+  )
+
+
+sentiment_summary_long <- sentiment_summary |>
+  select(perc_positive, perc_negative, perc_neutral) |>
+  pivot_longer(cols = everything(),
+               names_to = "Sentiment",
+               values_to = "Anteil") |>
+  mutate(
+    Sentiment = recode(Sentiment,
+      perc_positive = "Positiv",
+      perc_negative = "Negativ",
+      perc_neutral = "Neutral"
+    )
+  )
+```
+
+
+
+```{r}
+#| fig-cap: Distribution of Sentiment
+#| fig-height: 1.263476
+
+overall_sentiment_plot <-
+  ggplot(sentiment_summary_long, aes(x = "", y = Anteil, fill = Sentiment)) +
+  geom_bar(stat = "identity", width = 0.4) +
+  coord_flip() +
+  labs(
+    x = NULL,
+    y = "Anteil in %",
+  ) +
+  theme_minimal() +
+  scale_fill_manual(values = c("Positiv" = "#39b185", 
+                               "Neutral" = "#e9e29c", 
+                               "Negativ" = "#cf597e"))
+
+if(interactive()){
+  3 * 0.25 + calc_panel_margin_y_in(overall_sentiment_plot)
+}
+
+overall_sentiment_plot
+```
+
+
+Mit einem Anteil von 55.4% sind die Nachrichten überwiegend sprachlich negativ geladen. Es zeigt sich auch, dass die Nachrichten eher positiv oder negativ sind, denn nur rund 3% der Nachrichten sind sprachlich neutral. Das deutet darauf hin, dass Support-Nachrichten oft emotional aufgeladen sind.
+
+Ein Blick auf den durchschnittlichen Sentimentwert für dringende und weniger dringende Nachrichten zeigt bedeutungsvolle Unterschiede: 
+
+```{r}
+#| fig-cap: Distribution of Sentiment per Urgency Class 
+#| fig-height: 2.424034
+
+#Sentiment per urgency label 
+avg_sentiment_per_class <- support_summary |>
+  group_by(Dringlichkeit) |>
+  summarize(avg_sentiment = mean(Sentimentwert, na.rm = TRUE)) |>
+  arrange(desc(avg_sentiment))
+
+
+sentiment_per_urgency_plot <-
+  support_summary |>
+  ggplot(aes(x = Dringlichkeit, y = Sentimentwert, fill = Dringlichkeit)) +
+  geom_violin(trim = FALSE, alpha = 0.8, color = NA) +
+  geom_boxplot(width = 0.1, fill = "white", outlier.shape = NA) +
+  labs(
+    x = "Dringlichkeit",
+    y = "Sentimentwert"
+  ) +
+  scale_fill_manual(values = c(
+    "gering" = "#39b185",
+    "hoch" = "#cf597e"
+  )) +
+  theme(
+    panel.grid.major = element_line()
+  )
+
+
+if(interactive()){
+  7 * 0.25 + calc_panel_margin_y_in(sentiment_per_urgency_plot)
+}
+
+sentiment_per_urgency_plot
+
+```
+
+
+Hoch dringliche Nachrichten enthalten häufiger negativ formulierte Texte, etwa bei Problemen oder Störungen. Weniger dringliche Anfragen sind oft neutral oder positiv, z.B. bei allgemeinen Rückfragen oder Wünschen. Die Stimmung im Text kann also ein guter Hinweis auf die Dringlichkeit sein.
+
+
+```{r}
+# #| fig-cap: Sentiment scores per class 
+# #| fig-cap-location: top
+# #| echo: false
+# 
+# #Sentiment per urgency label 
+# avg_sentiment_per_type <- support_summary |>
+#   group_by(Bereich) |>
+#   summarize(avg_sentiment = mean(Sentimentwert, na.rm = TRUE)) |>
+#   arrange(desc(avg_sentiment))
+# 
+# print(avg_sentiment_per_type)
+# 
+# 
+# avg_sentiment_per_type |>
+#   ggplot(aes(x = fct_reorder(Bereich, avg_sentiment), 
+#              y = avg_sentiment, 
+#              fill = Bereich)) +
+#   geom_col(show.legend = FALSE) +
+#   labs(
+#     x = "Nachrichtentyp",
+#     y = "Ø Sentimentwert"
+#   ) +
+#   theme_minimal() +
+#   scale_fill_manual(values = color_pal |>
+#                       filter(palette %in% c("diverging", "sequential")) |>
+#                       slice_head(n = n_distinct(avg_sentiment_per_type$Bereich)) |>
+#                       pull(color)
+#                     ) +
+#   coord_flip()
+# 
+# 
+```
+
+Unser finaler Datensatz besteht aus einigen Merkmalen, die nun für das trainieren eines Modelles genutzt werden können, um damit zukünftige Nachrichten anhand des Textes in "dringend" oder "weniger dringend" zu klassifizieren. 
+
+
+```{r}
+support_model_data <- support_summary |>
+  select(Dringlichkeit, Nachricht, Bereich, Sentimentwert, Wortanzahl, Wortlänge, 
+         Frage, `Betreff vorhanden`, `Zeichenanzahl`, `Anzahl Ausrufezeichen`) |>
+  drop_na() |>
+  mutate(across(c(Dringlichkeit, Bereich, Frage, `Betreff vorhanden`), factor))
+
+
+tibble(
+  Variable = names(support_model_data),
+  Typ = map_chr(support_model_data, ~class(.x)[1]),
+  Beispiel = map_chr(support_model_data, ~as.character(.x[1]))
+) |>
+  gt() |>
+  tab_header(title = "Variablenbeschreibung des Modell-Datensatzes") |>
+  cols_label(
+    Variable = "Variable",
+    Typ = "Datentyp",
+    Beispiel = "Beispielwert"
+  ) |>
+  tab_options(
+    table.width = pct(100),
+    table.font.size = px(13),
+    data_row.padding = px(4),
+    ihtml.use_pagination = FALSE
+  )
+
+```
+
+
+Um herauszufinden, ob eine Nachricht dringend ist oder nicht, wurde ein maschinelles Lernmodell (Random Forest) trainiert. Dabei wurden nicht nur der Inhalt der Nachricht, sondern auch sprachliche Merkmale wie Wortlänge, Anzahl an Ausrufezeichen, das Sentiment oder das Vorhandensein eines Betreffs berücksichtigt.
+
+Das Modell wurde mit 75% der Daten trainiert und auf den verbleibenden 25% getestet. Die folgenden Schritte kamen dabei zum Einsatz:
+
+{{{< fa-ul >}}}
+{{{< fa-solid-li icon="broom" >}}} Textvorverarbeitung: Die Nachrichten wurden in einzelne Wörter zerlegt, Stoppwörter entfernt und sogenannte TF-IDF-Werte berechnet.{{{< /fa-solid-li >}}}
+
+{{{< fa-solid-li icon="wrench" >}}} Merkmalsgenerierung: Wir haben verschiedene Merkmale extrahiert – darunter Sentimentwerte, Satzzeichenanzahl, Wortlänge oder auch das Vorhandensein eines Betreffs.{{{< /fa-solid-li >}}}
+
+{{{< fa-solid-li icon="network-wired" >}}} Klassifikation: Anschließend wurde ein Random-Forest-Modell trainiert, das Nachrichten automatisch in hohe oder geringe Dringlichkeit einordnet.{{{< /fa-solid-li >}}}
+
+{{{< fa-solid-li icon="chart-line" >}}} Modellbewertung: Um die Qualität des Modells zu beurteilen, wurden die Genauigkeit des Modells berechnet und anhand einer Konfusionsmatrix visualisiert. {{{< /fa-solid-li >}}}
+{{{< /fa-ul >}}}
+
+
+
+
+```{r}
+
+# TODO: Build nice classfier for urgency labels 
+
+# 
+# # Set seed for reproducibility
+# set.seed(123)
+# data_split <- initial_split(support_model_data, prop = 0.75, strata = urgency)
+# train_data <- training(data_split)
+# test_data  <- testing(data_split)
+# 
+# 
+# # Recipe with TF-IDF and engineered features
+# support_recipe <- recipe(urgency ~ message + sentiment_score + 
+#                          avg_word_length + contains_question + has_subject + queue + n_chars, 
+#                          data = train_data) |>
+#   step_tokenize(message) |>
+#   step_tokenfilter(message, max_tokens = 2000) |>
+#   step_stopwords(message, language = "de") |>
+#   step_tfidf(message) |>
+#   step_dummy(all_nominal_predictors()) |> 
+#   step_zv(all_predictors()) |> 
+#   step_normalize(all_numeric_predictors()) |>
+#   themis::step_downsample(urgency)
+# 
+# 
+# 
+# ###### random forest
+# 
+# tune_spec <- rand_forest(mtry = tune(), trees = 250, min_n = tune()) |> 
+#   set_mode("classification") |> 
+#   set_engine("ranger")
+# 
+# tune_workflow <- workflow() |>
+#   add_recipe(support_recipe) |>
+#   add_model(tune_spec)
+# 
+# res <- tune_grid(
+#   tune_workflow,
+#   resamples = vfold_cv(train_data, v = 5, strata = urgency),
+#   grid = 5,
+#   metrics = metric_set(accuracy, bal_accuracy, f_meas)
+# )
+# 
+# 
+# collect_metrics(res)
+# 
+# best_params <- select_best(res, metric = c("f_meas"))
+# 
+# 
+# 
+# final_rf_workflow <- finalize_workflow(tune_workflow, best_params)
+# 
+# final_rf_fit <- fit(final_rf_workflow, data = train_data)
+
+# saveRDS(final_rf_fit, "data/final_rf_model.rds")
+
+final_rf_fit <- readRDS("data/final_rf_model.rds")
+
+# final_preds <- predict(final_rf_fit, test_data, type = "class") |> 
+#   bind_cols(test_data)
+
+# final_preds |> 
+#   select(urgency, .pred_class) |> 
+#   write.csv("data/final_predictions.csv", row.names = FALSE)
+
+final_preds <- read.csv("data/final_predictions.csv") |>
+  mutate(urgency = factor(urgency),
+         .pred_class = factor(.pred_class))
+
+
+# performance metrics
+metriken <- final_preds |> 
+  yardstick::accuracy(truth = urgency, estimate = .pred_class) |> 
+  select(.metric, .estimate) |> 
+  mutate(
+    .metric = recode(.metric,
+      "accuracy" = "Genauigkeit"
+    ),
+    .estimate = round(.estimate, 3)
+  )
+
+metriken |> 
+  gt() |>
+  tab_header(
+    title = "Bewertung des Klassifikationsmodells"
+  ) |>
+  cols_label(
+    .metric = "Metrik",
+    .estimate = "Wert"
+  ) |>
+  fmt_percent(
+    columns = ".estimate",
+    scale_values = TRUE,
+    decimals = 1
+  ) |>
+  tab_options(
+    table.width = pct(60),
+    table.font.size = px(14),
+    data_row.padding = px(4)
+  )
+```
+
+Das trainierte Klassifikationsmodell erzielt eine Genauigkeit von 97,9% auf den Testdaten. Dies bedeutet, dass nahezu alle Nachrichten korrekt als "hoch" oder "gering" dringlich eingestuft wurden.
+
+Die Konfusionsmatrix visualisiert diese Leistung im Detail:
+
+{{{< fa-ul >}}}
+{{{< fa-solid-li icon="thumbs-up" >}}}Das Modell erkennt den Großteil der Nachrichten korrekt: 1254 hoch dringliche und 916 gering dringliche Anfragen wurden richtig klassifiziert.{{{< /fa-solid-li >}}}
+
+{{{< fa-solid-li icon="thumbs-down" >}}}Fehlklassifikationen traten nur in 23 Fällen pro Klasse auf.{{{< /fa-solid-li >}}}
+{{{< /fa-ul >}}}
+
+
+```{r}
+#| fig-cap: Confusion Matrix
+#| fig-height: 1.924034
+
+
+conf_df <- final_preds |>
+  yardstick::conf_mat(truth = urgency, estimate = .pred_class) |>
+  tidy() |>
+  mutate(
+    truth = rep(c("Hoch", "Gering"), each = 2),
+    prediction = rep(c("Hoch", "Gering"), times = 2),
+    richtig = name %in% c("cell_1_1", "cell_2_2")
+  )
+
+conf_plot <-
+  ggplot(conf_df, aes(x = prediction, y = truth, fill = richtig)) +
+  geom_tile(color = "white", width = 0.9, height = 0.9) +
+  geom_text(aes(label = value), size = 6, fontface = "bold", color = "white") +
+  scale_fill_manual(values = c("TRUE" = "#39b185", "FALSE" = "#cf597e")) +
+  labs(
+    x = "Vorhergesagt",
+    y = "Tatsächlich",
+    fill = NULL
+  ) +
+  theme(legend.position = "none")
+
+if(interactive()){
+  5 * 0.25 + calc_panel_margin_y_in(conf_plot)
+}
+
+conf_plot
+```
+
+
+### Fazit
+
+Dieses Fallbeispiel zeigt, wie sich textbasierte Informationen gezielt nutzen lassen, um fundierte Entscheidungen zu treffen. Schon einfache sprachliche Merkmale wie Wortwahl, Satzzeichen oder Stimmung reichen aus, um komplexe Aufgaben wie die automatische Klassifikation von Support-Nachrichten zuverlässig zu lösen. Solche Modelle helfen Unternehmen dabei, ihren Kundenservice effizienter zu gestalten und die Zufriedenheit ihrer Kundinnen und Kunden zu steigern.
+
+
