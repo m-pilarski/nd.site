@@ -14,61 +14,60 @@ execute:
 ```{r}
 #| cache: false
 
-# Setup 
+# Setup
 set.seed(123)
 
 library(tidyverse)
 library(tidytext)
-library(textdata)      
+library(textdata)
 library(lubridate)
-library(topicmodels)   
-library(tm)
-library(wordcloud)
-library(stopwords)
+library(topicmodels)
+# library(tm)
+# library(wordcloud)
+# library(stopwords)
 library(ggplot2)
 library(textrecipes)
 library(gt)
 
-calc_panel_margin_y_in <- function(.plot_obj){
-  .plot_obj <<- .plot_obj
-  .plot_obj |> 
-    plottr::calc_element_margin_data() |> 
+data_dir <- here::here("content", "case_studies", "support_tickets", "data")
+
+calc_panel_margin_y_in <- function(.plot_obj) {
+  # .plot_obj <<- .plot_obj
+  .plot_obj |>
+    plottr::calc_element_margin_data() |>
     dplyr::filter(
       stringi::stri_detect_regex(name, "^panel(-\\d+)*$")
-    ) |> 
+    ) |>
     dplyr::summarize(
-      margin_top = min(plottr:::unit_to_mm(margin_top)), 
+      margin_top = min(plottr:::unit_to_mm(margin_top)),
       margin_bottom = min(plottr:::unit_to_mm(margin_bottom))
-    ) |> 
-    with(unit(margin_bottom + margin_top, "mm")) |> 
-    grid::convertUnit("in", valueOnly=TRUE)
-
+    ) |>
+    with(unit(margin_bottom + margin_top, "mm")) |>
+    grid::convertUnit("in", valueOnly = TRUE)
 }
 
 ggplot2::theme_set(`+`(
-  ggplot2::theme_minimal(base_size=14, base_family="Open Sans"),
+  ggplot2::theme_minimal(base_size = 14, base_family = "Open Sans"),
   ggplot2::theme(
-    axis.text.x=ggplot2::element_text(size=12),
-    axis.text.y=ggplot2::element_text(size = 12),
-    axis.title.x=ggplot2::element_text(size = 14),
-    axis.title.y=ggplot2::element_text(size = 14),
-    title=ggplot2::element_text(size = 14),
-    strip.text=ggplot2::element_text(size = 14),
-    panel.grid.major=ggplot2::element_blank(),
-    panel.grid.minor=ggplot2::element_blank(),
-    panel.background=ggplot2::element_rect(fill = NA, colour = NA),     
-    plot.background=ggplot2::element_rect(fill = NA, colour = NA) 
+    axis.text.x = ggplot2::element_text(size = 12),
+    axis.text.y = ggplot2::element_text(size = 12),
+    axis.title.x = ggplot2::element_text(size = 14),
+    axis.title.y = ggplot2::element_text(size = 14),
+    title = ggplot2::element_text(size = 14),
+    strip.text = ggplot2::element_text(size = 14),
+    panel.grid.major = ggplot2::element_blank(),
+    panel.grid.minor = ggplot2::element_blank(),
+    panel.background = ggplot2::element_rect(fill = NA, colour = NA),
+    plot.background = ggplot2::element_rect(fill = NA, colour = NA)
   )
 ))
-
-theme_gg <- ggplot2::theme_get()
 ```
 
   
 ```{r}
 # #| message: false
 # #| output: false
-# 
+#
 # color_pal <-
 #   tibble::tribble(
 #   ~color, ~palette,
@@ -92,26 +91,23 @@ theme_gg <- ggplot2::theme_get()
 # ) |>
 #   dplyr::mutate(
 #     color_palette_rank = dplyr::row_number(), .by=palette
-#   ) 
-# 
-# 
+#   )
+#
+#
 # library(tidyverse)
 # library(tidytext)
-# library(textdata)      
+# library(textdata)
 # library(lubridate)
-# library(topicmodels)   
+# library(topicmodels)
 # library(tm)
 # library(wordcloud)
 # library(stopwords)
 # library(ggplot2)
 # library(textrecipes)
 # library(tidymodels)
-# 
+#
 # # TODO: add colors from webapp, to color the plots cohesively
 ```
-
-
-
 
 Täglich erreichen Unternehmen zahlreiche Anfragen, Beschwerden oder sonstige Mitteilungen. Um diese effizient zu verwalten, kommen Support-Systeme zum Einsatz, die Kundenanliegen strukturieren und kategorisieren.
 
@@ -119,30 +115,31 @@ In diesem Fallbeispiel zeigen wir, wie sich Methoden der Textanalyse und des mas
 
 Dabei konzentrieren wir uns bewusst vor allem auf textbasierte Variablen, um zu demonstrieren, dass bereits auf dieser Basis leistungsfähige Klassifikationsmodelle entwickelt werden können.
 
-
-
 ```{r}
 #| echo: false
 #| message: false
 
-
 support <-
-  read_rds("data/german_customer_support_tickets.rds") |>
+  read_rds(
+    fs::path(data_dir, "german_customer_support_tickets.rds")
+  ) |>
   mutate(
-    row_id = row_number() |> 
+    row_id = row_number() |>
       as.character(),
     .before = subject
   ) |>
   mutate(
     urgency = if_else(type %in% c("Incident", "Problem"), "hoch", "gering")
   ) |>
-  select(-paste0("tag_", 1:8), 
-         -answer, 
-         -type, 
-         -priority, 
-         -version, 
-         -detected_language, 
-         -language_mismatch) |>
+  select(
+    -paste0("tag_", 1:8),
+    -answer,
+    -type,
+    -priority,
+    -version,
+    -detected_language,
+    -language_mismatch
+  ) |>
   rename(
     ID = row_id,
     Betreff = subject,
@@ -151,7 +148,7 @@ support <-
     Sprache = language,
     Dringlichkeit = urgency
   ) |>
-    mutate(
+  mutate(
     Bereich = case_when(
       Bereich == "Billing and Payments" ~ "Abrechnung und Zahlungen",
       Bereich == "Customer Service" ~ "Kundenservice",
@@ -163,14 +160,14 @@ support <-
       Bereich == "Sales and Pre-Sales" ~ "Vertrieb und Vorverkauf",
       Bereich == "Service Outages and Maintenance" ~ "Wartung und Störungen",
       Bereich == "Technical Support" ~ "Technischer Support",
-      TRUE ~ Bereich  
+      TRUE ~ Bereich
     )
   )
 
 
-support |> 
-  head(2) |> 
-  gt::gt() |> 
+support |>
+  head(2) |>
+  gt::gt() |>
   gt::tab_header(
     title = "Beispiel der ersten Beobachtungen aus dem Rohdatensatz"
   ) |>
@@ -180,7 +177,7 @@ support |>
     data_row.padding = gt::px(4),
     ihtml.use_pagination = FALSE,
     ihtml.use_text_wrapping = TRUE
-  ) 
+  )
 ```
 
 
@@ -188,38 +185,42 @@ Bevor wir mit der Modellierung beginnen, schauen wir uns den Datensatz etwas gen
 
 Dabei entfernen wir sogenannte Stoppwörter, also sehr häufige Wörter ohne inhaltliche Aussagekraft. Zusätzlich bereinigen wir die Texte um wiederkehrende Begrüßungen wie „Sehr geehrtes Support-Team“ oder "Sehr geehrter Kundenservice", da auch diese keinen Beitrag zur inhaltlichen Analyse leisten.
 
-
-
 ```{r}
 #| echo: false
 #| message: false
 
-custom_stopwords <- tibble(word = tolower(c(
-  read_lines("data/german_stopwords_full.txt"), 
-  "sehr", 
-  "geehrtes", 
-  "support", 
-  "kundensupport", 
-  "team", 
-  "kundendienstteam",
-  "kundenservice",
-  "nachricht",
-  "kundendienst", 
-  "hoffe", 
-  "erreicht")))
+custom_stopwords <- tibble(
+  word = tolower(c(
+    # read_lines("data/german_stopwords_full.txt"),
+    quanteda::stopwords(language = "de", source = "nltk"),
+    "sehr",
+    "geehrtes",
+    "support",
+    "kundensupport",
+    "team",
+    "kundendienstteam",
+    "kundenservice",
+    "nachricht",
+    "kundendienst",
+    "hoffe",
+    "erreicht"
+  ))
+)
 
 support_tokens_clean <- support |>
-    mutate(Nachricht = str_replace_all(Nachricht, "\\\\n", " "),
-           Nachricht = str_to_lower(Nachricht)) |>
+  mutate(
+    Nachricht = str_replace_all(Nachricht, "\\\\n", " "),
+    Nachricht = str_to_lower(Nachricht)
+  ) |>
   unnest_tokens(word, Nachricht) |>
   filter(
     !str_detect(word, "^\\d+$|^[sa]\\d+$|^[0-9]+[a-z]*$"),
     !word %in% custom_stopwords$word
   )
 
-support_tokens_clean |> 
-  head(5) |> 
-  gt::gt() |> 
+support_tokens_clean |>
+  head(5) |>
+  gt::gt() |>
   gt::tab_header(
     title = "Beispiel der ersten Beobachtung nach dem Preprocessing"
   ) |>
@@ -229,7 +230,7 @@ support_tokens_clean |>
     data_row.padding = gt::px(4),
     ihtml.use_pagination = FALSE,
     ihtml.use_text_wrapping = TRUE
-  ) 
+  )
 ```
 
 
@@ -242,19 +243,18 @@ Das Endresultat ist ein Datensatz in dem jedes Wort eine eigene Zeile darstellt.
 
 # word freq
 top_words <- support_tokens_clean |>
-  count(word, sort = TRUE) 
+  count(word, sort = TRUE)
 
-freq_plot<-
-  top_words |>
+freq_plot <- top_words |>
   slice_head(n = 10) |>
   ggplot(aes(x = reorder(word, n), y = n)) +
-  geom_col(show.legend = FALSE, fill="#837591") +
+  geom_col(show.legend = FALSE, fill = "#837591") +
   coord_flip() +
   labs(x = "Wort", y = "Anzahl") +
   theme_minimal()
 
-if(interactive()){
-  7 * 0.25 + calc_panel_margin_y_in(freq_plot)
+if (interactive()) {
+  10 * 0.25 + calc_panel_margin_y_in(freq_plot)
 }
 
 freq_plot
@@ -275,24 +275,28 @@ freq_per_class_plot <-
   group_by(Dringlichkeit) |>
   slice_max(n, n = 10) |>
   ungroup() |>
-  ggplot(aes(x = reorder_within(word, n, Dringlichkeit), 
-             y = n, fill = Dringlichkeit)) +
+  ggplot(aes(
+    x = reorder_within(word, n, Dringlichkeit),
+    y = n,
+    fill = Dringlichkeit
+  )) +
   geom_col(show.legend = FALSE) +
   facet_wrap(~Dringlichkeit, scales = "free_y") +
   scale_x_reordered() +
   coord_flip() +
   theme_minimal() +
-  scale_fill_manual(values = 
-                      c(
-                        "gering" = "#39b185",
-                        "hoch" = "#cf597e"
-                      )) +
+  scale_fill_manual(
+    values = c(
+      "gering" = "#39b185",
+      "hoch" = "#cf597e"
+    )
+  ) +
   labs(
     x = NULL,
     y = "Häufigkeit"
   )
 
-if(interactive()){
+if (interactive()) {
   7 * 0.25 + calc_panel_margin_y_in(freq_per_class_plot)
 }
 
@@ -303,7 +307,7 @@ freq_per_class_plot
 Es lassen sich klare inhaltliche Unterschiede zwischen den Klassen erkennen:
 
 {{{< fa-ul >}}}
-  {{{< fa-solid-li icon="comment-dots" >}}} In weniger dringlichen Nachrichten (links) stehen eher allgemeine oder informative Begriffe im Vordergrund, wie z.B. „informationen“, „freue“, „integration“ oder „unterstützung“. Diese Anfragen deuten auf Interesse, Verbesserungsvorschläge oder Rückfragen hin.{{< /fa-solid-li >}}}
+  {{{< fa-solid-li icon="comment-dots" >}}} In weniger dringlichen Nachrichten (links) stehen eher allgemeine oder informative Begriffe im Vordergrund, wie z.B. „informationen“, „freue“, „integration“ oder „unterstützung“. Diese Anfragen deuten auf Interesse, Verbesserungsvorschläge oder Rückfragen hin.{{{< /fa-solid-li >}}}
 
   {{{< fa-solid-li icon="triangle-exclamation" >}}} In hoch dringlichen Nachrichten (rechts) dominieren dagegen Begriffe wie „problem“, „software“, „beheben“, „lösung“ oder „ursache“. Diese Begriffe weisen auf technische Schwierigkeiten oder akute Störungen hin, die eine schnelle Reaktion erfordern.{{{< /fa-solid-li >}}}
 {{{< /fa-ul >}}}
@@ -322,25 +326,29 @@ tfidf_plot <-
   group_by(Dringlichkeit) |>
   slice_max(tf_idf, n = 10) |>
   ungroup() |>
-  ggplot(aes(x = reorder_within(word, tf_idf, Dringlichkeit), 
-                        y = tf_idf, fill = Dringlichkeit)) +
+  ggplot(aes(
+    x = reorder_within(word, tf_idf, Dringlichkeit),
+    y = tf_idf,
+    fill = Dringlichkeit
+  )) +
   geom_col(show.legend = FALSE) +
   facet_wrap(~Dringlichkeit, scales = "free") +
   scale_x_reordered() +
   coord_flip() +
   theme_minimal() +
-   scale_fill_manual(values = 
-                      c(
-                        "gering" = "#39b185",
-                        "hoch" = "#cf597e"
-                      )) +
+  scale_fill_manual(
+    values = c(
+      "gering" = "#39b185",
+      "hoch" = "#cf597e"
+    )
+  ) +
   labs(
     y = "TF-IDF Wert",
     x = NULL
   )
 
 
-if(interactive()){
+if (interactive()) {
   7 * 0.25 + calc_panel_margin_y_in(tfidf_plot)
 }
 
@@ -360,13 +368,21 @@ support_clean <- support |>
     `Anzahl Ausrufezeichen` = str_count(Nachricht, "!"),
     Wortanzahl = str_count(Nachricht, "\\w+"),
     Frage = str_detect(Nachricht, "\\?") |> factor(),
-    Wortlänge = str_extract_all(Nachricht, "\\w+") |> 
+    Wortlänge = str_extract_all(Nachricht, "\\w+") |>
       map_dbl(~ mean(nchar(.x), na.rm = TRUE)),
-    `Betreff vorhanden` = (!is.na(Betreff) & str_length(str_trim(Betreff)) > 0) |> factor(), 
+    `Betreff vorhanden` = (!is.na(Betreff) &
+      str_length(str_trim(Betreff)) > 0) |>
+      factor(),
     Nachricht = str_replace_all(Nachricht, "\\\\n", " "),
     Nachricht = str_to_lower(Nachricht),
-    Nachricht = str_remove_all(Nachricht, "\\b\\d+\\b|\\b[sa]\\d+\\b|\\b[0-9]+[a-z]*\\b"),
-    Nachricht = str_remove_all(Nachricht, paste0("\\b(", paste(custom_stopwords$word, collapse = "|"), ")\\b")),
+    Nachricht = str_remove_all(
+      Nachricht,
+      "\\b\\d+\\b|\\b[sa]\\d+\\b|\\b[0-9]+[a-z]*\\b"
+    ),
+    Nachricht = str_remove_all(
+      Nachricht,
+      paste0("\\b(", paste(custom_stopwords$word, collapse = "|"), ")\\b")
+    ),
     Nachricht = str_squish(Nachricht),
     Nachricht = str_replace_all(Nachricht, "[[:punct:]]", " "),
     Nachricht = str_replace_all(Nachricht, "\\s+", " "),
@@ -384,7 +400,11 @@ comp_table <- support_clean |>
     `Ø Wortlänge` = mean(Wortlänge, na.rm = TRUE),
     `Ø Ausrufezeichen` = mean(`Anzahl Ausrufezeichen`, na.rm = TRUE),
     `Fragenanteil (%)` = mean(as.numeric(Frage) == 1, na.rm = TRUE) * 100,
-    `Betreff vorhanden (%)` = mean(as.numeric(`Betreff vorhanden`) == 1, na.rm = TRUE) * 100,
+    `Betreff vorhanden (%)` = mean(
+      as.numeric(`Betreff vorhanden`) == 1,
+      na.rm = TRUE
+    ) *
+      100,
     .groups = "drop"
   )
 
@@ -423,18 +443,20 @@ support_summary <- support_clean |>
   left_join(
     sentiment_tokens |>
       group_by(doc_id = as.character(doc_id)) |>
-      summarise(Sentimentwert = sum(tok_pol_num, na.rm = TRUE), .groups = "drop"),
+      summarise(
+        Sentimentwert = sum(tok_pol_num, na.rm = TRUE),
+        .groups = "drop"
+      ),
     by = c("ID" = "doc_id")
   ) |>
   mutate(
-  Sentimentwert = replace_na(Sentimentwert, 0),
-  sentiment_class = case_when(
-    Sentimentwert > 0 ~ "positiv",
-    Sentimentwert < 0 ~ "negativ",
-    TRUE ~ "neutral"
+    Sentimentwert = replace_na(Sentimentwert, 0),
+    sentiment_class = case_when(
+      Sentimentwert > 0 ~ "positiv",
+      Sentimentwert < 0 ~ "negativ",
+      TRUE ~ "neutral"
+    )
   )
-)
-
 
 
 sentiment_summary <- support_summary |>
@@ -455,11 +477,14 @@ sentiment_summary <- support_summary |>
 
 sentiment_summary_long <- sentiment_summary |>
   select(perc_positive, perc_negative, perc_neutral) |>
-  pivot_longer(cols = everything(),
-               names_to = "Sentiment",
-               values_to = "Anteil") |>
+  pivot_longer(
+    cols = everything(),
+    names_to = "Sentiment",
+    values_to = "Anteil"
+  ) |>
   mutate(
-    Sentiment = recode(Sentiment,
+    Sentiment = recode(
+      Sentiment,
       perc_positive = "Positiv",
       perc_negative = "Negativ",
       perc_neutral = "Neutral"
@@ -482,11 +507,15 @@ overall_sentiment_plot <-
     y = "Anteil in %",
   ) +
   theme_minimal() +
-  scale_fill_manual(values = c("Positiv" = "#39b185", 
-                               "Neutral" = "#e9e29c", 
-                               "Negativ" = "#cf597e"))
+  scale_fill_manual(
+    values = c(
+      "Positiv" = "#39b185",
+      "Neutral" = "#e9e29c",
+      "Negativ" = "#cf597e"
+    )
+  )
 
-if(interactive()){
+if (interactive()) {
   3 * 0.25 + calc_panel_margin_y_in(overall_sentiment_plot)
 }
 
@@ -499,10 +528,10 @@ Mit einem Anteil von 55.4% sind die Nachrichten überwiegend sprachlich negativ 
 Ein Blick auf den durchschnittlichen Sentimentwert für dringende und weniger dringende Nachrichten zeigt bedeutungsvolle Unterschiede: 
 
 ```{r}
-#| fig-cap: Distribution of Sentiment per Urgency Class 
+#| fig-cap: Distribution of Sentiment per Urgency Class
 #| fig-height: 2.424034
 
-#Sentiment per urgency label 
+#Sentiment per urgency label
 avg_sentiment_per_class <- support_summary |>
   group_by(Dringlichkeit) |>
   summarize(avg_sentiment = mean(Sentimentwert, na.rm = TRUE)) |>
@@ -518,16 +547,18 @@ sentiment_per_urgency_plot <-
     x = "Dringlichkeit",
     y = "Sentimentwert"
   ) +
-  scale_fill_manual(values = c(
-    "gering" = "#39b185",
-    "hoch" = "#cf597e"
-  )) +
+  scale_fill_manual(
+    values = c(
+      "gering" = "#39b185",
+      "hoch" = "#cf597e"
+    )
+  ) +
   theme(
     panel.grid.major = element_line()
   )
 
 
-if(interactive()){
+if (interactive()) {
   7 * 0.25 + calc_panel_margin_y_in(sentiment_per_urgency_plot)
 }
 
@@ -540,22 +571,22 @@ Hoch dringliche Nachrichten enthalten häufiger negativ formulierte Texte, etwa 
 
 
 ```{r}
-# #| fig-cap: Sentiment scores per class 
+# #| fig-cap: Sentiment scores per class
 # #| fig-cap-location: top
 # #| echo: false
-# 
-# #Sentiment per urgency label 
+#
+# #Sentiment per urgency label
 # avg_sentiment_per_type <- support_summary |>
 #   group_by(Bereich) |>
 #   summarize(avg_sentiment = mean(Sentimentwert, na.rm = TRUE)) |>
 #   arrange(desc(avg_sentiment))
-# 
+#
 # print(avg_sentiment_per_type)
-# 
-# 
+#
+#
 # avg_sentiment_per_type |>
-#   ggplot(aes(x = fct_reorder(Bereich, avg_sentiment), 
-#              y = avg_sentiment, 
+#   ggplot(aes(x = fct_reorder(Bereich, avg_sentiment),
+#              y = avg_sentiment,
 #              fill = Bereich)) +
 #   geom_col(show.legend = FALSE) +
 #   labs(
@@ -569,8 +600,8 @@ Hoch dringliche Nachrichten enthalten häufiger negativ formulierte Texte, etwa 
 #                       pull(color)
 #                     ) +
 #   coord_flip()
-# 
-# 
+#
+#
 ```
 
 Unser finaler Datensatz besteht aus einigen Merkmalen, die nun für das trainieren eines Modelles genutzt werden können, um damit zukünftige Nachrichten anhand des Textes in "dringend" oder "weniger dringend" zu klassifizieren. 
@@ -578,16 +609,26 @@ Unser finaler Datensatz besteht aus einigen Merkmalen, die nun für das trainier
 
 ```{r}
 support_model_data <- support_summary |>
-  select(Dringlichkeit, Nachricht, Bereich, Sentimentwert, Wortanzahl, Wortlänge, 
-         Frage, `Betreff vorhanden`, `Zeichenanzahl`, `Anzahl Ausrufezeichen`) |>
+  select(
+    Dringlichkeit,
+    Nachricht,
+    Bereich,
+    Sentimentwert,
+    Wortanzahl,
+    Wortlänge,
+    Frage,
+    `Betreff vorhanden`,
+    `Zeichenanzahl`,
+    `Anzahl Ausrufezeichen`
+  ) |>
   drop_na() |>
   mutate(across(c(Dringlichkeit, Bereich, Frage, `Betreff vorhanden`), factor))
 
 
 tibble(
   Variable = names(support_model_data),
-  Typ = map_chr(support_model_data, ~class(.x)[1]),
-  Beispiel = map_chr(support_model_data, ~as.character(.x[1]))
+  Typ = map_chr(support_model_data, ~ class(.x)[1]),
+  Beispiel = map_chr(support_model_data, ~ as.character(.x[1]))
 ) |>
   gt() |>
   tab_header(title = "Variablenbeschreibung des Modell-Datensatzes") |>
@@ -625,87 +666,84 @@ Das Modell wurde mit 75% der Daten trainiert und auf den verbleibenden 25% getes
 
 ```{r}
 
-# TODO: Build nice classfier for urgency labels 
+# TODO: Build nice classfier for urgency labels
 
-# 
+#
 # # Set seed for reproducibility
 # set.seed(123)
 # data_split <- initial_split(support_model_data, prop = 0.75, strata = urgency)
 # train_data <- training(data_split)
 # test_data  <- testing(data_split)
-# 
-# 
+#
+#
 # # Recipe with TF-IDF and engineered features
-# support_recipe <- recipe(urgency ~ message + sentiment_score + 
-#                          avg_word_length + contains_question + has_subject + queue + n_chars, 
+# support_recipe <- recipe(urgency ~ message + sentiment_score +
+#                          avg_word_length + contains_question + has_subject + queue + n_chars,
 #                          data = train_data) |>
 #   step_tokenize(message) |>
 #   step_tokenfilter(message, max_tokens = 2000) |>
 #   step_stopwords(message, language = "de") |>
 #   step_tfidf(message) |>
-#   step_dummy(all_nominal_predictors()) |> 
-#   step_zv(all_predictors()) |> 
+#   step_dummy(all_nominal_predictors()) |>
+#   step_zv(all_predictors()) |>
 #   step_normalize(all_numeric_predictors()) |>
 #   themis::step_downsample(urgency)
-# 
-# 
-# 
+#
+#
+#
 # ###### random forest
-# 
-# tune_spec <- rand_forest(mtry = tune(), trees = 250, min_n = tune()) |> 
-#   set_mode("classification") |> 
+#
+# tune_spec <- rand_forest(mtry = tune(), trees = 250, min_n = tune()) |>
+#   set_mode("classification") |>
 #   set_engine("ranger")
-# 
+#
 # tune_workflow <- workflow() |>
 #   add_recipe(support_recipe) |>
 #   add_model(tune_spec)
-# 
+#
 # res <- tune_grid(
 #   tune_workflow,
 #   resamples = vfold_cv(train_data, v = 5, strata = urgency),
 #   grid = 5,
 #   metrics = metric_set(accuracy, bal_accuracy, f_meas)
 # )
-# 
-# 
+#
+#
 # collect_metrics(res)
-# 
+#
 # best_params <- select_best(res, metric = c("f_meas"))
-# 
-# 
-# 
+#
+#
+#
 # final_rf_workflow <- finalize_workflow(tune_workflow, best_params)
-# 
+#
 # final_rf_fit <- fit(final_rf_workflow, data = train_data)
 
 # saveRDS(final_rf_fit, "data/final_rf_model.rds")
 
-final_rf_fit <- readRDS("data/final_rf_model.rds")
+final_rf_fit <- readRDS(fs::path(data_dir, "final_rf_model.rds"))
 
-# final_preds <- predict(final_rf_fit, test_data, type = "class") |> 
+# final_preds <- predict(final_rf_fit, test_data, type = "class") |>
 #   bind_cols(test_data)
 
-# final_preds |> 
-#   select(urgency, .pred_class) |> 
+# final_preds |>
+#   select(urgency, .pred_class) |>
 #   write.csv("data/final_predictions.csv", row.names = FALSE)
 
-final_preds <- read.csv("data/final_predictions.csv") |>
-  mutate(urgency = factor(urgency),
-         .pred_class = factor(.pred_class))
+final_preds <- read.csv(fs::path(data_dir, "final_predictions.csv")) |>
+  mutate(urgency = factor(urgency), .pred_class = factor(.pred_class))
 
 
 # performance metrics
-metriken <- final_preds |> 
-  yardstick::accuracy(truth = urgency, estimate = .pred_class) |> 
-  select(.metric, .estimate) |> 
+metriken <- final_preds |>
+  yardstick::accuracy(truth = urgency, estimate = .pred_class) |>
+  select(.metric, .estimate) |>
   mutate(
-    .metric = recode(.metric,
-      "accuracy" = "Genauigkeit"
-    ),
+    .metric = recode(.metric, "accuracy" = "Genauigkeit"),
     .estimate = round(.estimate, 3)
   )
 
-metriken |> 
+metriken |>
   gt() |>
   tab_header(
     title = "Bewertung des Klassifikationsmodells"
@@ -741,7 +779,6 @@ Die Konfusionsmatrix visualisiert diese Leistung im Detail:
 #| fig-cap: Confusion Matrix
 #| fig-height: 1.924034
 
-
 conf_df <- final_preds |>
   yardstick::conf_mat(truth = urgency, estimate = .pred_class) |>
   tidy() |>
@@ -763,7 +800,7 @@ conf_plot <-
   ) +
   theme(legend.position = "none")
 
-if(interactive()){
+if (interactive()) {
   5 * 0.25 + calc_panel_margin_y_in(conf_plot)
 }
 

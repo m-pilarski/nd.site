@@ -3,57 +3,49 @@ title: "Fallstudie: Kundenrezensionen"
 subtitle: "Analyse von ..."
 figtitle: "⭐"
 date: "2024-11-25T14:25:49+01:00"
-draft: true
+draft: false
 ---
 
 ## Einleitung
 
-Kundenrezensionen geben einen direkten Einblick in die Wahrnehmung, Nutzung und Bewertung von Produkten. Da deiese jedoch in einem unstrukturierten Format vorliegen, sind diese Informationen nicht auf dem ersten Blick ersichtlich. Mithilfe von Methoden der Textanalyse lassen sich diese Informationen systematisch extrahieren und bieten so die Möglichkeit, die Bedürfnisse und Erfahrungen von Nutzer:innen besser zu verstehen.
-<br>
-
-Ziel dieser Case Study ist es, anhand von Kundenrezensionen ein differenziertes Bild der Nutzererfahrungen mit verschiedenen Produktgruppen zu zeichnen und daraus Verbesserungspotenziale abzuleiten.
-
-Die Analyse basiert auf 3.413 deutschsprachigen Rezensionen von Amazon zu technischen Produkten. Neben dem Textinhalt liegen unter anderem Titel, Datum und Sternebewertung vor.
-
+{{{< div id="lalala" style="width: 100%; height: 300px;" >}}} {{{< /div >}}}
 
 ```{r}
-library(tidyverse)
-library(gt)
+wordcloud_data <- 
+  readr::read_csv(
+    here::here(
+      "content", "case_studies", "customer_reviews", "data", 
+      "Amazon-Deutsch-Dataset.csv"
+    ),
+    col_types=readr::cols_only(content="c"), name_repair="unique_quiet"
+  ) |> 
+  tidyr::drop_na() |> 
+  dplyr::pull(content) |> 
+  stringi::stri_trans_general("lower") |> 
+  stringi::stri_c(collapse="\n") |> 
+  vns::parse_doc_simple() |> 
+  dplyr::filter(
+    stringi::stri_detect_charclass(tok_str, "[[:alpha:]]"),
+    !vctrs::vec_in(tok_str, quanteda::stopwords(language="de", source="nltk"))
+  ) |> 
+  dplyr::count(
+    text = stringi::stri_replace_all_charclass(tok_str, "[^[:alpha:]]", ""), 
+    sort=TRUE
+  ) |> 
+  dplyr::slice_max(order_by=n, n=5e2) |> 
+  dplyr::mutate(
+    text,
+    n=log(n),
+    size=(n - min(n))/max(n - min(n)) * 50 + 5,
+    rotate=sample(c(0, 0, -90, 90), size=dplyr::n(), replace=TRUE),
+    color=sample(c("#425280", "#46aea0"), size=dplyr::n(), replace=TRUE),
+    .keep="none"
+  )
 
-ggplot2::theme_set(`+`(
-  ggplot2::theme_minimal(base_size=14, base_family="Open Sans"),
-  ggplot2::theme()
-))
+wordcloud_data |> 
+  nd.util::d3_wordcloud(.element_id="lalala") |> 
+  as.character() |> 
+  nd.util::render_raw_html()
 ```
 
-Da in dieser Analyse vorwiegend lexikon- und regelbasierte Verfahren zum Einsatz kommen, ist eine umfassende Datenbereinigung essenziell, um die Aussagekraft der Ergebnisse sicherzustellen. Diese Methoden reagieren sensibel auf irrelevante oder mehrdeutige Inhalte. Daher müssen die Texte so vorbereitet werden, dass sie möglichst klar und konsistent sind:
-
-{{{< fa-ul >}}}
-  {{{< fa-solid-li icon="language" >}}}	**Sprachfilter:** Weil die Analysen auf deutschen Lexikas basieren, wurden alle fremdsprachigen Rezensionen ausgeschlossen. {{{< /fa-solid-li >}}}
-  {{{< fa-solid-li icon="broom" >}}} **Bewertungen bereinigt:** Sternebewertungen wurden aus dem Text extrahiert und in numerische Werte umgewandelt (5,0 von 5 Sternen 5). {{{< /fa-solid-li >}}}
-  {{{< fa-solid-li icon="scissors" >}}} **Tokenisierung:** Die Inhalte der Rezensionen wurden in einzelne Wörter zerlegt. {{{< /fa-solid-li >}}}
-
-  {{{< fa-solid-li icon="filter" >}}}	**Stopword-Filter:** Häufige, aber inhaltsleere Wörter wie „und“ oder „ist“, sowie Produktnamen oder Modellnummern wurden entfernt, damit der Fokus auf den relevanten Begriffen liegt. {{{< /fa-solid-li >}}}
-{{{< /fa-ul >}}}
-
-Diese Vorverarbeitung stellt sicher, dass die Analyse auf den inhaltlich relevanten Bestandteilen der Texte basiert.
-
-*[Tabelle]*
-
-Die extrahierten numerischen Bewertungen liefern erste Einblicke in die allgemeine Kundenzufriedenheit über das gesamte Angebot an Produkten hinweg.
-
-```{r}
-#| fig-height: 2
-sample(5:1, size=100, replace=TRUE, prob=c(5:2, 3)) |> 
-  tibble::as_tibble_col("rating") |> 
-  count(rating = factor(rating), name="count") |> 
-  mutate(prop = count / sum(count)) |> 
-  ggplot(aes(y=rating, x=prop, fill=rating)) +
-  geom_col() +
-  rcartocolor::scale_fill_carto_d(palette="Temps", direction=-1) +
-  scale_x_continuous(labels=scales::label_percent()) +
-  labs(x="Anteil", y="Bewertung") +
-  theme(legend.position="none")
-```
-
-Die Verteilung zeigt dabei, dass die meisten Bewertungen im oberen und unteren Bereich liegen. Entsprechend sind Kund:innen entweder sehr überzeugt oder sehr enttäuscht von den Produkten. Im nächsten Schritt wird ermittelt, ob bestimmte Produktkategorieren besonders positiv oder negativ bewertet wurden.
+Kundenrezensionen geben einen direkten Einblick in die Wahrnehmung, Nutzung und Bewertung von Produkten. 

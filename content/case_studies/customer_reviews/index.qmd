@@ -61,8 +61,6 @@ ggplot2::theme_set(`+`(
     plot.background=ggplot2::element_rect(fill = NA, colour = NA) 
   )
 ))
-
-theme_gg <- ggplot2::theme_get()
 ```
 
 
@@ -246,8 +244,7 @@ wort_plot <- review_tokens_clean |>
   ggplot(aes(x = reorder(Wort, n), y = n)) +
   geom_col(show.legend = FALSE, fill="#837591") +
   coord_flip() +
-  labs(x = "Wort", y = "Anzahl") +
-  theme_gg
+  labs(x = "Wort", y = "Anzahl")
 
 if(interactive()){
   10 * 0.25 + calc_panel_margin_y_in(wort_plot)
@@ -388,7 +385,6 @@ sentiment_summary <- review_summary |>
 #   scale_fill_manual(values = c("Positiv" = "#39b185", "Negativ" = "#cf597e", "Neutral" = "#e9e29c")) +
 #   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
 #   labs(y = "Anteil der Bewertungen", x = NULL) +
-#   theme_gg +
 #   theme(
 #     panel.grid.major = ggplot2::element_line(),
 #     legend.title = ggplot2::element_blank(),
@@ -421,8 +417,7 @@ sentiment_summary <- review_summary |>
 <!-- #   labs( -->
 <!-- #     x = "Bewertung", -->
 <!-- #     y = "Sentiment" -->
-<!-- #   ) + -->
-<!-- #   theme_gg -->
+<!-- #   ) -->
 <!-- # ``` -->
 <!-- #  -->
 <!-- #  -->
@@ -711,8 +706,7 @@ topic_frex_plot <- top_frex |>
   coord_flip() +
   theme_minimal() +
   labs(x = "Repräsentative Begriffe", y = "Gewichtung") +
-  rcartocolor::scale_fill_carto_d(type="diverging", palette="Temps") +
-  theme_gg
+  rcartocolor::scale_fill_carto_d(type="diverging", palette="Temps")
 
 if(interactive()){
   7 * 0.25 + calc_panel_margin_y_in(topic_frex_plot)
