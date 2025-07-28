@@ -3,7 +3,7 @@ title: "Analyse von Support-Tickets"
 subtitle: "Wie maschinelles Lernen hilft, dringende Kundenanliegen frühzeitig zu erkennen."
 figtitle: "📩"
 date: "2024-11-25T14:25:49+01:00"
-draft: true
+draft: false
 execute:
   echo: false
   message: false
@@ -239,7 +239,6 @@ Das Endresultat ist ein Datensatz in dem jedes Wort eine eigene Zeile darstellt.
 
 ```{r}
 #| fig-cap: Word Frequency
-#| fig-height: 2.263476
 
 # word freq
 top_words <- support_tokens_clean |>
@@ -252,23 +251,17 @@ freq_plot <- top_words |>
   coord_flip() +
   labs(x = "Wort", y = "Anzahl") +
   theme_minimal()
-
-if (interactive()) {
-  10 * 0.25 + calc_panel_margin_y_in(freq_plot)
-}
-
+```
+```{r}
+#| fig-height: !expr '10 * 0.25 + calc_panel_margin_y_in(freq_plot)'
 freq_plot
 ```
 
-
 Die zehn häufigsten Begriffe im Datensatz deuten darauf hin, dass der Kundenservice vor allem bei technischen Problemen oder Fragen zur Software kontaktiert wird. Allerdings wird hiermit noch nicht deutlich, welche Begriffe dringendere Nachrichten darstellen. Dazu betrachten wir in der nächsten Abbildung die häufigsten Begriffe nach Dringlichkeit. 
-
-
 
 ```{r}
 #| fig-cap: Word Frequency per Urgency Class
 #| fig-height: 2.498452
-
 freq_per_class_plot <-
   support_tokens_clean |>
   count(Dringlichkeit, word, sort = TRUE) |>
@@ -295,11 +288,9 @@ freq_per_class_plot <-
     x = NULL,
     y = "Häufigkeit"
   )
-
-if (interactive()) {
-  7 * 0.25 + calc_panel_margin_y_in(freq_per_class_plot)
-}
-
+```
+```{r}
+#| fig-height: !expr '10 * 0.25 + calc_panel_margin_y_in(freq_per_class_plot)'
 freq_per_class_plot
 ```
 
@@ -346,15 +337,11 @@ tfidf_plot <-
     y = "TF-IDF Wert",
     x = NULL
   )
-
-
-if (interactive()) {
-  7 * 0.25 + calc_panel_margin_y_in(tfidf_plot)
-}
-
+```
+```{r}
+#| fig-height: !expr '10 * 0.25 + calc_panel_margin_y_in(tfidf_plot)'
 tfidf_plot
 ```
-
 
 Um die Dringlichkeit von Nachrichten automatisch einschätzen zu können, müssen aus dem Text sinnvolle Merkmale gewonnen werden. Dabei helfen sprachliche Hinweise wie Ausrufezeichen, Fragen oder die durchschnittliche Wortlänge. Solche Merkmale lassen sich mit sogenannten "Regular Expressions" erkennen. Das sind spezielle Suchmuster, mit denen bestimmte Zeichenfolgen im Text gezielt gefunden und gezählt werden können, etwa Ausrufezeichen oder Fragewörter.
 
@@ -431,7 +418,6 @@ Ein weiteres Merkmal, das für die Modellierung interessant sein könnte, ist di
 
 
 ```{r}
-
 ## Sentiment Analysis
 
 sentiment_tokens <- vns::calc_tok_sentidict_tbl(
