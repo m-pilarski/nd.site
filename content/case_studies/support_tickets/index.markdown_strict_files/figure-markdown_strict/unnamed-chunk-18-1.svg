@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='576.00pt' height='138.53pt' viewBox='0 0 576.00 138.53'>
+<g class='svglite'>
+<defs>
+  <style type='text/css'><![CDATA[
+    .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {
+      fill: none;
+      stroke: #000000;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-miterlimit: 10.00;
+    }
+    .svglite text {
+      white-space: pre;
+    }
+    .svglite g.glyphgroup path {
+      fill: inherit;
+      stroke: none;
+    }
+  ]]></style>
+</defs>
+<rect width='100%' height='100%' style='stroke: none; fill: none;'/>
+<defs>
+  <clipPath id='cpMC4wMHw1NzYuMDB8MC4wMHwxMzguNTM='>
+    <rect x='0.00' y='0.00' width='576.00' height='138.53' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpMC4wMHw1NzYuMDB8MC4wMHwxMzguNTM=)'>
+<rect x='0.00' y='0.00' width='576.00' height='138.53' style='stroke-width: 1.36; stroke: none;' />
+</g>
+<defs>
+  <clipPath id='cpNjcuMzZ8NTY5LjAzfDYuOTd8OTYuOTg='>
+    <rect x='67.36' y='6.97' width='501.67' height='90.01' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpNjcuMzZ8NTY5LjAzfDYuOTd8OTYuOTg=)'>
+<rect x='67.36' y='6.97' width='501.67' height='90.01' style='stroke-width: 1.36; stroke: none;' />
+<rect x='329.59' y='13.11' width='205.23' height='36.82' style='stroke-width: 0.21; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #39B185;' />
+<rect x='101.56' y='13.11' width='205.23' height='36.82' style='stroke-width: 0.21; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #CF597E;' />
+<rect x='329.59' y='54.02' width='205.23' height='36.82' style='stroke-width: 0.21; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #CF597E;' />
+<rect x='101.56' y='54.02' width='205.23' height='36.82' style='stroke-width: 0.21; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #39B185;' />
+<text x='432.21' y='37.63' text-anchor='middle' style='font-size: 17.07px; font-weight: bold;fill: #FFFFFF; font-family: "Arial";' textLength='37.94px' lengthAdjust='spacingAndGlyphs'>1254</text>
+<text x='204.18' y='37.63' text-anchor='middle' style='font-size: 17.07px; font-weight: bold;fill: #FFFFFF; font-family: "Arial";' textLength='18.97px' lengthAdjust='spacingAndGlyphs'>23</text>
+<text x='432.21' y='78.54' text-anchor='middle' style='font-size: 17.07px; font-weight: bold;fill: #FFFFFF; font-family: "Arial";' textLength='18.97px' lengthAdjust='spacingAndGlyphs'>23</text>
+<text x='204.18' y='78.54' text-anchor='middle' style='font-size: 17.07px; font-weight: bold;fill: #FFFFFF; font-family: "Arial";' textLength='28.45px' lengthAdjust='spacingAndGlyphs'>916</text>
+</g>
+<g clip-path='url(#cpMC4wMHw1NzYuMDB8MC4wMHwxMzguNTM=)'>
+<text x='61.08' y='76.72' text-anchor='end' style='font-size: 12.00px;fill: #4D4D4D; font-family: "Open Sans";' textLength='37.27px' lengthAdjust='spacingAndGlyphs'>Gering</text>
+<text x='61.08' y='35.81' text-anchor='end' style='font-size: 12.00px;fill: #4D4D4D; font-family: "Open Sans";' textLength='29.17px' lengthAdjust='spacingAndGlyphs'>Hoch</text>
+<text x='204.18' y='111.83' text-anchor='middle' style='font-size: 12.00px;fill: #4D4D4D; font-family: "Open Sans";' textLength='37.27px' lengthAdjust='spacingAndGlyphs'>Gering</text>
+<text x='432.21' y='111.83' text-anchor='middle' style='font-size: 12.00px;fill: #4D4D4D; font-family: "Open Sans";' textLength='29.17px' lengthAdjust='spacingAndGlyphs'>Hoch</text>
+<text x='318.19' y='128.19' text-anchor='middle' style='font-size: 14.00px; font-family: "Open Sans";' textLength='87.17px' lengthAdjust='spacingAndGlyphs'>Vorhergesagt</text>
+<text transform='translate(16.97,51.98) rotate(-90)' text-anchor='middle' style='font-size: 14.00px; font-family: "Open Sans";' textLength='72.59px' lengthAdjust='spacingAndGlyphs'>Tatsächlich</text>
+</g>
+</g>
+</svg>

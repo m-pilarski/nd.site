@@ -3,7 +3,7 @@ title: "Analyse von Kundenrezensionen"
 subtitle: "Wie kann Kundenfeedback effektiv zur Produktoptimierung genutzt werden?"
 figtitle: "⭐"
 date: "2024-11-25T14:25:49+01:00"
-draft: true
+draft: false
 execute: 
   echo: false
   message: false
