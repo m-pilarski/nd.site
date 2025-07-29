@@ -84,16 +84,19 @@ highschool |>
         {{{< p class="nd-article" >}}} Unsere Fallstudien veranschaulichen, wie Technologien der Textanalyse auf reale Daten angewendet werden. Entdecken Sie konkrete Beispiele für den Einsatz von Sentimentanalyse, Themenmodellierung und weiteren Methoden. {{{< /p >}}}
     {{{< /div >}}} 
     {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
-        {{{< bs_card_emoji emoji_code="1f4f0" emoji_bg="#837591" card_title="Fallstudie I" card_text="Lorem Ipsum" card_href="/case_studies/case_study-1" >}}}
+        {{{< bs_card_emoji emoji_code="2b50" emoji_bg="#837591" card_title="Kundenrezensionen" card_text="Kundenrezensionen bieten wertvolle Einblicke in die Nutzung und Bewertung von Produkten, oft jedoch in unstrukturierter Form. Mittels Textanalyse lassen sich diese Informationen systematisch aufbereiten und helfen, Nutzerbedürfnisse gezielt zu erkennen." card_href="/case_studies/customer_reviews" >}}}
+    {{{< /div >}}} 
+    {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
+        {{{< bs_card_emoji emoji_code="1f4e9" emoji_bg="#837591" card_title="Analyse von Support-Tickets" card_text="Täglich erreichen Unternehmen zahlreiche Anfragen, Beschwerden oder sonstige Mitteilungen. Um diese effizient zu verwalten, kommen Support-Systeme zum Einsatz, die Kundenanliegen strukturieren und kategorisieren." >}}}
+    {{{< /div >}}} 
+    {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
+        {{{< bs_card_emoji emoji_code="1f4f0" emoji_bg="#9c9c9c" card_title="Fallstudie I" card_text="Lorem Ipsum" card_href="/case_studies/case_study-1" >}}}
     {{{< /div >}}} 
     {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
         {{{< bs_card_emoji emoji_code="1f4f0" emoji_bg="#9c9c9c" card_title="Fallstudie II" card_text="Lorem Ipsum" card_href="/case_studies/case_study-2" >}}}
     {{{< /div >}}} 
     {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
         {{{< bs_card_emoji emoji_code="1f4f0" emoji_bg="#9c9c9c" card_title="Fallstudie III" card_text="Lorem Ipsum" card_href="/case_studies/case_study-3" >}}}
-    {{{< /div >}}} 
-    {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
-        {{{< bs_card_emoji emoji_code="1f4f0" emoji_bg="#9c9c9c" card_title="Fallstudie IV" card_text="Lorem Ipsum" card_href="/case_studies/case_study-4" >}}}
     {{{< /div >}}} 
 {{{< /div >}}}
 

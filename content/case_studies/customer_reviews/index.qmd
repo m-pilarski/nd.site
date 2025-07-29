@@ -69,6 +69,180 @@ Kundenrezensionen bieten wertvolle Einblicke in die Nutzung und Bewertung von Pr
 Ziel dieser Case Study ist es, ein differenziertes Bild der Kundenerfahrungen mit verschiedenen technischen Produktgruppen zu zeichnen und daraus Verbesserungspotenziale abzuleiten. Die Analyse basiert auf 3.413 deutschsprachigen Amazon-Rezensionen mit Angaben zu Bewertungstitel, Datum und Sternebewertung.
 
 ```{r}
+tags <- htmltools::tags
+
+# card_test <- tags$div(
+#   tags$div(
+#     "Beispiel einer Beobachtung aus dem Rohdatensatz", 
+#     class="card-header"
+#   ),
+#   tags$ul(
+#     tags$li(tags$em("Titel:"), "Das Beste iPhone aller Zeiten", class="list-group-item"),
+#     tags$li(tags$em("Datum:"), "5. Januar 2020", class="list-group-item"),
+#     tags$li(tags$em("Inhalt:"), "Ich bin sehr zufrieden mit dem iPhone 11. Der Wechsel vom iPhone 6s war ein riesiger Quantensprung, der sich allerdings gelohnt hat. Ich würde es jederzeit wieder kaufen.", class="list-group-item"),    
+#     tags$li(tags$em("Bewertung:"), htmltools::HTML("<i class='fa-solid fa-star'></i>&nbsp;<i class='fa-solid fa-star'></i>&nbsp;<i class='fa-solid fa-star'></i>&nbsp;<i class='fa-solid fa-star'></i>&nbsp;<i class='fa-regular fa-star'></i>"), class="list-group-item"),
+#     tags$li(tags$em("URL:"), tags$a("https://www.amazon.de/Apple-iPhone-11-128-GB-Schwarz/product-reviews/B07XRFCP6G/ref=cm_cr_arp_d_paging_btm_10?ie=UTF8&filterByStar=positive&pageNumber=10&reviewerType=all_reviews", href="https://www.amazon.de/Apple-iPhone-11-128-GB-Schwarz/product-reviews/B07XRFCP6G/ref=cm_cr_arp_d_paging_btm_10?ie=UTF8&filterByStar=positive&pageNumber=10&reviewerType=all_reviews"), class="list-group-item"),
+#     class="list-group list-group-flush"
+#   ),
+#   class="card", style="width: 100%;"
+# )
+
+
+
+# library(htmltools)
+
+# # Create list of cards
+# cards <- htmltools::tagList(
+#   card_test,
+#   card_test,
+#   card_test,
+#   card_test
+# )
+
+# # Wrap for Glider.js
+# glider_container <- tags$div(
+#   class = "glider-container",
+#   tags$div(class = "glider", cards),
+#   tags$button(class = "glider-prev", "«"),
+#   tags$button(class = "glider-next", "»"),
+#   # tags$div(class = "dots")
+# )
+
+# # Optional: JS initialization (assumes you're loading glider.min.js separately)
+# glider_init <- tags$script(htmltools::HTML(
+#   "document.addEventListener('DOMContentLoaded', function () {",
+#   "  new Glider(document.querySelector('.glider'), {",
+#   "    slidesToShow: 2,",
+#   "    slidesToScroll: 1,",
+#   "    draggable: true,",
+#   "    dots: '.dots',",
+#   "    arrows: {",
+#   "      prev: '.glider-prev',",
+#   "      next: '.glider-next'",
+#   "    }",
+#   "  });",
+#   "});"
+# ))
+
+# glider_css <- tags$style(HTML(paste(
+#   ".glider-container {",
+#   "  position: relative;",
+#   "  padding: 1rem;",
+#   "}",
+#   ".glider {",
+#   "  margin: 0 auto;",
+#   # "  gap: 1rem;",
+#   "}",
+#   ".glider-prev, .glider-next {",
+#   "  position: absolute;",
+#   "  top: 50%;",
+#   "  transform: translateY(-50%);",
+#   "  background: #fff;",
+#   "  border: none;",
+#   "  font-size: 2rem;",
+#   "  z-index: 10;",
+#   "  cursor: pointer;",
+#   "}",
+#   ".glider-prev {",
+#   "  left: -1rem;",
+#   "}",
+#   ".glider-next {",
+#   "  right: -1rem;",
+#   "}",
+#   ".glider::-webkit-scrollbar {",
+#   "  display: none;",
+#   "}",
+#   ".glider {",
+#   "  -ms-overflow-style: none;  /* IE/Edge */",
+#   "  scrollbar-width: none;     /* Firefox */",
+#   "}",
+#   ".glider > * {",
+#   "  margin-right: 1rem; /* Adjust spacing between items */",
+#   "}",
+#   ".glider > *:last-child {",
+#   "  margin-right: 0;",
+#   "}",
+#   sep = "\n"
+# )))
+
+# tagList(glider_css, glider_container, glider_init)
+```
+
+```{r}
+library(htmltools)
+
+# Create cards with wrapper for spacing
+create_card <- function(title, date, content) {
+  tags$div(
+    class = "card",
+    tags$div(title, class = "card-header"),
+    tags$ul(
+      class = "list-group list-group-flush",
+      tags$li(tags$em("Datum:"), " ", date, class = "list-group-item"),
+      tags$li(tags$em("Inhalt:"), " ", content, class = "list-group-item")
+    )
+  )
+}
+
+# Example cards
+cards <- tagList(
+  create_card("Beispiel 1", "5. Jan 2020", "Sehr zufrieden mit dem iPhone."),
+  create_card("Beispiel 2", "6. Jan 2020", "Tolles Gerät."),
+  create_card("Beispiel 3", "7. Jan 2020", "Gute Akkulaufzeit."),
+  create_card("Beispiel 4", "8. Jan 2020", "Preis-Leistung passt.")
+)
+
+# HTML structure with buttons underneath
+glider_container <- tagList(
+  tags$div(
+    class = "glider-container",
+    tags$div(class = "glider", cards),
+  ),
+  tags$div(
+    class = "d-flex justify-content-between",
+    tags$button(id="glider-prev1", type="button", class="btn btn-light", htmltools::HTML("<i class='fa-solid fa-angles-left'></i>")),
+    tags$button(id="glider-next1", type="button", class="btn btn-light", htmltools::HTML("<i class='fa-solid fa-angles-right'></i>"))
+  )
+)
+
+# JavaScript for Glider initialization
+glider_js <- tags$script(HTML("
+  document.addEventListener('DOMContentLoaded', function () {
+    // Wait a bit to ensure DOM is fully ready
+    setTimeout(function() {
+      const gliderElement = document.querySelector('.glider');
+      if (gliderElement && typeof Glider !== 'undefined') {
+        new Glider(gliderElement, {
+          slidesToShow: 1, 
+          slidesToScroll: 1,
+          draggable: true,
+          dragVelocity: 1.2,
+          arrows: {
+            prev: '#glider-prev1',
+            next: '#glider-next1'
+          },
+          responsive: [
+            {
+              breakpoint: 768,
+              settings: {
+                slidesToShow: 2, 
+                slidesToScroll: 1
+              }
+            }
+          ]
+        });
+      } else {
+        console.error('Glider element or Glider.js library not found');
+      }
+    }, 100);
+  });
+"))
+
+# Render everything (no CDN needed since Glider.js is already loaded)
+tagList(glider_container, glider_js)
+```
+
+```{r}
 reviews <- 
   read_csv(
     here::here(
