@@ -59,13 +59,13 @@ defaultContentLanguageInSubdir = false
         name = "Support-Tickets"
         url = "/case_studies/support_tickets/"
     [[menu.main]]
-        weight = 2
+        weight = 3
         identifier = "case_studies-case_study-1"
         parent = "case_studies"
         name = "Fallstudie I"
         url = "/case_studies/case_study-1/"
     [[menu.main]]
-        weight = 3
+        weight = 4
         identifier = "case_studies-case_study-2"
         parent = "case_studies"
         name = "Fallstudie II"

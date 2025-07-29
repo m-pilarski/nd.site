@@ -26,7 +26,7 @@ library(topicmodels)
 # library(wordcloud)
 # library(stopwords)
 library(ggplot2)
-library(textrecipes)
+# library(textrecipes)
 library(gt)
 
 data_dir <- here::here("content", "case_studies", "support_tickets", "data")
@@ -115,6 +115,9 @@ In diesem Fallbeispiel zeigen wir, wie sich Methoden der Textanalyse und des mas
 
 Dabei konzentrieren wir uns bewusst vor allem auf textbasierte Variablen, um zu demonstrieren, dass bereits auf dieser Basis leistungsfähige Klassifikationsmodelle entwickelt werden können.
 
+
+### Laden des Datensatzes 
+
 ```{r}
 #| echo: false
 #| message: false
@@ -181,9 +184,14 @@ support |>
 ```
 
 
-Bevor wir mit der Modellierung beginnen, schauen wir uns den Datensatz etwas genauer an, um ein besseres Verständnis für die enthaltenen Texte zu gewinnen. Insbesondere bei textbasierten Daten bietet es sich an, zunächst Worthäufigkeiten zu betrachten, um zentrale Begriffe und mögliche Muster zu erkennen.
+### Vorverarbeitung
 
-Dabei entfernen wir sogenannte Stoppwörter, also sehr häufige Wörter ohne inhaltliche Aussagekraft. Zusätzlich bereinigen wir die Texte um wiederkehrende Begrüßungen wie „Sehr geehrtes Support-Team“ oder "Sehr geehrter Kundenservice", da auch diese keinen Beitrag zur inhaltlichen Analyse leisten.
+Bevor der Text für weitere Analysen genutzt werden kann, muss er, wie in den Grundlagen beschrieben, in ein geeignetes Format überführt werden.
+
+Dazu entfernen wir unter anderem sogenannte **Stoppwörter**, also sehr häufige Wörter ohne inhaltliche Aussagekraft. Zusätzlich bereinigen wir die Texte um wiederkehrende Formulierungen wie „Sehr geehrtes Support-Team“ oder „Sehr geehrter Kundenservice“, da auch diese keinen Mehrwert für die inhaltliche Analyse bieten.
+
+Anschließend wird der Text **tokenisiert**, also in einzelne Wörter zerlegt. Dies ist ein grundlegender Schritt, um unstrukturierte Sprache in eine **strukturierte Form** zu bringen, die sich systematisch analysieren lässt, etwa durch das Zählen oder Vergleichen sprachlicher Einheiten, wie Wörtern.
+
 
 ```{r}
 #| echo: false
@@ -238,7 +246,6 @@ Das Endresultat ist ein Datensatz in dem jedes Wort eine eigene Zeile darstellt.
 
 
 ```{r}
-#| fig-cap: Word Frequency
 
 # word freq
 top_words <- support_tokens_clean |>
@@ -257,10 +264,16 @@ freq_plot <- top_words |>
 freq_plot
 ```
 
+
+### Analyse
+
+#### Worthäufigkeiten
+
+Bevor wir mit der Modellierung beginnen, schauen wir uns den Datensatz etwas genauer an, um ein besseres Verständnis für die enthaltenen Texte zu gewinnen. Insbesondere bei textbasierten Daten bietet es sich an, zunächst **Worthäufigkeiten** zu betrachten, um zentrale Begriffe und mögliche Muster zu erkennen.
+
 Die zehn häufigsten Begriffe im Datensatz deuten darauf hin, dass der Kundenservice vor allem bei technischen Problemen oder Fragen zur Software kontaktiert wird. Allerdings wird hiermit noch nicht deutlich, welche Begriffe dringendere Nachrichten darstellen. Dazu betrachten wir in der nächsten Abbildung die häufigsten Begriffe nach Dringlichkeit. 
 
 ```{r}
-#| fig-cap: Word Frequency per Urgency Class
 #| fig-height: 2.498452
 freq_per_class_plot <-
   support_tokens_clean |>
@@ -303,11 +316,13 @@ Es lassen sich klare inhaltliche Unterschiede zwischen den Klassen erkennen:
   {{{< fa-solid-li icon="triangle-exclamation" >}}} In hoch dringlichen Nachrichten (rechts) dominieren dagegen Begriffe wie „problem“, „software“, „beheben“, „lösung“ oder „ursache“. Diese Begriffe weisen auf technische Schwierigkeiten oder akute Störungen hin, die eine schnelle Reaktion erfordern.{{{< /fa-solid-li >}}}
 {{{< /fa-ul >}}}
 
+
+#### Charakteristische Begriffe pro Klasse (TF-IDF)
+
 Neben der Betrachtung der häufigsten Begriffe ist es oft noch aufschlussreicher, charakteristische Wörter pro Klasse zu identifizieren. Die TF-IDF-Methode hebt dabei Begriffe hervor, die besonders typisch für eine Klasse sind, aber in anderen weniger häufig vorkommen. So lassen sich sprachliche Muster erkennen, die beim automatisierten Erkennen der Dringlichkeit besonders hilfreich sind. Die folgende Grafik zeigt die jeweils 10 prägnantesten Begriffe pro Klasse.
 
 
 ```{r}
-#| fig-cap: TF-IDF per Urgency Class
 #| fig-height: 2.498452
 
 tfidf_plot <-
@@ -343,9 +358,12 @@ tfidf_plot <-
 tfidf_plot
 ```
 
-Um die Dringlichkeit von Nachrichten automatisch einschätzen zu können, müssen aus dem Text sinnvolle Merkmale gewonnen werden. Dabei helfen sprachliche Hinweise wie Ausrufezeichen, Fragen oder die durchschnittliche Wortlänge. Solche Merkmale lassen sich mit sogenannten "Regular Expressions" erkennen. Das sind spezielle Suchmuster, mit denen bestimmte Zeichenfolgen im Text gezielt gefunden und gezählt werden können, etwa Ausrufezeichen oder Fragewörter.
 
-Im nächsten Schritt bereiten wir die Texte entsprechend vor und erstellen verschiedene Merkmale, die später als Grundlage für das Modell dienen.
+#### Textbasierte Merkmalsextraktion
+
+Um die Dringlichkeit von Nachrichten automatisch einschätzen zu können, müssen aus dem Text sinnvolle **Merkmale** gewonnen werden. Dabei helfen sprachliche Hinweise wie **Ausrufezeichen**, **Fragen** oder die **durchschnittliche Wortlänge**. Solche Merkmale lassen sich mit sogenannten **Regular Expressions** erkennen. Das sind spezielle Suchmuster, mit denen bestimmte Zeichenfolgen im Text gezielt gefunden und gezählt werden können, etwa Ausrufezeichen oder Fragewörter.
+
+Im nächsten Schritt bereiten wir die Texte entsprechend vor und erstellen verschiedene Merkmale, die später als **Grundlage für das Modell** dienen.
 
 
 ```{r}
@@ -414,7 +432,9 @@ Ein Vergleich sprachlicher Merkmale zeigt deutliche Unterschiede zwischen dringe
 Andere Merkmale wie Zeichen- und Wortanzahl oder die Häufigkeit von Ausrufezeichen unterscheiden sich dagegen kaum. Der Anteil an Nachrichten mit Betreff ist in beiden Klassen nahezu identisch. Diese Unterschiede deuten darauf hin, dass dringende Nachrichten sprachlich oft direkter formuliert sind und klarere Handlungsaufforderungen enthalten. 
 
 
-Ein weiteres Merkmal, das für die Modellierung interessant sein könnte, ist die sprachliche Stimmung (Sentiment): Ist der Ton der Nachricht eher positiv oder negativ? Dazu führen wir eine einfache lexikonbasierte Sentimentanalyse durch. Dabei wird jeder Nachricht ein Wert zugewiesen, der die Summe der positiven und negativen Begriffe widerspiegelt. 
+#### Sentimentanalyse 
+
+Ein weiteres Merkmal, das für die Modellierung interessant sein könnte, ist die **sprachliche Stimmung (Sentiment):** Ist der Ton der Nachricht eher positiv oder negativ? Dazu führen wir eine einfache **lexikonbasierte Sentimentanalyse** durch. Dabei wird jeder Nachricht ein Wert zugewiesen, der die Summe der positiven und negativen Begriffe widerspiegelt. 
 
 
 ```{r}
@@ -514,7 +534,6 @@ Mit einem Anteil von 55.4% sind die Nachrichten überwiegend sprachlich negativ 
 Ein Blick auf den durchschnittlichen Sentimentwert für dringende und weniger dringende Nachrichten zeigt bedeutungsvolle Unterschiede: 
 
 ```{r}
-#| fig-cap: Distribution of Sentiment per Urgency Class
 #| fig-height: 2.424034
 
 #Sentiment per urgency label
@@ -590,6 +609,8 @@ Hoch dringliche Nachrichten enthalten häufiger negativ formulierte Texte, etwa 
 #
 ```
 
+### Klassifikation 
+
 Unser finaler Datensatz besteht aus einigen Merkmalen, die nun für das trainieren eines Modelles genutzt werden können, um damit zukünftige Nachrichten anhand des Textes in "dringend" oder "weniger dringend" zu klassifizieren. 
 
 
@@ -633,18 +654,18 @@ tibble(
 ```
 
 
-Um herauszufinden, ob eine Nachricht dringend ist oder nicht, wurde ein maschinelles Lernmodell (Random Forest) trainiert. Dabei wurden nicht nur der Inhalt der Nachricht, sondern auch sprachliche Merkmale wie Wortlänge, Anzahl an Ausrufezeichen, das Sentiment oder das Vorhandensein eines Betreffs berücksichtigt.
+Um herauszufinden, ob eine Nachricht dringend ist oder nicht, wurde ein **maschinelles Lernmodell (Random Forest)** trainiert. Dabei wurden nicht nur der Inhalt der Nachricht, sondern auch sprachliche Merkmale wie Wortlänge, Anzahl an Ausrufezeichen, das Sentiment oder das Vorhandensein eines Betreffs berücksichtigt.
 
 Das Modell wurde mit 75% der Daten trainiert und auf den verbleibenden 25% getestet. Die folgenden Schritte kamen dabei zum Einsatz:
 
 {{{< fa-ul >}}}
-{{{< fa-solid-li icon="broom" >}}} Textvorverarbeitung: Die Nachrichten wurden in einzelne Wörter zerlegt, Stoppwörter entfernt und sogenannte TF-IDF-Werte berechnet.{{{< /fa-solid-li >}}}
+{{{< fa-solid-li icon="broom" >}}} **Textvorverarbeitung:** Die Nachrichten wurden in einzelne Wörter zerlegt, Stoppwörter entfernt und sogenannte TF-IDF-Werte berechnet.{{{< /fa-solid-li >}}}
 
-{{{< fa-solid-li icon="wrench" >}}} Merkmalsgenerierung: Wir haben verschiedene Merkmale extrahiert – darunter Sentimentwerte, Satzzeichenanzahl, Wortlänge oder auch das Vorhandensein eines Betreffs.{{{< /fa-solid-li >}}}
+{{{< fa-solid-li icon="wrench" >}}} **Merkmalsgenerierung:** Wir haben verschiedene Merkmale extrahiert – darunter Sentimentwerte, Satzzeichenanzahl, Wortlänge oder auch das Vorhandensein eines Betreffs.{{{< /fa-solid-li >}}}
 
-{{{< fa-solid-li icon="network-wired" >}}} Klassifikation: Anschließend wurde ein Random-Forest-Modell trainiert, das Nachrichten automatisch in hohe oder geringe Dringlichkeit einordnet.{{{< /fa-solid-li >}}}
+{{{< fa-solid-li icon="network-wired" >}}} **Klassifikation:** Anschließend wurde ein Random-Forest-Modell trainiert, das Nachrichten automatisch in hohe oder geringe Dringlichkeit einordnet.{{{< /fa-solid-li >}}}
 
-{{{< fa-solid-li icon="chart-line" >}}} Modellbewertung: Um die Qualität des Modells zu beurteilen, wurden die Genauigkeit des Modells berechnet und anhand einer Konfusionsmatrix visualisiert. {{{< /fa-solid-li >}}}
+{{{< fa-solid-li icon="chart-line" >}}} **Modellbewertung:** Um die Qualität des Modells zu beurteilen, wurden die Genauigkeit des Modells berechnet und anhand einer Konfusionsmatrix visualisiert. {{{< /fa-solid-li >}}}
 {{{< /fa-ul >}}}
 
 
@@ -762,7 +783,6 @@ Die Konfusionsmatrix visualisiert diese Leistung im Detail:
 
 
 ```{r}
-#| fig-cap: Confusion Matrix
 #| fig-height: 1.924034
 
 conf_df <- final_preds |>
@@ -796,6 +816,6 @@ conf_plot
 
 ### Fazit
 
-Dieses Fallbeispiel zeigt, wie sich textbasierte Informationen gezielt nutzen lassen, um fundierte Entscheidungen zu treffen. Schon einfache sprachliche Merkmale wie Wortwahl, Satzzeichen oder Stimmung reichen aus, um komplexe Aufgaben wie die automatische Klassifikation von Support-Nachrichten zuverlässig zu lösen. Solche Modelle helfen Unternehmen dabei, ihren Kundenservice effizienter zu gestalten und die Zufriedenheit ihrer Kundinnen und Kunden zu steigern.
+Dieses Fallbeispiel zeigt, wie sich textbasierte Informationen gezielt nutzen lassen, um fundierte Entscheidungen zu treffen. Schon einfache sprachliche Merkmale wie Wortwahl, Satzzeichen oder Stimmung reichen aus, um komplexe Aufgaben wie die automatische Klassifikation von Support-Nachrichten zuverlässig zu lösen. Solche Modelle können Unternehmen dabei untersützen, ihren Kundenservice effizienter zu gestalten und die Zufriedenheit ihrer Kundinnen und Kunden zu steigern.
 
 

@@ -10,6 +10,7 @@ execute:
   cache: true
 ---
 
+
 ```{r}
 #| cache: false
 
@@ -64,9 +65,186 @@ ggplot2::theme_set(`+`(
 ```
 
 
-Kundenrezensionen bieten wertvolle Einblicke in die Nutzung und Bewertung von Produkten, oft jedoch in unstrukturierter Form. Mittels Textanalyse lassen sich diese Informationen systematisch aufbereiten und helfen, Nutzerbedürfnisse gezielt zu erkennen.
+Kundenrezensionen bieten wertvolle Einblicke in die Nutzung und Bewertung von Produkten, oft jedoch in unstrukturierter Form. Mittels Methoden der Textanalyse lassen sich diese Informationen systematisch aufbereiten und helfen, Nutzerbedürfnisse gezielt zu erkennen. Ziel dieser Case Study ist es, ein differenziertes Bild der Kundenerfahrungen mit verschiedenen technischen Produktgruppen zu zeichnen und daraus Verbesserungspotenziale abzuleiten.
 
-Ziel dieser Case Study ist es, ein differenziertes Bild der Kundenerfahrungen mit verschiedenen technischen Produktgruppen zu zeichnen und daraus Verbesserungspotenziale abzuleiten. Die Analyse basiert auf 3.413 deutschsprachigen Amazon-Rezensionen mit Angaben zu Bewertungstitel, Datum und Sternebewertung.
+
+### Laden des Datensatzes 
+
+Die Analyse basiert auf 3.413 deutschsprachigen Amazon-Rezensionen, die jeweils das Datum, die Sternebewertung und den Link der Rezension enthalten. Ein Ausschnitt der ersten Beobachtungen ist in der folgenden Tabelle dargestellt. 
+ 
+```{r}
+tags <- htmltools::tags
+
+# card_test <- tags$div(
+#   tags$div(
+#     "Beispiel einer Beobachtung aus dem Rohdatensatz", 
+#     class="card-header"
+#   ),
+#   tags$ul(
+#     tags$li(tags$em("Titel:"), "Das Beste iPhone aller Zeiten", class="list-group-item"),
+#     tags$li(tags$em("Datum:"), "5. Januar 2020", class="list-group-item"),
+#     tags$li(tags$em("Inhalt:"), "Ich bin sehr zufrieden mit dem iPhone 11. Der Wechsel vom iPhone 6s war ein riesiger Quantensprung, der sich allerdings gelohnt hat. Ich würde es jederzeit wieder kaufen.", class="list-group-item"),    
+#     tags$li(tags$em("Bewertung:"), htmltools::HTML("<i class='fa-solid fa-star'></i>&nbsp;<i class='fa-solid fa-star'></i>&nbsp;<i class='fa-solid fa-star'></i>&nbsp;<i class='fa-solid fa-star'></i>&nbsp;<i class='fa-regular fa-star'></i>"), class="list-group-item"),
+#     tags$li(tags$em("URL:"), tags$a("https://www.amazon.de/Apple-iPhone-11-128-GB-Schwarz/product-reviews/B07XRFCP6G/ref=cm_cr_arp_d_paging_btm_10?ie=UTF8&filterByStar=positive&pageNumber=10&reviewerType=all_reviews", href="https://www.amazon.de/Apple-iPhone-11-128-GB-Schwarz/product-reviews/B07XRFCP6G/ref=cm_cr_arp_d_paging_btm_10?ie=UTF8&filterByStar=positive&pageNumber=10&reviewerType=all_reviews"), class="list-group-item"),
+#     class="list-group list-group-flush"
+#   ),
+#   class="card", style="width: 100%;"
+# )
+
+
+
+# library(htmltools)
+
+# # Create list of cards
+# cards <- htmltools::tagList(
+#   card_test,
+#   card_test,
+#   card_test,
+#   card_test
+# )
+
+# # Wrap for Glider.js
+# glider_container <- tags$div(
+#   class = "glider-container",
+#   tags$div(class = "glider", cards),
+#   tags$button(class = "glider-prev", "«"),
+#   tags$button(class = "glider-next", "»"),
+#   # tags$div(class = "dots")
+# )
+
+# # Optional: JS initialization (assumes you're loading glider.min.js separately)
+# glider_init <- tags$script(htmltools::HTML(
+#   "document.addEventListener('DOMContentLoaded', function () {",
+#   "  new Glider(document.querySelector('.glider'), {",
+#   "    slidesToShow: 2,",
+#   "    slidesToScroll: 1,",
+#   "    draggable: true,",
+#   "    dots: '.dots',",
+#   "    arrows: {",
+#   "      prev: '.glider-prev',",
+#   "      next: '.glider-next'",
+#   "    }",
+#   "  });",
+#   "});"
+# ))
+
+# glider_css <- tags$style(HTML(paste(
+#   ".glider-container {",
+#   "  position: relative;",
+#   "  padding: 1rem;",
+#   "}",
+#   ".glider {",
+#   "  margin: 0 auto;",
+#   # "  gap: 1rem;",
+#   "}",
+#   ".glider-prev, .glider-next {",
+#   "  position: absolute;",
+#   "  top: 50%;",
+#   "  transform: translateY(-50%);",
+#   "  background: #fff;",
+#   "  border: none;",
+#   "  font-size: 2rem;",
+#   "  z-index: 10;",
+#   "  cursor: pointer;",
+#   "}",
+#   ".glider-prev {",
+#   "  left: -1rem;",
+#   "}",
+#   ".glider-next {",
+#   "  right: -1rem;",
+#   "}",
+#   ".glider::-webkit-scrollbar {",
+#   "  display: none;",
+#   "}",
+#   ".glider {",
+#   "  -ms-overflow-style: none;  /* IE/Edge */",
+#   "  scrollbar-width: none;     /* Firefox */",
+#   "}",
+#   ".glider > * {",
+#   "  margin-right: 1rem; /* Adjust spacing between items */",
+#   "}",
+#   ".glider > *:last-child {",
+#   "  margin-right: 0;",
+#   "}",
+#   sep = "\n"
+# )))
+
+# tagList(glider_css, glider_container, glider_init)
+```
+
+```{r}
+library(htmltools)
+
+# Create cards with wrapper for spacing
+create_card <- function(title, date, content) {
+  tags$div(
+    class = "card",
+    tags$div(title, class = "card-header"),
+    tags$ul(
+      class = "list-group list-group-flush",
+      tags$li(tags$em("Datum:"), " ", date, class = "list-group-item"),
+      tags$li(tags$em("Inhalt:"), " ", content, class = "list-group-item")
+    )
+  )
+}
+
+# Example cards
+cards <- tagList(
+  create_card("Beispiel 1", "5. Jan 2020", "Sehr zufrieden mit dem iPhone."),
+  create_card("Beispiel 2", "6. Jan 2020", "Tolles Gerät."),
+  create_card("Beispiel 3", "7. Jan 2020", "Gute Akkulaufzeit."),
+  create_card("Beispiel 4", "8. Jan 2020", "Preis-Leistung passt.")
+)
+
+# HTML structure with buttons underneath
+glider_container <- tagList(
+  tags$div(
+    class = "glider-container",
+    tags$div(class = "glider", cards),
+  ),
+  tags$div(
+    class = "d-flex justify-content-between",
+    tags$button(id="glider-prev1", type="button", class="btn btn-light", htmltools::HTML("<i class='fa-solid fa-angles-left'></i>")),
+    tags$button(id="glider-next1", type="button", class="btn btn-light", htmltools::HTML("<i class='fa-solid fa-angles-right'></i>"))
+  )
+)
+
+# JavaScript for Glider initialization
+glider_js <- tags$script(HTML("
+  document.addEventListener('DOMContentLoaded', function () {
+    // Wait a bit to ensure DOM is fully ready
+    setTimeout(function() {
+      const gliderElement = document.querySelector('.glider');
+      if (gliderElement && typeof Glider !== 'undefined') {
+        new Glider(gliderElement, {
+          slidesToShow: 1, 
+          slidesToScroll: 1,
+          draggable: true,
+          dragVelocity: 1.2,
+          arrows: {
+            prev: '#glider-prev1',
+            next: '#glider-next1'
+          },
+          responsive: [
+            {
+              breakpoint: 768,
+              settings: {
+                slidesToShow: 2, 
+                slidesToScroll: 1
+              }
+            }
+          ]
+        });
+      } else {
+        console.error('Glider element or Glider.js library not found');
+      }
+    }, 100);
+  });
+"))
+
+# Render everything (no CDN needed since Glider.js is already loaded)
+tagList(glider_container, glider_js)
+```
 
 ```{r}
 reviews <- 
@@ -126,7 +304,13 @@ reviews <-
 ```
 
 
-In dieser Analyse kommen überwiegend lexikon- und regelbasierte Verfahren zum Einsatz, die empfindlich auf irrelevante Inhalte reagieren. Daher ist eine gründliche Vorverarbeitung der Texte essenziell, um konsistente und aussagekräftige Ergebnisse zu gewährleisten. Die folgenden Schritte wurden dabei durchgeführt:
+### Vorverarbeitung der Textdaten
+
+In dieser Analyse kommen überwiegend **lexikon- und regelbasierte Verfahren** zum Einsatz, die empfindlich auf irrelevante Inhalte reagieren. Bevor sich jedoch das Signal erkennen lässt, muss das Rauschen entfernt werden.
+
+Als erster Schritt wird der Text daher so aufbereitet, dass aus der Vielzahl an Formulierungen, Füllwörtern und inhaltsarmen Begriffen jene sprachlichen Elemente herausgefiltert werden, die einen **bedeutungsvollen Mehrwert** bieten. Dieser Prozess ist als **Vorverarbeitung** bekannt und bildet die Grundlage für konsistente und aussagekräftige Ergebnisse.
+
+Die folgenden Schritte wurden dabei durchgeführt:
 
 
 {{{< fa-ul >}}}
@@ -135,7 +319,7 @@ In dieser Analyse kommen überwiegend lexikon- und regelbasierte Verfahren zum E
   {{{< fa-solid-li icon="filter" >}}}	**Stopword-Filter:** Häufige, wenig aussagekräftige Wörter (z.B. „und“, „ist“, "oder") sowie produktspezifische Begriffe wurden entfernt. {{{< /fa-solid-li >}}}
 {{{< /fa-ul >}}}
 
-Diese Schritte gewährleisten, dass die nachfolgenden Analysen auf dem wesentlichen Kern der Kundenrezensionen basieren.
+Diese Schritte gewährleisten, dass die nachfolgenden Analysen auf dem **wesentlichen Kern** der Kundenrezensionen basieren.
 
 
 
@@ -175,41 +359,71 @@ review_tokens_clean |>
 
 ```
 
-Die Verteilung der Bewertungen zeigt, dass die meisten Bewertungen im oberen und unteren Bereich liegen. Im nächsten Schritt wird ermittelt, ob bestimmte Produktkategorieren besonders positiv oder negativ bewertet wurden. 
 
-:::{.columns}
+<!-- Die Verteilung der Bewertungen zeigt, dass die meisten Bewertungen im oberen und unteren Bereich liegen. Im nächsten Schritt wird ermittelt, ob bestimmte Produktkategorieren besonders positiv oder negativ bewertet wurden.  -->
 
-::: {.column width="70%"}
+<!-- :::{.columns} -->
 
-```{r}
-#| fig-cap: Rating distribution
-#| fig-height: 1.923071
-bewertung_plot <- reviews |>
-  count(Bewertung = factor(Bewertung)) |> 
-  ggplot(aes(y=Bewertung, x = n)) +
-  geom_col(aes(fill = Bewertung)) +
-  rcartocolor::scale_fill_carto_d(
-    type="diverging", palette="Temps", direction=-1
-  ) +
-  labs(y = "Bewertung", x = "Anzahl") +
-  theme(legend.position="none")
+<!-- ::: {.column width="70%"} -->
 
-if(interactive()){
-  5 * 0.25 + calc_panel_margin_y_in(bewertung_plot)
-}
+<!-- ```{r} -->
+<!-- #| fig-cap: Rating distribution -->
+<!-- #| fig-height: 1.923071 -->
+<!-- bewertung_plot <- reviews |> -->
+<!--   count(Bewertung = factor(Bewertung)) |>  -->
+<!--   ggplot(aes(y=Bewertung, x = n)) + -->
+<!--   geom_col(aes(fill = Bewertung)) + -->
+<!--   rcartocolor::scale_fill_carto_d( -->
+<!--     type="diverging", palette="Temps", direction=-1 -->
+<!--   ) + -->
+<!--   labs(y = "Bewertung", x = "Anzahl") + -->
+<!--   theme(legend.position="none") -->
 
-bewertung_plot
-```
-:::
+<!-- if(interactive()){ -->
+<!--   5 * 0.25 + calc_panel_margin_y_in(bewertung_plot) -->
+<!-- } -->
 
-::: {.column width="30%"}
+<!-- bewertung_plot -->
+<!-- ``` -->
+<!-- ::: -->
+
+<!-- ::: {.column width="30%"} -->
+<!-- ```{r} -->
+<!-- reviews |> -->
+<!--   group_by(Produkttyp) |> -->
+<!--   summarise(avg_rating = mean(Bewertung, na.rm = TRUE)) |> -->
+<!--   arrange(desc(avg_rating)) |>  -->
+<!--   gt::gt() |>  -->
+<!--   gt::fmt_number(columns = avg_rating, decimals = 2) |>  -->
+<!--   gt::cols_label( -->
+<!--     Produkttyp = "Produkttyp", -->
+<!--     avg_rating = "Ø Bewertung" -->
+<!--   ) |> -->
+<!--   gt::tab_options( -->
+<!--     table.width = gt::pct(100) -->
+<!--   ) -->
+<!-- ``` -->
+<!-- ::: -->
+<!-- ::: -->
+
+### Analyse 
+
+#### Erste Einblicke: Vergleich der Produktkategorien 
+
+Wir beginnen mit einer rein **explorativen Betrachtung:** Gibt es Unterschiede in der durchschnittlichen Bewertung zwischen den Produktkategorien?
+
+Dazu werden die Produktnamen aus den URLs extrahiert und manuell drei Kategorien zugeordnet: **Smartphones**, **Kopfhörer** und **Telefonzubehör.**
+
+**Beispiel:** Aus der URL *https://www.amazon.de/sony-kopfhoerer-mdr/product-reviews/* wird „sony kopfhoerer mdr“ extrahiert und der Kategorie „Kopfhörer“ zugewiesen.
+
+
 ```{r}
 reviews |>
   group_by(Produkttyp) |>
   summarise(avg_rating = mean(Bewertung, na.rm = TRUE)) |>
-  arrange(desc(avg_rating)) |> 
-  gt::gt() |> 
-  gt::fmt_number(columns = avg_rating, decimals = 2) |> 
+  arrange(desc(avg_rating)) |>
+  gt::gt() |>
+  gt::fmt_number(columns = avg_rating, decimals = 2) |>
   gt::cols_label(
     Produkttyp = "Produkttyp",
     avg_rating = "Ø Bewertung"
@@ -218,23 +432,21 @@ reviews |>
     table.width = gt::pct(100)
   )
 ```
-:::
-:::
-
-
-Dafür werden die Produktnamen aus den URLs extrahiert und manuell in drei Kategorien eingeteilt: Smartphones, Kopfhörer und Telefonzubehör. Beispiel: Aus der URL *https:://www.amazon.de/sony-kopfhoerer-mdr/product-reviews/* wird „sony kopfhoerer mdr“ extrahiert und der Kategorie "Kopfhörer" zugeordnet.
 
 Ein Blick auf den Durchschnitt der Bewertungen nach Produktkategorie zeigt zusätzlich Unterschiede in der Kundenzufriedenheit:
 
 {{{< fa-ul >}}}
-  {{{< fa-solid-li icon="lightbulb" >}}} Die Kategorie "Telefonzubehör" (z.B.Anrufbeantworter) schneidet im Schnitt am besten ab. {{{< /fa-solid-li >}}}
+  {{{< fa-solid-li icon="lightbulb" >}}} Die Kategorie "Telefonzubehör" (z.B. Anrufbeantworter) schneidet im Schnitt am besten ab. {{{< /fa-solid-li >}}}
   {{{< fa-solid-li icon="lightbulb" >}}} Kopfhörer hingegen zeigen im Vergleich die niedrigsten Durchschnittsbewertungen. {{{< /fa-solid-li >}}}
 {{{< /fa-ul >}}}
 
-Um ein erstes Gefühl für den Inhalt der Kundenrezensionen zu bekommen, bietet sich eine einfache Häufigkeitsanalyse der verwendeten Begriffe an. Die erste Grafik zeigt die häufigsten Wörter über alle Produktkategorien hinweg. Begriffe wie "super", "funktioniert" und "zufrieden" lassen bereits darauf schließen, dass Kund:innen grundsätzlich positive Erfahrungen mit den Produkten machen. Sie liefern jedoch wenig tiefergehende Erkenntnisse, da sie sehr allgemein sind.
+
+
+#### Worthäufigkeiten 
+
+Um ein erstes Gefühl für den Inhalt der Kundenrezensionen zu erhalten, bietet sich eine einfache **Häufigkeitsanalyse** der verwendeten Begriffe an. Die erste Grafik zeigt die häufigsten Wörter über alle Produktkategorien hinweg. Begriffe wie "super", "funktioniert" und "zufrieden" lassen bereits darauf schließen, dass Kund:innen grundsätzlich positive Erfahrungen mit den Produkten machen. Sie liefern jedoch wenig tiefergehende Erkenntnisse, da sie sehr allgemein sind.
 
 ```{r}
-#| fig-cap: Word frequency
 #| fig-height: 3.173071
 
 # word freq
@@ -253,10 +465,10 @@ if(interactive()){
 wort_plot
 ```
 
-Eine differenziertere Betrachtung liefert andere Einblicke: Während bei Smartphones und Telefonzubehör Begriffe wie „funktioniert“ oder „super“ dominieren, tauchen bei Kopfhörern vermehrt Wörter wie „kaputt“ oder „wackelkontakt“ auf. In Kombination mit der vergleichsweise niedrigen Durchschnittsbewertung deutet dies darauf hin, dass gerade bei Kopfhörern häufiger Probleme auftreten.
+
+Im nächsten Schritt untersuchen wir die häufigsten Begriffe pro Kategorie, um inhaltliche Unterschiede sichtbar zu machen.
 
 ```{r}
-#| fig-cap: Word freq per product
 #| fig-height: 3.505128
 
 produkttyp_plot <- review_tokens_clean |>
@@ -280,6 +492,8 @@ if(interactive()){
 produkttyp_plot
 ```
 
+
+Während bei *Smartphones* und *Telefonzubehör* Begriffe wie „funktioniert“ oder „super“ dominieren, tauchen bei *Kopfhörern* vermehrt Wörter wie „kaputt“ oder „wackelkontakt“ auf. In Kombination mit der vergleichsweise niedrigen Durchschnittsbewertung deutet dies darauf hin, dass gerade bei Kopfhörern häufiger Probleme auftreten.
 
 <!-- Häufigkeitsanalysen zeigen dominante Begriffe, vernachlässigen jedoch deren Aussagekraft pro Kategorie. Die TF-IDF-Analyse hebt hingegen kategorietypische Begriffe hervor. Die TF-IDF-Metrik (Term Frequency–Inverse Document Frequency) gewichtet Wörter nicht nur nach ihrer Häufigkeit, sondern berücksichtigt auch, wie exklusiv sie für eine bestimmte Kategorie sind. -->
 
@@ -321,7 +535,9 @@ produkttyp_plot
 <!-- ``` -->
 
 
-Um über reine Sternebewertungen hinauszugehen, wurde der Textinhalt der Rezensionen mithilfe einer lexikonbasierten Sentimentanalyse ausgewertet. Dabei erhielt jede Rezension einen numerischen Sentimentwert, der positive und negative Begriffe berücksichtigt.
+#### Sentimentanalyse 
+
+Um über reine Sternebewertungen hinauszugehen, analysieren wir den Textinhalt der Rezensionen mithilfe einer **lexikonbasierten Sentimentanalyse**. Dabei wird jeder Rezension einen numerischen Sentimentwert zugewiesen, der positive und negative Begriffe entsprechend abbildet. 
 
 
 ```{r}
@@ -461,7 +677,6 @@ sentiment_summary_per_class <-
 ```
 
 ```{r}
-#| fig-cap: Sentiment per product category
 #| fig-height: 2.050507
 
 sentimentclass_plot <- sentiment_summary_per_class |> 
@@ -500,9 +715,9 @@ sentimentclass_plot
 
 Um die Stimmung in den Rezensionen je Produktkategorie besser einordnen zu können, wurden die Anteile positiver, negativer und neutraler Bewertungen berechnet und in einem Vergleichsdiagramm nach Produktgruppen visualisiert.
 
-Die Kateogire "Telefonzubehör" sticht positiv hervor: Sie weist nicht nur den höchsten durchschnittlichen Sentimentwert auf (+0.45), sondern auch den größten Anteil an positiv formulierten Rezensionen (52%).
+Die Kateogire *Telefonzubehör* sticht positiv hervor: Sie weist nicht nur den höchsten durchschnittlichen Sentimentwert auf (+0.45), sondern auch den größten Anteil an positiv formulierten Rezensionen (52%).
 
-Kopfhörer hingegen erreichen den niedrigsten Sentimentwert (-0.37) und haben zugleich den geringsten Anteil an positiven Kommentaren (38%). Diese Ergebnisse decken sich mit den bisherigen Beobachtungen.
+*Kopfhörer* hingegen erreichen den niedrigsten Sentimentwert (-0.37) und haben zugleich den geringsten Anteil an positiven Kommentaren (38%). Diese Ergebnisse decken sich mit den bisherigen Beobachtungen.
 
 
 
@@ -540,11 +755,14 @@ if(interactive()){
 bigrams_worst_plot
 ```
 
-Eine Analyse der am häufigsten vorkommenden Wortpaare (Bigrams) in den Rezensionen für Kopfhörer offenbart ein zentrales Problem: 
+
+#### Analyse der Bigramme 
+
+Eine Analyse der am häufigsten vorkommenden **Wortpaare (Bigrams)** in den Rezensionen für *Kopfhörer* offenbart ein zentrales Problem: 
 
 Wortpaare wie „kaputt gegangen“, „monaten kaputt“, oder „kurzer zeit“ zeigen, dass viele Bewertungen auf schnelle Defekte und kurze Lebensdauer hinweisen. Kund:innen berichten von frühzeitigen Ausfällen, oft bereits nach wenigen Wochen oder Monaten.
 
-Welche konkreten Themen die Konsumenten bezüglich der Produktkategorie "Kopfhörer" beschäftigt, wird im nächsten Schritt mithilfe einer Themenmodellierung betrachtet.
+Welche konkreten Themen die Konsumenten bezüglich der Produktkategorie *Kopfhörer* beschäftigt, wird im nächsten Schritt mithilfe einer Themenmodellierung betrachtet.
 
 
 <!-- # ```{r} -->
@@ -739,8 +957,9 @@ topic_sentiment <- topic_assignments |>
 ```
 
 
+#### Themenmodellierung
 
-Um die zentralen Kritikpunkte in den Rezensionen zur Produktkategorie „Kopfhörer“ präziser herauszuarbeiten, wurde ein "Structural Topic Modelling" (STM) berechnet. Diese Methode bietet die Möglichkeit andere Faktoren, die die Themen beeinflussen könnten, zu berücksichtigen, wie die Bewertungen der Kund:innen und das Datum, an dem die Rezension verfasst wurde. Dabei stechen drei thematische Schwerpunkte heraus: **Preis-Leistung**, **Qualität**, und **Verarbeitung der Kabel**.
+Um die zentralen Kritikpunkte in den Rezensionen zur Produktkategorie *Kopfhörer* präziser herauszuarbeiten, wurde ein **Structural Topic Modelling (STM)** berechnet. Diese Methode bietet die Möglichkeit andere Faktoren, die die Themen beeinflussen könnten, zu berücksichtigen, wie die Bewertungen der Kund:innen und das Datum, an dem die Rezension verfasst wurde. Dabei stechen drei thematische Schwerpunkte heraus: **Preis-Leistung**, **Qualität**, und **Verarbeitung der Kabel**.
 
 
 
@@ -787,10 +1006,10 @@ topic_summary_plot
 ```
 
 
-Die Analyse der Sentimentwerte zeigt: Die größte Unzufriedenheit äußert sich bezüglich der Kabel der Kopfhörer, die meist kurz nach dem Kauf kaputt gehen. Auch die Themen Qualität und Preis-Leistung werden kritisch bewertet, allerdings nicht in dem Maße wie die fehlerhafte Verarbeitung der Kabel. Der Anbieter sollte gezielt an der Produktqualität arbeiten, um die Zufriedenheit der Kund:innen nachhaltig zu verbessern.
+Die Analyse der Sentimentwerte zeigt: Die größte Unzufriedenheit äußert sich bezüglich der Kabel der Kopfhörer, die meist kurz nach dem Kauf kaputt gehen. Auch die Themen Qualität und Preis-Leistung werden kritisch bewertet, allerdings nicht in dem Maße wie die fehlerhafte Verarbeitung der Kabel. Eine gezielte Verbesserung der Produktqualität oder des Rückgabeprozesses könnten dazu beitragen, die Kundenzufriedenheit langfristig zu steigern. 
 
 ### Fazit
 
-Kundenrezensionen liefern wertvolle Hinweise auf Produktqualität, Nutzererwartungen und Verbesserungspotenziale. Unternehmen können diese Einsichten nutzen, um gezielt Produktmängel zu beheben und ihre Angebote kundenorientierter weiterzuentwickeln.
+In dieser Fallstudie haben wir gezeigt, welches Potenzial in der **systematischen Auswertung von Kundenrezensionen** steckt. Der freie Text in Rezensionen liefert wertvolle Informationen, ohne dass zusätzliche Befragungen oder aufwändige Erhebungen notwendig sind, wodurch Ressourcen gespart und anders eingesetzt werden können. Mithilfe geeigneter Analysemethoden lassen sich daraus konkrete Hinweise auf Produktqualität, Nutzererwartungen und mögliche Verbesserungspotenziale ableiten. Unternehmen können diese Einsichten gezielt nutzen, um Schwachstellen zu erkennen und ihre Produkte noch konsequenter an den Bedürfnissen der Kund:innen auszurichten.
 
 
