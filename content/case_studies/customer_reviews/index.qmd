@@ -71,180 +71,6 @@ Kundenrezensionen bieten wertvolle Einblicke in die Nutzung und Bewertung von Pr
 ### Laden des Datensatzes 
 
 Die Analyse basiert auf 3.413 deutschsprachigen Amazon-Rezensionen, die jeweils das Datum, die Sternebewertung und den Link der Rezension enthalten. Ein Ausschnitt der ersten Beobachtungen ist in der folgenden Tabelle dargestellt. 
- 
-```{r}
-tags <- htmltools::tags
-
-# card_test <- tags$div(
-#   tags$div(
-#     "Beispiel einer Beobachtung aus dem Rohdatensatz", 
-#     class="card-header"
-#   ),
-#   tags$ul(
-#     tags$li(tags$em("Titel:"), "Das Beste iPhone aller Zeiten", class="list-group-item"),
-#     tags$li(tags$em("Datum:"), "5. Januar 2020", class="list-group-item"),
-#     tags$li(tags$em("Inhalt:"), "Ich bin sehr zufrieden mit dem iPhone 11. Der Wechsel vom iPhone 6s war ein riesiger Quantensprung, der sich allerdings gelohnt hat. Ich würde es jederzeit wieder kaufen.", class="list-group-item"),    
-#     tags$li(tags$em("Bewertung:"), htmltools::HTML("<i class='fa-solid fa-star'></i>&nbsp;<i class='fa-solid fa-star'></i>&nbsp;<i class='fa-solid fa-star'></i>&nbsp;<i class='fa-solid fa-star'></i>&nbsp;<i class='fa-regular fa-star'></i>"), class="list-group-item"),
-#     tags$li(tags$em("URL:"), tags$a("https://www.amazon.de/Apple-iPhone-11-128-GB-Schwarz/product-reviews/B07XRFCP6G/ref=cm_cr_arp_d_paging_btm_10?ie=UTF8&filterByStar=positive&pageNumber=10&reviewerType=all_reviews", href="https://www.amazon.de/Apple-iPhone-11-128-GB-Schwarz/product-reviews/B07XRFCP6G/ref=cm_cr_arp_d_paging_btm_10?ie=UTF8&filterByStar=positive&pageNumber=10&reviewerType=all_reviews"), class="list-group-item"),
-#     class="list-group list-group-flush"
-#   ),
-#   class="card", style="width: 100%;"
-# )
-
-
-
-# library(htmltools)
-
-# # Create list of cards
-# cards <- htmltools::tagList(
-#   card_test,
-#   card_test,
-#   card_test,
-#   card_test
-# )
-
-# # Wrap for Glider.js
-# glider_container <- tags$div(
-#   class = "glider-container",
-#   tags$div(class = "glider", cards),
-#   tags$button(class = "glider-prev", "«"),
-#   tags$button(class = "glider-next", "»"),
-#   # tags$div(class = "dots")
-# )
-
-# # Optional: JS initialization (assumes you're loading glider.min.js separately)
-# glider_init <- tags$script(htmltools::HTML(
-#   "document.addEventListener('DOMContentLoaded', function () {",
-#   "  new Glider(document.querySelector('.glider'), {",
-#   "    slidesToShow: 2,",
-#   "    slidesToScroll: 1,",
-#   "    draggable: true,",
-#   "    dots: '.dots',",
-#   "    arrows: {",
-#   "      prev: '.glider-prev',",
-#   "      next: '.glider-next'",
-#   "    }",
-#   "  });",
-#   "});"
-# ))
-
-# glider_css <- tags$style(HTML(paste(
-#   ".glider-container {",
-#   "  position: relative;",
-#   "  padding: 1rem;",
-#   "}",
-#   ".glider {",
-#   "  margin: 0 auto;",
-#   # "  gap: 1rem;",
-#   "}",
-#   ".glider-prev, .glider-next {",
-#   "  position: absolute;",
-#   "  top: 50%;",
-#   "  transform: translateY(-50%);",
-#   "  background: #fff;",
-#   "  border: none;",
-#   "  font-size: 2rem;",
-#   "  z-index: 10;",
-#   "  cursor: pointer;",
-#   "}",
-#   ".glider-prev {",
-#   "  left: -1rem;",
-#   "}",
-#   ".glider-next {",
-#   "  right: -1rem;",
-#   "}",
-#   ".glider::-webkit-scrollbar {",
-#   "  display: none;",
-#   "}",
-#   ".glider {",
-#   "  -ms-overflow-style: none;  /* IE/Edge */",
-#   "  scrollbar-width: none;     /* Firefox */",
-#   "}",
-#   ".glider > * {",
-#   "  margin-right: 1rem; /* Adjust spacing between items */",
-#   "}",
-#   ".glider > *:last-child {",
-#   "  margin-right: 0;",
-#   "}",
-#   sep = "\n"
-# )))
-
-# tagList(glider_css, glider_container, glider_init)
-```
-
-```{r}
-library(htmltools)
-
-# Create cards with wrapper for spacing
-create_card <- function(title, date, content) {
-  tags$div(
-    class = "card",
-    tags$div(title, class = "card-header"),
-    tags$ul(
-      class = "list-group list-group-flush",
-      tags$li(tags$em("Datum:"), " ", date, class = "list-group-item"),
-      tags$li(tags$em("Inhalt:"), " ", content, class = "list-group-item")
-    )
-  )
-}
-
-# Example cards
-cards <- tagList(
-  create_card("Beispiel 1", "5. Jan 2020", "Sehr zufrieden mit dem iPhone."),
-  create_card("Beispiel 2", "6. Jan 2020", "Tolles Gerät."),
-  create_card("Beispiel 3", "7. Jan 2020", "Gute Akkulaufzeit."),
-  create_card("Beispiel 4", "8. Jan 2020", "Preis-Leistung passt.")
-)
-
-# HTML structure with buttons underneath
-glider_container <- tagList(
-  tags$div(
-    class = "glider-container",
-    tags$div(class = "glider", cards),
-  ),
-  tags$div(
-    class = "d-flex justify-content-between",
-    tags$button(id="glider-prev1", type="button", class="btn btn-light", htmltools::HTML("<i class='fa-solid fa-angles-left'></i>")),
-    tags$button(id="glider-next1", type="button", class="btn btn-light", htmltools::HTML("<i class='fa-solid fa-angles-right'></i>"))
-  )
-)
-
-# JavaScript for Glider initialization
-glider_js <- tags$script(HTML("
-  document.addEventListener('DOMContentLoaded', function () {
-    // Wait a bit to ensure DOM is fully ready
-    setTimeout(function() {
-      const gliderElement = document.querySelector('.glider');
-      if (gliderElement && typeof Glider !== 'undefined') {
-        new Glider(gliderElement, {
-          slidesToShow: 1, 
-          slidesToScroll: 1,
-          draggable: true,
-          dragVelocity: 1.2,
-          arrows: {
-            prev: '#glider-prev1',
-            next: '#glider-next1'
-          },
-          responsive: [
-            {
-              breakpoint: 768,
-              settings: {
-                slidesToShow: 2, 
-                slidesToScroll: 1
-              }
-            }
-          ]
-        });
-      } else {
-        console.error('Glider element or Glider.js library not found');
-      }
-    }, 100);
-  });
-"))
-
-# Render everything (no CDN needed since Glider.js is already loaded)
-tagList(glider_container, glider_js)
-```
 
 ```{r}
 reviews <- 
@@ -255,20 +81,149 @@ reviews <-
     )
   ) |> 
   select(-1, -3, -author, -`web-scraper-order`, -`next`, -`Unnamed: 9`)
+```
+
+```{r}
+tags <- htmltools::tags
+
+card_test <- tags$div(
+  tags$ul(
+    class="list-group list-group-flush",
+    tags$li(tags$code("Datum:"), "5. Januar 2020", class="list-group-item"),
+    tags$li(tags$code("Inhalt:"), "Ich bin sehr zufrieden mit dem iPhone 11. Der Wechsel vom iPhone 6s war ein riesiger Quantensprung, der sich allerdings gelohnt hat. Ich würde es jederzeit wieder kaufen.", class="list-group-item"),    
+    tags$li(tags$code("Bewertung:"), htmltools::HTML("<i class='fa-solid fa-star'></i>&nbsp;<i class='fa-solid fa-star'></i>&nbsp;<i class='fa-solid fa-star'></i>&nbsp;<i class='fa-solid fa-star'></i>&nbsp;<i class='fa-regular fa-star'></i>"), class="list-group-item"),
+    tags$li(tags$code("URL:"), tags$a("https://www.amazon.de/Apple-iPhone-11-128-GB-Schwarz/product-reviews/B07XRFCP6G/ref=cm_cr_arp_d_paging_btm_10?ie=UTF8&filterByStar=positive&pageNumber=10&reviewerType=all_reviews", href="https://www.amazon.de/Apple-iPhone-11-128-GB-Schwarz/product-reviews/B07XRFCP6G/ref=cm_cr_arp_d_paging_btm_10?ie=UTF8&filterByStar=positive&pageNumber=10&reviewerType=all_reviews"), class="list-group-item"),
+  ),
+  class="card"#, style="width: 100%;"
+)
+```
+
+```{r}
+library(htmltools)
+
+nd_carousel <- function(.slides, .title=""){
+
+  .glide_id <- stringi::stri_c(
+    "nd-", digest::sha1(list(.slides, Sys.time(), runif(1e3)))
+  )
+
+  .glide_container <- tags$div(
+    id=.glide_id, class="glide nd-glide",
+    tags$div(
+      class="glide__controls d-flex justify-content-between align-middle pb-2",
+      `data-glide-el`="controls",
+      tags$button(
+        `data-glide-dir`="<", 
+        class="btn btn-primary text-white",
+        tags$i(class="fa-solid fa-angles-left")
+      ),
+      tags$h4(class="text-center px-2", .title),
+      tags$button(
+        `data-glide-dir`=">", 
+        class="btn btn-primary text-white",
+        tags$i(class="fa-solid fa-angles-right")
+      )
+    ),
+    tags$div(
+      class="glide__track py-1", `data-glide-el` = "track", 
+      tags$div(
+        class="glide__slides", 
+        htmltools::tagList(
+          !!!purrr::map(.slides, tags$div, class="glide__slide")
+        )
+      )
+    )
+  )
+
+  .glide_js <- tags$script(stringi::stri_c(
+    "document.addEventListener('DOMContentLoaded', function () {",
+    stringi::stri_c("  new Glide('#", .glide_id, "', {"),
+    "    type: 'carousel',",
+    "    perView: 2,",
+    "    gap: 24,",
+    "    autoplay: 5000,",
+    "    breakpoints: {",
+    "      576: { perView: 1 }",
+    "    }",
+    "  }).mount();",
+    "})",
+    sep="\n"
+  ))
+
+  .carousel <- htmltools::tagList(.glide_container, .glide_js)
+
+  return(.carousel)
+
+}
 
 reviews |> 
-  head(1) |> 
-  gt::gt() |> 
-  gt::tab_header(
-    title = "Beispiel einer Beobachtung aus dem Rohdatensatz"
-  ) |>
-  gt::tab_options(
-    table.width = gt::pct(100),
-    table.font.size = gt::px(13),
-    data_row.padding = gt::px(4),
-    ihtml.use_pagination = FALSE,
-    ihtml.use_text_wrapping = TRUE
-  ) 
+  slice_sample(n=10) |> 
+  mutate(
+    Datum = date,
+    Titel = title,
+    Rezension = content,
+    Bewertung = local({
+      .rating_int <- as.integer(
+        stringi::stri_extract_first_regex(rating, "^(\\d+)")
+      )
+      .stars <- purrr::map(.rating_int, \(..rating_int){
+        htmltools::tagList(
+          purrr::list_flatten(rep.int(
+            list(nd.util::icon_fa("fa-solid fa-star")), 
+            times=..rating_int
+          )),
+          purrr::list_flatten(rep.int(
+            list(nd.util::icon_fa("fa-regular fa-star")), 
+            times=5L - ..rating_int
+          )),
+          sep="", collapse=""
+        )
+      })
+      return(.stars)
+    }),
+    URL = map(`next-href`, \(.url){tags$a(href=.url, .url)}),
+    .keep="none"
+  ) |> 
+  as.list() |> 
+  list_transpose() |> 
+  map(\(.row_list){
+    tags$div(
+      class="card", style="width: 100%;",
+      tags$ul(
+        class="list-group list-group-flush",
+        !!!unname(imap(.row_list, \(.value, .key){
+          tags$li(
+            class="list-group-item", 
+            tags$div(
+              style=stringi::stri_c(
+                "overflow: hidden; width: 100%; display: -webkit-box; ",
+                "-webkit-line-clamp: 8; -webkit-box-orient: vertical;"
+              ),
+              tags$code(stringi::stri_c(.key, ":")), 
+              .value
+            )
+          )
+        }))
+      )
+    )
+  }) |> 
+  nd_carousel(.title="Beispielbeobachtungen aus dem Rodatensatz")
+```
+
+```{r}
+# reviews |> 
+#   head(1) |> 
+#   gt::gt() |> 
+#   gt::tab_header(
+#     title = "Beispiel einer Beobachtung aus dem Rohdatensatz"
+#   ) |>
+#   gt::tab_options(
+#     table.width = gt::pct(100),
+#     table.font.size = gt::px(13),
+#     data_row.padding = gt::px(4),
+#     ihtml.use_pagination = FALSE,
+#     ihtml.use_text_wrapping = TRUE
+#   ) 
 
 reviews <-
   reviews |>

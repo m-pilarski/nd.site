@@ -33,3 +33,4 @@ dependencies:
   - xz=5.6.3=hbcc6ac9_1
   - xz-gpl-tools=5.6.3=hbcc6ac9_1
   - xz-tools=5.6.3=hb9d3cd8_1
+prefix: /home/moritz/.local/share/r-miniconda/envs/nd.site.condaenv
