@@ -87,7 +87,7 @@ highschool |>
         {{{< bs_card_emoji emoji_code="2b50" emoji_bg="#837591" card_title="Kundenrezensionen" card_text="In dieser Case Study zeigen wir, wie unstrukturierte Kundenrezensionen mithilfe von Textanalyse systematisch ausgewertet werden können, um differenzierte Einblicke in die Nutzung technischer Produkte zu gewinnen und gezielt Verbesserungspotenziale zu identifizieren." card_href="/case_studies/customer_reviews" >}}}
     {{{< /div >}}} 
     {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
-        {{{< bs_card_emoji emoji_code="1f4e9" emoji_bg="#837591" card_title="Analyse von Support-Tickets" card_text="Dieses Fallbeispiel zeigt, wie sich Support-Anfragen allein anhand der Texte automatisiert nach Dringlichkeit klassifizieren lassen. Durch den gezielten Einsatz von Textanalyse und Machine Learning werden besonders kritische Anliegen frühzeitig erkannt, um den Kundenservice effizienter zu gestalten." >}}}
+        {{{< bs_card_emoji emoji_code="1f4e9" emoji_bg="#837591" card_title="Analyse von Support-Tickets" card_text="Dieses Fallbeispiel zeigt, wie sich Support-Anfragen allein anhand der Texte automatisiert nach Dringlichkeit klassifizieren lassen. Durch den gezielten Einsatz von Textanalyse und Machine Learning werden besonders kritische Anliegen frühzeitig erkannt, um den Kundenservice effizienter zu gestalten." card_href="/case_studies/support_tickets" >}}}
     {{{< /div >}}} 
     {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
         {{{< bs_card_emoji emoji_code="1f4f0" emoji_bg="#9c9c9c" card_title="Fallstudie I" card_text="Lorem Ipsum" card_href="/case_studies/case_study-1" >}}}
