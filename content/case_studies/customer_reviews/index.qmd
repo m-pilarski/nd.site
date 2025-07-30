@@ -437,7 +437,7 @@ Während bei *Smartphones* und *Telefonzubehör* Begriffe wie „funktioniert“
 
 #### Sentimentanalyse 
 
-Um über reine Sternebewertungen hinauszugehen, analysieren wir den Textinhalt der Rezensionen mithilfe einer **lexikonbasierten Sentimentanalyse**. Dabei wird jeder Rezension einen numerischen Sentimentwert zugewiesen, der positive und negative Begriffe entsprechend abbildet. 
+Um über reine Sternebewertungen hinauszugehen, analysieren wir den Textinhalt der Rezensionen mithilfe einer {{{< crossref path="/methods/sentiment#lexikonbasierte-sentimentanalyse" label="lexikonbasierten Sentimentanalyse" >}}}. Dabei wird jeder Rezension einen numerischen Sentimentwert zugewiesen, der positive und negative Begriffe entsprechend abbildet. 
 
 
 ```{r}

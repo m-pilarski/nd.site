@@ -1,0 +1,6 @@
+<h{{ .Level }} id="{{ .Anchor | safeURL }}">
+  {{ .Text | safeHTML }}
+  <a class="anchor-link" href="#{{ .Anchor | safeURL }}" aria-label="Link to {{ .Text }}">
+    <i class="fa-solid fa-link fa-2xs"></i>
+  </a>
+</h{{ .Level }}>
