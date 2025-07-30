@@ -57,10 +57,10 @@ knitr::include_graphics(here::here("content/methods/sentiment/img/dict_senti.svg
 
 ```{r}
 #| output: asis
-nd.util::html_to_md(nd.util:::nd_iframe_app(
+nd.util:::nd_iframe_app(
   .url="https://shiny.dsjlu.wirtschaft.uni-giessen.de/senti_dict/", 
   .height="4rem"
-))
+)
 ```
 
 {{{< div class="pb-4" >}}} {{{< /div >}}}
@@ -95,8 +95,8 @@ knitr::include_graphics(here::here("content/methods/sentiment/img/ml_senti.svg")
 
 ```{r}
 #| output: asis
-nd.util::html_to_md(nd.util:::nd_iframe_app(
+nd.util:::nd_iframe_app(
   .url="https://shiny.dsjlu.wirtschaft.uni-giessen.de/senti_trans/", 
   .height="4rem"
-))
+)
 ```

@@ -168,19 +168,58 @@ support <-
   )
 
 
-support |>
-  head(2) |>
-  gt::gt() |>
-  gt::tab_header(
-    title = "Beispiel der ersten Beobachtungen aus dem Rohdatensatz"
-  ) |>
-  gt::tab_options(
-    table.width = gt::pct(100),
-    table.font.size = gt::px(13),
-    data_row.padding = gt::px(4),
-    ihtml.use_pagination = FALSE,
-    ihtml.use_text_wrapping = TRUE
-  )
+# support |>
+#   head(2) |>
+#   gt::gt() |>
+#   gt::tab_header(
+#     title = "Beispiel der ersten Beobachtungen aus dem Rohdatensatz"
+#   ) |>
+#   gt::tab_options(
+#     table.width = gt::pct(100),
+#     table.font.size = gt::px(13),
+#     data_row.padding = gt::px(4),
+#     ihtml.use_pagination = FALSE,
+#     ihtml.use_text_wrapping = TRUE
+#   )
+```
+
+```{r}
+library(htmltools)
+
+support |> 
+  slice_sample(n=10) |> 
+  mutate(
+    Betreff,
+    Nachricht,
+    Bereich,
+    Sprache,
+    Dringlichkeit,
+    .keep="none"
+  ) |> 
+  as.list() |> 
+  list_transpose() |> 
+  map(\(.row_list){
+    tags$div(
+      class="card", style="width: 100%;",
+      tags$ul(
+        class="list-group list-group-flush",
+        !!!unname(imap(.row_list, \(.value, .key){
+          tags$li(
+            class="list-group-item", 
+            tags$div(
+              style=stringi::stri_c(
+                "overflow: hidden; width: 100%; display: -webkit-box; ",
+                "-webkit-line-clamp: 8; -webkit-box-orient: vertical;"
+              ),
+              tags$code(stringi::stri_c(.key, ":")), 
+              .value
+            )
+          )
+        }))
+      )
+    )
+  }) |> 
+  nd.util::nd_carousel(.title="Beispielbeobachtungen aus dem Rohdatensatz")
 ```
 
 

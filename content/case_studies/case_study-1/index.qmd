@@ -13,10 +13,8 @@ Durch die Auswertung relevanter Google News-Feeds zu spezifischen Suchbegriffen 
 Sehen Sie sich im folgenden Beispiel an, wie diese Analyse in der Praxis funktioniert!
 
 ```{r}
-#| echo: false
-#| output: asis
-nd.util::html_to_md(nd.util:::nd_iframe_app(
+nd.util:::nd_iframe_app(
   .url="https://shiny.dsjlu.wirtschaft.uni-giessen.de/case_study-1/", 
   .height="4rem"
-))
+)
 ```
