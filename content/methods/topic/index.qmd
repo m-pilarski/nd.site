@@ -63,11 +63,9 @@ knitr::include_graphics(here::here("content/methods/topic/img/lda_topic.svg"))
 
 ### Kontextuelle Themenmodellierung
 
-Moderne Themenmodellierungsverfahren setzen zunehmend auf neuronale Netze und tiefgehende Sprachmodelle, um semantische Informationen noch präziser zu extrahieren.
+Moderne Themenmodellierungsverfahren setzen zunehmend auf vortrainierte Sprachmodelle, wie {{{< crossref path="/basics#bert" label="BERT" >}}}, um semantische Informationen noch präziser zu extrahieren.
 
 BERTopic ist ein modernes, auf neuronalen Netzen basierendes Verfahren, das die Stärken von Transformer-Modellen mit Clustering-Techniken kombiniert. Dadurch lassen sich kontextuelle Wortbedeutungen erkennen und thematische Strukturen auch in kurzen, komplexen Texten erfassen. Im Gegensatz zu klassischen Methoden wie LDA kann BERTopic flexibler auf neue Themen reagieren und bietet eine feinere semantische Differenzierung.
-
-<!-- TODO: Zu Embeddings in Basics verlinken -->
 
 Die Themenmodellierung erfolgt dabei in vier aufeinander aufbauenden Schritten:
 
