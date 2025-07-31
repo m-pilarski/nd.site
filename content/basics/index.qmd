@@ -107,10 +107,53 @@ knitr::include_graphics(here::here("content/basics/img/stemm_lemm.svg"))
 
 {{{< /div >}}} {{{< /div >}}}
 
-Die folgende Tabelle bietet eine **Übersicht der gängigsten Vorverarbeitungsschritte für Textdaten**, sowie kurze Beispiele dazu. 
-
-<!-- insert table  -->
+<!-- Die folgende Tabelle bietet eine **Übersicht der gängigsten Vorverarbeitungsschritte für Textdaten**, sowie kurze Beispiele dazu.  -->
+<!-- insert table (maybe where users can select different steps and the text gets shown according to the selection of preprocessing steps chosen - like in an app)  -->
 
 
 ## Texte numerisch darstellen
+
+Die Vorverarbeitung der Texte allein genügt nicht, um sie vollständig in eine computerlesbare Struktur zu überführen. Es sind weitere Methoden erforderlich, die Wörter numerisch darstellen. Hier gibt es verschiedene Verfahren, die für unterschiedliche Methoden geeignet sind.
+
+
+### Häufigkeitsbasierte Verfahren
+
+#### Bag of Words 
+
+Das **Bag-of-Words-Modell** (BoW) ist eine der einfachsten Methoden, um Texte in eine numerische Form zu überführen. Dabei wird für jeden Text gezählt, wie oft bestimmte Wörter vorkommen, unabhängig von ihrer Reihenfolge oder ihrem Kontext. Jeder Text wird dadurch zu einem sogenannten **Wortvektor**, in dem jedes Element die Häufigkeit eines bestimmten Begriffs angibt.
+
+<!-- Insert example vector -->
+
+Dieses Verfahren ist besonders einfach zu implementieren und funktioniert gut für erste Analysen, z.B. für die Analyse von Worthäufigkeiten. Allerdings geht die Bedeutung von Sprache verloren, da weder Satzstruktur noch Wortbedeutung berücksichtigt werden.
+
+
+#### TF-IDF
+
+**TF-IDF** ist eine Weiterentwicklung des Bag-of-Words-Modells. Es zählt nicht nur, wie **oft ein Wort in einem Text vorkommt** (TF = Term Frequency), sondern prüft auch, wie **selten es im gesamten Textkorpus ist** (IDF = Inverse Document Frequency).
+
+Alltägliche Wörter wie „ist“ oder „und“ erscheinen in vielen Dokumenten und erhalten deshalb eine niedrige Gewichtung. Fachbegriffe oder thematisch wichtige Wörter, die nur in wenigen Dokumenten auftauchen, werden dagegen stärker gewichtet. So erkennt TF-IDF, welche Begriffe für den jeweiligen Text besonders aussagekräftig sind.
+
+
+### Kontextuelle Verfahren
+
+Moderne Verfahren basieren auf sogenannte **Word Embeddings** (Worteinbettungen). Dabei werden Wörter in einem numerischen Raum so eingebettet, dass semantische Ähnlichkeiten messbar werden.
+
+
+#### Word2Vec
+
+Ein früherer Vertreter solcher Einbettungen ist die Word2Vec Methode. Im Gegensatz zu BoW oder TF-IDF, die Wörter nur zählen, ist Word2Vec ein von Google trainiertes Modell, welches anhand von **neuronalen Netzwerken** lernte, welche Wörter in **ähnlichen Kontexten** verwendet werden und gibt ihnen **ähnliche Vektoren**.
+
+Das Modell analysiert dabei, in welchen Zusammenhängen Wörter gemeinsam auftreten. Wenn „Katze“ und „Hund“ oft in ähnlichen Sätzen vorkommen, erkennt Word2Vec, dass diese Begriffe semantisch ähnlich sind und platziert sie nah beieinander im Vektorraum.
+
+<!-- insert typical man/woman & king/queen type of illustr.  -->
+
+#### BERT 
+
+Anders als frühere Verfahren wie Word2Vec, bei denen jedes Wort einen festen Vektor erhält, berechnet **BERT** für jedes Vorkommen eines Wortes einen **eigenen, kontextabhängigen Vektor**. Das Modell betrachtet dabei den gesamten Satz, um die **Wortbedeutung im Zusammenhang** zu verstehen.
+
+**Beispiel:** Das Wort „Bank" bekommt in „Ich sitze auf der Bank" eine andere Repräsentation als in „Die Bank hat heute geschlossen", weil BERT aus dem Kontext die unterschiedlichen Bedeutungen erkennt.
+
+Möglich wird das durch die **Transformer-Architektur**, bei der alle Wörter eines Satzes gleichzeitig betrachtet und ihre Beziehungen zueinander gewichtet werden. So entstehen präzise Vektoren, die sich für anspruchsvolle Aufgaben eignen.
+
+
 
