@@ -61,11 +61,38 @@ knitr::include_graphics(here::here("content/methods/topic/img/lda_topic.svg"))
 
 
 
-### Moderne Verfahren
+### Kontextuelle Themenmodellierung
 
 Moderne Themenmodellierungsverfahren setzen zunehmend auf neuronale Netze und tiefgehende Sprachmodelle, um semantische Informationen noch präziser zu extrahieren.
 
-BERTopic ist ein modernes, auf neuronalen Netzen basierendes Verfahren für die Themenmodellierung. Diese Modelle ermöglichen eine präzisere Erfassung semantischer Zusammenhänge, da sie kontextuelle Wortbedeutungen besser verstehen und flexibel auf neue Themen reagieren können. Es nutzt Transformer-Modelle wie BERT, um kontextuelle Wortrepräsentationen zu erstellen, und kombiniert diese mit Clustering-Algorithmen, um thematische Gruppen zu identifizieren. BERTopic bietet gegenüber LDA einige Vorteile:
+BERTopic ist ein modernes, auf neuronalen Netzen basierendes Verfahren, das die Stärken von Transformer-Modellen mit Clustering-Techniken kombiniert. Dadurch lassen sich kontextuelle Wortbedeutungen erkennen und thematische Strukturen auch in kurzen, komplexen Texten erfassen. Im Gegensatz zu klassischen Methoden wie LDA kann BERTopic flexibler auf neue Themen reagieren und bietet eine feinere semantische Differenzierung.
+
+<!-- TODO: Zu Embeddings in Basics verlinken -->
+
+Die Themenmodellierung erfolgt dabei in vier aufeinander aufbauenden Schritten:
+
+{{{< fa-ul >}}}
+    {{{< fa-solid-li icon="robot" >}}}**Embeddings:** Jeder Text wird vom Sprachmodell (BERT) in einen Zahlenvektor (Embedding) übersetzt, der seine Bedeutung im Kontext abbildet. {{{< /fa-solid-li >}}}
+    {{{< fa-solid-li icon="down-long" >}}}**Dimensionsreduktion:** Diese aus dem ersten Schritt resultierenden hochdimensionalen Vektoren werden in wenige Dimensionen reduziert.{{{< /fa-solid-li >}}}
+    {{{< fa-solid-li  icon="circle-nodes" >}}}**Cluster:** Semantisch ähnliche Texte werden automatisch zu thematischen Gruppen zusammengefasst.{{{< /fa-solid-li >}}}
+    {{{< fa-solid-li  icon="list" >}}}**Themenbeschreibung:** Repräsentative Begriffe pro Gruppe helfen, ein passendes Thema zu identifizieren. Diese Begriffe werden mithilfe der TF-IDF-Methode berechnet. {{{< /fa-solid-li >}}}
+{{{< /fa-ul >}}}
+
+
+<!-- TODO: Insert illustration for BERTopic -->
+
+#### Vor- und Nachteile
+
+{{{< fa-ul >}}}
+    {{{< fa-solid-li icon="thumbs-up" color="#39b185" >}}} BERTopic benötigt keine aufwendige Vorverarbeitung von Texten, da der Kontext berücksichtigt wird. Es sogar nachteilig sein, Wörter zu entfernen oder stark zu vereinfachen. {{{< /fa-solid-li >}}}
+    {{{< fa-solid-li icon="thumbs-up" color="#39b185" >}}} Funktionieren zuverlässig auch bei kurzen oder informell geschriebenen Texten, wo LDA oft scheitert. {{{< /fa-solid-li >}}}
+        {{{< fa-solid-li icon="thumbs-up" color="#39b185" >}}} Können mittels Fine Tuning und spezifischer Daten auf eigene, relevante Themen angepasst werden. {{{< /fa-solid-li >}}}
+    {{{< fa-solid-li icon="thumbs-down" color="#cf597e" >}}} Da BERTopic aus mehreren aufeinander aufbauenden Verfahren besteht, erfordert die Umsetzung technisches Know-how, insbesondere zur Auswahl der Parameter. {{{< /fa-solid-li >}}}
+        {{{< fa-solid-li icon="thumbs-down" color="#cf597e" >}}} Die Rechenleistung ist höher, insbesondere bei großen Datensätzen.  {{{< /fa-solid-li >}}}
+         {{{< fa-solid-li icon="thumbs-down" color="#cf597e" >}}}	Wie auch bei LDA müssen die Themen selbst interpretiert werden. Die Zuordnung bleibt also subjektiv. {{{< /fa-solid-li >}}}
+         {{{< fa-solid-li icon="thumbs-down" color="#cf597e" >}}}	BERTopic kann zu vielen sehr kleinen Themen mit wenigen Texten führen, was die Interpretation erschwert. Eine Anpassung der Modellparameter hilft, diese zu bündeln. {{{< /fa-solid-li >}}}
+{{{< /fa-ul >}}}
+
 
 ## Exemplarische Anwendung mit BERTopic
 
