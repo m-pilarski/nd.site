@@ -124,15 +124,17 @@ Das **Bag-of-Words-Modell** (BoW) ist eine der einfachsten Methoden, um Texte in
 
 <!-- Insert example vector -->
 
+{{{< p class="pb-0" >}}}
 Dieses Verfahren ist besonders einfach zu implementieren und funktioniert gut für erste Analysen, z.B. für die Analyse von Worthäufigkeiten. Allerdings geht die Bedeutung von Sprache verloren, da weder Satzstruktur noch Wortbedeutung berücksichtigt werden.
-
+{{{< /p >}}}
 
 #### TF-IDF
 
 **TF-IDF** ist eine Weiterentwicklung des Bag-of-Words-Modells. Es zählt nicht nur, wie **oft ein Wort in einem Text vorkommt** (TF = Term Frequency), sondern prüft auch, wie **selten es im gesamten Textkorpus ist** (IDF = Inverse Document Frequency).
 
+{{{< p class="pb-0" >}}}
 Alltägliche Wörter wie „ist“ oder „und“ erscheinen in vielen Dokumenten und erhalten deshalb eine niedrige Gewichtung. Fachbegriffe oder thematisch wichtige Wörter, die nur in wenigen Dokumenten auftauchen, werden dagegen stärker gewichtet. So erkennt TF-IDF, welche Begriffe für den jeweiligen Text besonders aussagekräftig sind.
-
+{{{< /p >}}}
 
 ### Kontextuelle Verfahren
 
@@ -143,9 +145,17 @@ Moderne Verfahren basieren auf sogenannte **Word Embeddings** (Worteinbettungen)
 
 Ein früherer Vertreter solcher Einbettungen ist die Word2Vec Methode. Im Gegensatz zu BoW oder TF-IDF, die Wörter nur zählen, ist Word2Vec ein von Google trainiertes Modell, welches anhand von **neuronalen Netzwerken** lernte, welche Wörter in **ähnlichen Kontexten** verwendet werden und gibt ihnen **ähnliche Vektoren**.
 
-Das Modell analysiert dabei, in welchen Zusammenhängen Wörter gemeinsam auftreten. Wenn „Katze“ und „Hund“ oft in ähnlichen Sätzen vorkommen, erkennt Word2Vec, dass diese Begriffe semantisch ähnlich sind und platziert sie nah beieinander im Vektorraum.
+{{{< p class="pb-0" >}}}
+In der Grafik sieht man, dass das Modell nicht nur erkennt, dass „König“ und „Königin“ zusammengehören, sondern auch die Beziehung zwischen „Mann“ und „Frau“ versteht. Die Richtung und Länge der Pfeile zeigen, dass die Bedeutung von „König“ zu „Königin“ ähnlich ist wie von „Mann“ zu „Frau“. So lassen sich Bedeutungen im Raum nicht nur erkennen, sondern auch rechnerisch ableiten, wie zum Beispiel *König – Mann + Frau = Königin*.
+{{{< /p >}}}
 
-<!-- insert typical man/woman & king/queen type of illustr.  -->
+{{{< div class="grid my-4" >}}} {{{< div class="g-col-12 g-col-md-8 g-start-md-3" >}}} 
+
+```{r}
+knitr::include_graphics(here::here("content/basics/img/embeddings.svg"))
+```
+
+{{{< /div >}}} {{{< /div >}}}
 
 #### BERT 
 
