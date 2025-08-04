@@ -73,7 +73,7 @@ Die Themenmodellierung erfolgt dabei in vier aufeinander aufbauenden Schritten:
     {{{< fa-solid-li icon="robot" >}}}**Embeddings:** Jeder Text wird vom Sprachmodell (BERT) in einen Zahlenvektor (Embedding) übersetzt, der seine Bedeutung im Kontext abbildet. {{{< /fa-solid-li >}}}
     {{{< fa-solid-li icon="down-long" >}}}**Dimensionsreduktion:** Diese aus dem ersten Schritt resultierenden hochdimensionalen Vektoren werden in wenige Dimensionen reduziert.{{{< /fa-solid-li >}}}
     {{{< fa-solid-li  icon="circle-nodes" >}}}**Cluster:** Semantisch ähnliche Texte werden automatisch zu thematischen Gruppen zusammengefasst.{{{< /fa-solid-li >}}}
-    {{{< fa-solid-li  icon="list" >}}}**Themenbeschreibung:** Repräsentative Begriffe pro Gruppe helfen, ein passendes Thema zu identifizieren. Diese Begriffe werden mithilfe der TF-IDF-Methode berechnet. {{{< /fa-solid-li >}}}
+    {{{< fa-solid-li  icon="list" >}}}**Themenbeschreibung:** Repräsentative Begriffe pro Gruppe helfen, ein passendes Thema zu identifizieren. Diese Begriffe werden mithilfe der {{{< crossref path="/basics#tf-idf" label="TF-IDF Methode" >}}} identifiziert. {{{< /fa-solid-li >}}}
 {{{< /fa-ul >}}}
 
 
