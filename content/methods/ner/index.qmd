@@ -1,0 +1,19 @@
+---
+title: "Entitätsanalyse"
+subtitle: "Automatisierte Identifikation und Klassifikation von Entitäten und Eigennamen"
+figtitle: "🏷️"
+date: "2024-11-25T14:25:49+01:00"
+toc_show: true
+draft: false
+html-table-processing: none
+---
+
+## Was ist Entitätsanalyse?
+
+
+## Anwendungen
+
+
+## Ansätze zur Entitätsanalyse
+
+
