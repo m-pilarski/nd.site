@@ -39,7 +39,37 @@ Für diese Methode stehen unterschiedliche Algorithmen zur Verfügung, für welc
 
 Regelbasierte Ansätze der Entitätsanalyse nutzen vordefinierte Muster und Wörterlisten, um Entitäten wie Personen, Organisationen oder Orte im Text zu identifizieren. Dabei werden meist zwei Verfahren kombiniert: Lexikonbasierte Erkennung und musterbasierte Regeln.
 
-<!-- table with examples (like a lexicon) -->
+```{r}
+entity_example <- 
+  tibble(
+  Entität = c(
+    "Organisation",
+    "Person",
+    "Ort",
+    "Land",
+    "Datum",
+    "Uhrzeit",
+    "Produkt",
+    "Menge",
+    "Währung",
+    "E-Mail"
+  ),
+  Beispiel = c(
+    "JLU",
+    "Max Msutermann",
+    "Gießen",
+    "Deutschland",
+    "24.05.2024",
+    "13:30",
+    "Laptop",
+    "20.000",
+    "Euro",
+    "max@mustermann.de"
+  )
+)
+
+
+```
 
 Beim lexikonbasierten Ansatz wird der Text mit einem vordefinierten Wörterverzeichnis abgeglichen, also mit Listen relevanter Namen und Begriffe. Stimmen Wörter im Text mit diesen Einträgen überein, werden sie als Entität klassifiziert. Ergänzend kommen regelbasierte Methoden zum Einsatz, die sprachliche Strukturen analysieren. Diese Regeln basieren oft auf linguistischen Mustern, wie z.B. Großschreibung innerhalb eines Satzes oder typischen Formatierungen wie Datums- oder E-Mail-Strukturen.
 
