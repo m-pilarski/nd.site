@@ -29,3 +29,15 @@ $theme-colors: map-merge($theme-colors, (
 @import "navbar";
 @import "io";
 @import "cards";
+
+
+.glide__controls {
+  color: red;
+  .glide__btn-left {
+    border-radius: var(--bs-card-border-radius) 0 0 var(--bs-card-border-radius) !important;
+  }
+  
+  .glide__btn-right {
+    border-radius: 0 var(--bs-card-border-radius) var(--bs-card-border-radius) 0 !important;
+  }
+}

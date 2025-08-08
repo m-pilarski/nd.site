@@ -8,7 +8,7 @@ toc_show: true
 execute:
   echo: false
   message: false
-  cache: true
+  cache: false
 ---
 
 
@@ -33,7 +33,6 @@ library(gt)
 data_dir <- here::here("content", "case_studies", "support_tickets", "data")
 
 calc_panel_margin_y_in <- function(.plot_obj) {
-  # .plot_obj <<- .plot_obj
   .plot_obj |>
     plottr::calc_element_margin_data() |>
     dplyr::filter(
@@ -237,10 +236,9 @@ Anschließend wird der Text **tokenisiert**, also in einzelne Wörter zerlegt. D
 #| echo: false
 #| message: false
 
-custom_stopwords <- tibble(
-  word = tolower(c(
-    # read_lines("data/german_stopwords_full.txt"),
-    quanteda::stopwords(language = "de", source = "nltk"),
+custom_stopwords <- 
+  quanteda::stopwords(language = "de", source = "nltk") |> 
+  c(
     "sehr",
     "geehrtes",
     "support",
@@ -252,8 +250,9 @@ custom_stopwords <- tibble(
     "kundendienst",
     "hoffe",
     "erreicht"
-  ))
-)
+  ) |> 
+  unique() |> 
+  tibble::as_tibble_col("word")
 
 support_tokens_clean <- support |>
   mutate(

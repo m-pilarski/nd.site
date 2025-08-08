@@ -29,3 +29,10 @@ $error: #e88471;
 @import "lists";
 // @import "glider";
 @import "glide";
+
+.anchor-link {
+  color: #bababa;
+  &:hover {
+    color: var(--bs-primary);
+  }
+}

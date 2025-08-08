@@ -1,5 +1,6 @@
 library(ggplot2)
 
+
 tibble::tribble(
   ~color, ~palette,
   "#2e2933", "base",
@@ -21,9 +22,14 @@ tibble::tribble(
   "#045275", "sequential",
 ) |>
   dplyr::mutate(
-    color_palette_rank = dplyr::row_number(), .by=palette
+    color_palette_rank = dplyr::row_number(),
+    .by = palette
   ) |>
-  ggplot(aes(x=color_palette_rank, y=forcats::fct_rev(palette), fill=color)) +
-  geom_tile(width=1) +
+  ggplot(aes(
+    x = color_palette_rank,
+    y = forcats::fct_rev(palette),
+    fill = color
+  )) +
+  geom_tile(width = 1) +
   scale_fill_identity() +
   coord_equal()

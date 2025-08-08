@@ -4,24 +4,25 @@ subtitle: "Wie kann Kundenfeedback effektiv zur Produktoptimierung genutzt werde
 figtitle: "⭐"
 date: "2024-11-25T14:25:49+01:00"
 draft: false
+toc_show: true
 execute: 
   echo: false
   message: false
-  cache: true
+  cache: false
 ---
 
 
 ```{r}
 #| cache: false
 
-# Setup 
+# Setup
 set.seed(123)
 
 library(tidyverse)
 library(tidytext)
-library(textdata)      
+library(textdata)
 library(lubridate)
-library(topicmodels)   
+library(topicmodels)
 library(tm)
 library(wordcloud)
 library(stopwords)
@@ -31,37 +32,40 @@ library(ggplot2)
 library(tidyverse)
 library(gt)
 
-calc_panel_margin_y_in <- function(.plot_obj){
+tags <- htmltools::tags
+
+calc_panel_margin_y_in <- function(.plot_obj) {
   .plot_obj <<- .plot_obj
-  .plot_obj |> 
-    plottr::calc_element_margin_data() |> 
+  .plot_obj |>
+    plottr::calc_element_margin_data() |>
     dplyr::filter(
       stringi::stri_detect_regex(name, "^panel(-\\d+)*$")
-    ) |> 
+    ) |>
     dplyr::summarize(
-      margin_top = min(plottr:::unit_to_mm(margin_top)), 
+      margin_top = min(plottr:::unit_to_mm(margin_top)),
       margin_bottom = min(plottr:::unit_to_mm(margin_bottom))
-    ) |> 
-    with(unit(margin_bottom + margin_top, "mm")) |> 
-    grid::convertUnit("in", valueOnly=TRUE)
-
+    ) |>
+    with(unit(margin_bottom + margin_top, "mm")) |>
+    grid::convertUnit("in", valueOnly = TRUE)
 }
 
 ggplot2::theme_set(`+`(
-  ggplot2::theme_minimal(base_size=14, base_family="Open Sans"),
+  ggplot2::theme_minimal(base_size = 14, base_family = "Open Sans"),
   ggplot2::theme(
-    axis.text.x=ggplot2::element_text(size=12),
-    axis.text.y=ggplot2::element_text(size = 12),
-    axis.title.x=ggplot2::element_text(size = 14),
-    axis.title.y=ggplot2::element_text(size = 14),
-    title=ggplot2::element_text(size = 14),
-    strip.text=ggplot2::element_text(size = 14),
-    panel.grid.major=ggplot2::element_blank(),
-    panel.grid.minor=ggplot2::element_blank(),
-    panel.background=ggplot2::element_rect(fill = NA, colour = NA),     
-    plot.background=ggplot2::element_rect(fill = NA, colour = NA) 
+    axis.text.x = ggplot2::element_text(size = 12),
+    axis.text.y = ggplot2::element_text(size = 12),
+    axis.title.x = ggplot2::element_text(size = 14),
+    axis.title.y = ggplot2::element_text(size = 14),
+    title = ggplot2::element_text(size = 14),
+    strip.text = ggplot2::element_text(size = 14),
+    panel.grid.major = ggplot2::element_blank(),
+    panel.grid.minor = ggplot2::element_blank(),
+    panel.background = ggplot2::element_rect(fill = NA, colour = NA),
+    plot.background = ggplot2::element_rect(fill = NA, colour = NA)
   )
 ))
+
+data_dir <- here::here("content", "case_studies", "customer_reviews", "data")
 ```
 
 
@@ -73,36 +77,16 @@ Kundenrezensionen bieten wertvolle Einblicke in die Nutzung und Bewertung von Pr
 Die Analyse basiert auf 3.413 deutschsprachigen Amazon-Rezensionen, die jeweils das Datum, die Sternebewertung und den Link der Rezension enthalten. Ein Ausschnitt der ersten Beobachtungen ist in der folgenden Tabelle dargestellt. 
 
 ```{r}
-reviews <- 
-  read_csv(
-    here::here(
-      "content", "case_studies", "customer_reviews", "data", 
-      "Amazon-Deutsch-Dataset.csv"
-    )
-  ) |> 
+reviews <-
+  read_csv(fs::path(data_dir, "Amazon-Deutsch-Dataset.csv")) |>
   select(-1, -3, -author, -`web-scraper-order`, -`next`, -`Unnamed: 9`)
-```
-
-```{r}
-tags <- htmltools::tags
-
-card_test <- tags$div(
-  tags$ul(
-    class="list-group list-group-flush",
-    tags$li(tags$code("Datum:"), "5. Januar 2020", class="list-group-item"),
-    tags$li(tags$code("Inhalt:"), "Ich bin sehr zufrieden mit dem iPhone 11. Der Wechsel vom iPhone 6s war ein riesiger Quantensprung, der sich allerdings gelohnt hat. Ich würde es jederzeit wieder kaufen.", class="list-group-item"),    
-    tags$li(tags$code("Bewertung:"), htmltools::HTML("<i class='fa-solid fa-star'></i>&nbsp;<i class='fa-solid fa-star'></i>&nbsp;<i class='fa-solid fa-star'></i>&nbsp;<i class='fa-solid fa-star'></i>&nbsp;<i class='fa-regular fa-star'></i>"), class="list-group-item"),
-    tags$li(tags$code("URL:"), tags$a("https://www.amazon.de/Apple-iPhone-11-128-GB-Schwarz/product-reviews/B07XRFCP6G/ref=cm_cr_arp_d_paging_btm_10?ie=UTF8&filterByStar=positive&pageNumber=10&reviewerType=all_reviews", href="https://www.amazon.de/Apple-iPhone-11-128-GB-Schwarz/product-reviews/B07XRFCP6G/ref=cm_cr_arp_d_paging_btm_10?ie=UTF8&filterByStar=positive&pageNumber=10&reviewerType=all_reviews"), class="list-group-item"),
-  ),
-  class="card"#, style="width: 100%;"
-)
 ```
 
 ```{r}
 library(htmltools)
 
-reviews |> 
-  slice_sample(n=10) |> 
+reviews |>
+  slice_sample(n = 10) |>
   mutate(
     Datum = date,
     Titel = title,
@@ -111,54 +95,58 @@ reviews |>
       .rating_int <- as.integer(
         stringi::stri_extract_first_regex(rating, "^(\\d+)")
       )
-      .stars <- purrr::map(.rating_int, \(..rating_int){
+      .stars <- purrr::map(.rating_int, \(..rating_int) {
         htmltools::tagList(
           purrr::list_flatten(rep.int(
-            list(nd.util::icon_fa("fa-solid fa-star")), 
-            times=..rating_int
+            list(nd.util::icon_fa("fa-solid fa-star")),
+            times = ..rating_int
           )),
           purrr::list_flatten(rep.int(
-            list(nd.util::icon_fa("fa-regular fa-star")), 
-            times=5L - ..rating_int
+            list(nd.util::icon_fa("fa-regular fa-star")),
+            times = 5L - ..rating_int
           )),
-          sep="", collapse=""
+          sep = "",
+          collapse = ""
         )
       })
       return(.stars)
     }),
-    URL = map(`next-href`, \(.url){tags$a(href=.url, .url)}),
-    .keep="none"
-  ) |> 
-  as.list() |> 
-  list_transpose() |> 
-  map(\(.row_list){
+    URL = map(`next-href`, \(.url) {
+      tags$a(href = .url, .url)
+    }),
+    .keep = "none"
+  ) |>
+  as.list() |>
+  list_transpose() |>
+  map(\(.row_list) {
     tags$div(
-      class="card", style="width: 100%;",
+      class = "card",
+      style = "width: 100%;",
       tags$ul(
-        class="list-group list-group-flush",
-        !!!unname(imap(.row_list, \(.value, .key){
+        class = "list-group list-group-flush",
+        !!!unname(imap(.row_list, \(.value, .key) {
           tags$li(
-            class="list-group-item", 
+            class = "list-group-item",
             tags$div(
-              style=stringi::stri_c(
+              style = stringi::stri_c(
                 "overflow: hidden; width: 100%; display: -webkit-box; ",
                 "-webkit-line-clamp: 8; -webkit-box-orient: vertical;"
               ),
-              tags$code(stringi::stri_c(.key, ":")), 
+              tags$code(stringi::stri_c(.key, ":")),
               .value
             )
           )
         }))
       )
     )
-  }) |> 
-  nd.util::nd_carousel(.title="Beispielbeobachtungen aus dem Rohdatensatz")
+  }) |>
+  nd.util::nd_carousel(.title = "Beispielbeobachtungen aus dem Rohdatensatz")
 ```
 
 ```{r}
-# reviews |> 
-#   head(1) |> 
-#   gt::gt() |> 
+# reviews |>
+#   head(1) |>
+#   gt::gt() |>
 #   gt::tab_header(
 #     title = "Beispiel einer Beobachtung aus dem Rohdatensatz"
 #   ) |>
@@ -168,30 +156,35 @@ reviews |>
 #     data_row.padding = gt::px(4),
 #     ihtml.use_pagination = FALSE,
 #     ihtml.use_text_wrapping = TRUE
-#   ) 
+#   )
 
 reviews <-
   reviews |>
   select(title, date, content, rating, `next-href`) |>
   mutate(
     Sprache = cld3::detect_language(content),
-    Produkt = str_extract(`next-href`, "(?<=amazon\\.de/).*?(?=/product-reviews)") |>
+    Produkt = str_extract(
+      `next-href`,
+      "(?<=amazon\\.de/).*?(?=/product-reviews)"
+    ) |>
       str_replace_all("-", " ") |>
       URLdecode(),
     Produkttyp = case_when(
-      str_detect(Produkt, regex("iphone|samsung|smartphone", TRUE)) ~ "Smartphone",
+      str_detect(Produkt, regex("iphone|samsung|smartphone", TRUE)) ~
+        "Smartphone",
       str_detect(Produkt, regex("kopfhörer|ear", TRUE)) ~ "Kopfhörer",
       str_detect(Produkt, regex("gigaset|telefon", TRUE)) ~ "Telefonzubehör",
       TRUE ~ "Other"
     ),
-    Bewertung = str_extract(rating, "^\\d+,\\d+") |> 
-      str_replace(",", ".") |> 
-      as.numeric()) |>
+    Bewertung = str_extract(rating, "^\\d+,\\d+") |>
+      str_replace(",", ".") |>
+      as.numeric()
+  ) |>
   filter(Sprache == "de", Produkttyp != "Other") |>
   drop_na(Produkt) |>
   mutate(
-     row_id = row_number(),
-     .before = title
+    row_id = row_number(),
+    .before = title
   ) |>
   rename(
     ID = row_id,
@@ -225,14 +218,19 @@ Diese Schritte gewährleisten, dass die nachfolgenden Analysen auf dem **wesentl
 
 ```{r}
 # stopwords
-product_terms <- reviews$Produkt |> 
-  str_split("\\s+") |> 
-  unlist() |> 
+product_terms <- reviews$Produkt |>
+  str_split("\\s+") |>
+  unlist() |>
   tolower() |>
   unique()
 
 # custom_stopwords <- tibble(Wort = tolower(c(read_lines("data/german_stopwords_full.txt"), product_terms)))
-custom_stopwords <- tibble(Wort = tolower(c(quanteda::stopwords(language="de", source="nltk"), product_terms)))
+custom_stopwords <- tibble(
+  Wort = tolower(c(
+    quanteda::stopwords(language = "de", source = "nltk"),
+    product_terms
+  ))
+)
 
 # tokenize and clean
 review_tokens <- reviews |>
@@ -242,23 +240,76 @@ review_tokens_clean <- review_tokens |>
   filter(!str_detect(Wort, "^\\d+$|^[sa]\\d+$|^[0-9]+[a-z]*$")) |>
   anti_join(custom_stopwords, by = "Wort")
 
-review_tokens_clean |>
-  select(-URL) |>
-  head(5) |>
-  gt::gt() |>
-  gt::tab_header(
-    title = "Beispiel der ersten Beobachtung nach der Vorverarbeitung"
-  ) |>
-  gt::tab_options(
-    table.width = gt::pct(100),
-    table.font.size = gt::px(13),
-    data_row.padding = gt::px(4),
-    ihtml.use_pagination = FALSE,
-    ihtml.use_text_wrapping = TRUE
-  ) 
+# review_tokens_clean |>
+#   select(-URL) |>
+#   head(5) |>
+#   gt::gt() |>
+#   gt::tab_header(
+#     title = "Beispiel der ersten Beobachtung nach der Vorverarbeitung"
+#   ) |>
+#   gt::tab_options(
+#     table.width = gt::pct(100),
+#     table.font.size = gt::px(13),
+#     data_row.padding = gt::px(4),
+#     ihtml.use_pagination = FALSE,
+#     ihtml.use_text_wrapping = TRUE
+#   )
 
 ```
 
+```{r}
+reviews |>
+  slice_sample(n = 10) |>
+  mutate(
+    Produkttyp,
+    Produkt,
+    Bewertung,
+    Wörter = Inhalt |>
+      stringi::stri_trans_tolower() |>
+      stringi::stri_split_boundaries(type = "word", skip_word_none = TRUE) |>
+      map_chr(\(.token) {
+        .token |>
+          stringi::stri_subset_regex(
+            "^\\d+$|^[sa]\\d+$|^[0-9]+[a-z]*$",
+            negate = TRUE
+          ) |>
+          setdiff(pull(custom_stopwords, Wort)) |>
+          map_chr(\(..str) {
+            stringi::stri_c("\"", ..str, "\"")
+          }) |>
+          stringi::stri_c(collapse = ", ") |>
+          (\(..str) {
+            stringi::stri_c("[", ..str, "]")
+          })()
+      }),
+    .keep = "none"
+  ) |>
+  as.list() |>
+  list_transpose() |>
+  map(\(.row_list) {
+    tags$div(
+      class = "card",
+      style = "width: 100%;",
+      tags$ul(
+        class = "list-group list-group-flush",
+        !!!unname(imap(.row_list, \(.value, .key) {
+          tags$li(
+            class = "list-group-item",
+            tags$div(
+              style = stringi::stri_c(
+                "overflow: hidden; width: 100%; display: -webkit-box; ",
+                "-webkit-line-clamp: 8; -webkit-box-orient: vertical;"
+              ),
+              tags$code(stringi::stri_c(.key, ":")),
+              .value
+            )
+          )
+        }))
+      )
+    )
+  }) |>
+  nd.util::nd_carousel(.title = "Beispielbeobachtung nach der Vorverarbeitung")
+```
 
 <!-- Die Verteilung der Bewertungen zeigt, dass die meisten Bewertungen im oberen und unteren Bereich liegen. Im nächsten Schritt wird ermittelt, ob bestimmte Produktkategorieren besonders positiv oder negativ bewertet wurden.  -->
 
@@ -354,11 +405,11 @@ wort_plot <- review_tokens_clean |>
   count(Wort, sort = TRUE) |>
   slice_head(n = 10) |>
   ggplot(aes(x = reorder(Wort, n), y = n)) +
-  geom_col(show.legend = FALSE, fill="#837591") +
+  geom_col(show.legend = FALSE, fill = "#837591") +
   coord_flip() +
   labs(x = "Wort", y = "Anzahl")
 
-if(interactive()){
+if (interactive()) {
   10 * 0.25 + calc_panel_margin_y_in(wort_plot)
 }
 
@@ -376,16 +427,19 @@ produkttyp_plot <- review_tokens_clean |>
   group_by(Produkttyp) |>
   slice_max(n, n = 10) |>
   ungroup() |>
-  ggplot(aes(x = reorder_within(Wort, n, Produkttyp), y = n,
-             fill = Produkttyp)) +
+  ggplot(aes(
+    x = reorder_within(Wort, n, Produkttyp),
+    y = n,
+    fill = Produkttyp
+  )) +
   geom_col(show.legend = FALSE) +
   facet_wrap(~Produkttyp, scales = "free") +
   scale_x_reordered() +
-  rcartocolor::scale_fill_carto_d(type="diverging", palette="Temps") +
+  rcartocolor::scale_fill_carto_d(type = "diverging", palette = "Temps") +
   coord_flip() +
   labs(x = NULL, y = "Wortanzahl")
 
-if(interactive()){
+if (interactive()) {
   10 * 0.25 + calc_panel_margin_y_in(produkttyp_plot)
 }
 
@@ -444,8 +498,10 @@ Um über reine Sternebewertungen hinauszugehen, analysieren wir den Textinhalt d
 #| fig-height: 2
 
 ## Sentiment Analysis
-sentiment_tokens <- vns::calc_tok_sentidict_tbl(reviews$Inhalt, 
-                                                .sentidict_tbl = vns.data::gerpolclu_tbl)
+sentiment_tokens <- vns::calc_tok_sentidict_tbl(
+  reviews$Inhalt,
+  .sentidict_tbl = vns.data::gerpolclu_tbl
+)
 
 review_sentiment <- sentiment_tokens |>
   group_by(doc_id = as.character(doc_id)) |>
@@ -557,35 +613,48 @@ sentiment_summary_per_class <-
     median_sentiment_score = median(sentiment_score),
     positive_reviews = sum(sentiment_class == "Positive"),
     negative_reviews = sum(sentiment_class == "Negative"),
-    neutral_reviews  = sum(sentiment_class == "Neutral"),
-    total_reviews    = n(),
-    perc_positive    = positive_reviews / total_reviews * 100,
-    perc_negative    = negative_reviews / total_reviews * 100,
-    perc_neutral     = neutral_reviews / total_reviews * 100,
+    neutral_reviews = sum(sentiment_class == "Neutral"),
+    total_reviews = n(),
+    perc_positive = positive_reviews / total_reviews * 100,
+    perc_negative = negative_reviews / total_reviews * 100,
+    perc_neutral = neutral_reviews / total_reviews * 100,
     .groups = "drop"
   ) |>
-   select(Produkttyp, avg_sentiment_score, perc_positive, perc_negative, perc_neutral) |>
-  pivot_longer(cols = starts_with("perc_"), names_to = "sentiment", values_to = "percentage") |>
+  select(
+    Produkttyp,
+    avg_sentiment_score,
+    perc_positive,
+    perc_negative,
+    perc_neutral
+  ) |>
+  pivot_longer(
+    cols = starts_with("perc_"),
+    names_to = "sentiment",
+    values_to = "percentage"
+  ) |>
   mutate(
-  sentiment = str_remove(sentiment, "perc_"),
-  sentiment = recode(sentiment,
-    positive = "Positiv",
-    negative = "Negativ",
-    neutral = "Neutral"
+    sentiment = str_remove(sentiment, "perc_"),
+    sentiment = recode(
+      sentiment,
+      positive = "Positiv",
+      negative = "Negativ",
+      neutral = "Neutral"
+    )
   )
-)
 ```
 
 ```{r}
 #| fig-height: 2.050507
 
-sentimentclass_plot <- sentiment_summary_per_class |> 
+sentimentclass_plot <- sentiment_summary_per_class |>
   ggplot(aes(x = percentage / 100, y = Produkttyp, fill = sentiment)) +
-  geom_col(position=position_stack()) +
+  geom_col(position = position_stack()) +
   geom_text(
     data = sentiment_summary_per_class |>
       group_by(Produkttyp) |>
-      summarise(label = paste0("Ø Sentiment: ", round(mean(avg_sentiment_score), 2))),
+      summarise(
+        label = paste0("Ø Sentiment: ", round(mean(avg_sentiment_score), 2))
+      ),
     aes(y = Produkttyp, x = 97.5 / 100, label = label),
     inherit.aes = FALSE,
     size = 4,
@@ -593,20 +662,25 @@ sentimentclass_plot <- sentiment_summary_per_class |>
     col = "white"
   ) +
   # coord_flip(clip = "off") +
-  scale_fill_manual(values = c("Positiv" = "#39b185", "Negativ" = "#cf597e", "Neutral" = "#e9e29c")) +
+  scale_fill_manual(
+    values = c(
+      "Positiv" = "#39b185",
+      "Negativ" = "#cf597e",
+      "Neutral" = "#e9e29c"
+    )
+  ) +
   scale_x_continuous(
     # expand = expansion(mult = c(0, 0.05)), limits = c(0, 105),
-    labels=scales::label_percent(accuracy=1)
+    labels = scales::label_percent(accuracy = 1)
   ) +
-  labs(y = NULL, fill = NULL, x = "Prozent"
-  ) +
-  guides(fill=guide_legend(reverse=TRUE)) |> 
-  theme(
-    legend.text = ggplot2::element_text(size = 12),
-    legend.position="bottom"
-  )
+  labs(y = NULL, fill = NULL, x = "Prozent") +
+  guides(fill = guide_legend(reverse = TRUE)) |>
+    theme(
+      legend.text = ggplot2::element_text(size = 12),
+      legend.position = "bottom"
+    )
 
-if(interactive()){
+if (interactive()) {
   3 * 0.25 + calc_panel_margin_y_in(sentimentclass_plot)
 }
 
@@ -630,13 +704,15 @@ bigrams_worst <- reviews |>
   filter(Produkttyp == "Kopfhörer") |>
   unnest_tokens(bigram, Inhalt, token = "ngrams", n = 2) |>
   separate(bigram, into = c("word1", "word2"), sep = " ") |>
-  filter(!word1 %in% custom_stopwords$Wort,
-         !word2 %in% custom_stopwords$Wort,
-         !str_detect(word1, "^\\d+$"),
-         !str_detect(word2, "^\\d+$")) |>
+  filter(
+    !word1 %in% custom_stopwords$Wort,
+    !word2 %in% custom_stopwords$Wort,
+    !str_detect(word1, "^\\d+$"),
+    !str_detect(word2, "^\\d+$")
+  ) |>
   unite(bigram, word1, word2, sep = "_")
 
-bigrams_worst_plot <- 
+bigrams_worst_plot <-
   bigrams_worst |>
   count(bigram, sort = TRUE) |>
   slice_max(n, n = 3) |>
@@ -644,11 +720,13 @@ bigrams_worst_plot <-
   geom_col(fill = "#46aea0") +
   coord_flip() +
   scale_x_discrete(
-    labels=\(.labs){stringi::stri_replace_all_fixed(.labs, "_", " ")}
+    labels = \(.labs) {
+      stringi::stri_replace_all_fixed(.labs, "_", " ")
+    }
   ) +
   labs(x = NULL, y = "Anzahl")
 
-if(interactive()){
+if (interactive()) {
   4 * 0.25 + calc_panel_margin_y_in(bigrams_worst_plot)
 }
 
@@ -784,7 +862,7 @@ stm_model <- stm(
   documents = out$documents,
   vocab = out$vocab,
   K = 3,
-  prevalence = ~ Bewertung,
+  prevalence = ~Bewertung,
   data = out$meta,
   init.type = "Spectral",
   verbose = FALSE,
@@ -801,7 +879,7 @@ tidy_topics <- tidy(stm_model)
 
 top_frex <- tidy_topics |>
   group_by(topic) |>
-  slice_max(beta, n = 7) |> 
+  slice_max(beta, n = 7) |>
   ungroup()
 
 topic_labels <- c(
@@ -815,18 +893,18 @@ topic_labels <- c(
 ```{r}
 #| fig-height: 2.755128
 
-topic_frex_plot <- top_frex |> 
-  mutate(term = reorder_within(term, beta, topic)) |> 
-  ggplot(aes(x=term, y = beta, fill = factor(topic))) +
+topic_frex_plot <- top_frex |>
+  mutate(term = reorder_within(term, beta, topic)) |>
+  ggplot(aes(x = term, y = beta, fill = factor(topic))) +
   geom_col(show.legend = FALSE) +
-  facet_wrap(~ topic, scales = "free", labeller = as_labeller(topic_labels)) +
+  facet_wrap(~topic, scales = "free", labeller = as_labeller(topic_labels)) +
   scale_x_reordered() +
   coord_flip() +
   theme_minimal() +
   labs(x = "Repräsentative Begriffe", y = "Gewichtung") +
-  rcartocolor::scale_fill_carto_d(type="diverging", palette="Temps")
+  rcartocolor::scale_fill_carto_d(type = "diverging", palette = "Temps")
 
-if(interactive()){
+if (interactive()) {
   7 * 0.25 + calc_panel_margin_y_in(topic_frex_plot)
 }
 
@@ -849,7 +927,7 @@ topic_assignments <- as_tibble(stm_model$theta) |>
   ungroup()
 
 topic_sentiment <- topic_assignments |>
-  mutate(ID = as.character(ID)) |>  
+  mutate(ID = as.character(ID)) |>
   left_join(
     review_summary |> select(ID, sentiment_score),
     by = "ID"
@@ -887,7 +965,7 @@ topic_summary <- topic_sentiment |>
 
 
 topic_summary_plot <- topic_summary |>
-  mutate(topic_label = forcats::fct_reorder(topic_label, avg_sentiment)) |> 
+  mutate(topic_label = forcats::fct_reorder(topic_label, avg_sentiment)) |>
   ggplot(aes(x = topic_label, y = avg_sentiment, fill = topic_label)) +
   geom_col(show.legend = FALSE) +
   scale_y_continuous() +
@@ -896,9 +974,9 @@ topic_summary_plot <- topic_summary |>
     y = "Ø Sentimentwert",
   ) +
   coord_flip() +
-  rcartocolor::scale_fill_carto_d(type="diverging", palette="Temps")
+  rcartocolor::scale_fill_carto_d(type = "diverging", palette = "Temps")
 
-if(interactive()){
+if (interactive()) {
   3 * 0.25 + calc_panel_margin_y_in(topic_summary_plot)
 }
 
@@ -912,4 +990,8 @@ Die Analyse der Sentimentwerte zeigt: Die größte Unzufriedenheit äußert sich
 
 In dieser Fallstudie haben wir gezeigt, welches Potenzial in der **systematischen Auswertung von Kundenrezensionen** steckt. Der freie Text in Rezensionen liefert wertvolle Informationen, ohne dass zusätzliche Befragungen oder aufwändige Erhebungen notwendig sind, wodurch Ressourcen gespart und anders eingesetzt werden können. Mithilfe geeigneter Analysemethoden lassen sich daraus konkrete Hinweise auf Produktqualität, Nutzererwartungen und mögliche Verbesserungspotenziale ableiten. Unternehmen können diese Einsichten gezielt nutzen, um Schwachstellen zu erkennen und ihre Produkte noch konsequenter an den Bedürfnissen der Kund:innen auszurichten.
 
-
+```{r}
+review_tokens_clean |>
+  count(Wort, sort = TRUE) |>
+  readr::write_rds(here::here("content", "data", "wordcloud_data.rds"))
+```

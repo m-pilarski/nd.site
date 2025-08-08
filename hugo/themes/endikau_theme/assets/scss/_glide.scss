@@ -6,6 +6,17 @@
   }
 }
 
+.glide__controls {
+  background-color:rgb(241, 241, 241);
+  .glide__btn-left {
+    border-radius: var(--bs-card-border-radius) 0 0 var(--bs-card-border-radius);
+  }
+  .glide__btn-right {
+    border-width: 0;
+    border-radius: 0 var(--bs-card-border-radius) var(--bs-card-border-radius) 0;
+  }
+}
+
 // Glide Container
 // .glide {
 //   position: relative;
