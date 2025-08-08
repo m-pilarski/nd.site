@@ -80,7 +80,7 @@ Die Themenmodellierung erfolgt dabei in vier aufeinander aufbauenden Schritten:
 {{{< div class="grid my-4" >}}} {{{< div class="g-col-12 g-col-md-10 g-start-md-2" >}}}
 
 ```{r}
-knitr::include_graphics(here::here("content/methods/topic/img/berttopic.svg"))
+knitr::include_graphics(here::here("content/methods/topic/img/bertopic.svg"))
 ```
 
 {{{< /div >}}} {{{< /div >}}}

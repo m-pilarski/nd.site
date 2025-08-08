@@ -8,6 +8,10 @@ draft: false
 html-table-processing: none
 ---
 
+```{r}
+library(tidyverse)
+```
+
 ## Was ist Entitätsanalyse?
 
 Die Entitätsanalyse ist eine NLP-Methode zur automatischen Erkennung und Klassifizierung wichtiger Begriffe (z.B. Personen, Orte, Organisationen) in unstrukturierten Texten. Als Entität bezeichnet man dabei die Information, die aus dem Text extrahiert werden soll. Eine Entität stellt dabei einen Begriff dar, der in einem Text konsequent das gleiche bezeichnet. So lassen sich mittels Entitätsanalyse beispielsweise Namen von Personen, Firmennamen, Orte, Ereignisse oder Zeitangaben erkennen und extrahieren. Dafür sind zwei Schritte grundlegend: Die Identifikation von Entitäten im Text und deren Zuordnung zu vordefinierten Kategorien.
@@ -40,8 +44,7 @@ Für diese Methode stehen unterschiedliche Algorithmen zur Verfügung, für welc
 Regelbasierte Ansätze der Entitätsanalyse nutzen vordefinierte Muster und Wörterlisten, um Entitäten wie Personen, Organisationen oder Orte im Text zu identifizieren. Dabei werden meist zwei Verfahren kombiniert: Lexikonbasierte Erkennung und musterbasierte Regeln.
 
 ```{r}
-entity_example <- 
-  tibble(
+entity_example <- tibble(
   Entität = c(
     "Organisation",
     "Person",
@@ -67,7 +70,6 @@ entity_example <-
     "max@mustermann.de"
   )
 )
-
 
 ```
 

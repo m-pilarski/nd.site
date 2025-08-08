@@ -34,15 +34,15 @@ toc_show: false
 library(ggraph)
 library(tidygraph)
 
-highschool |> 
-  as_tbl_graph() |> 
+highschool |>
+  as_tbl_graph() |>
   ggraph() +
-  geom_edge_link(aes(colour = factor(year)), linewidth=1.5) +
-  geom_node_point(size=4) +
-  scale_edge_color_manual(values=rcartocolor::carto_pal(2, "Temps")) +
+  geom_edge_link(aes(colour = factor(year)), linewidth = 1.5) +
+  geom_node_point(size = 4) +
+  scale_edge_color_manual(values = rcartocolor::carto_pal(2, "Temps")) +
   coord_equal() +
   theme_void() +
-  theme(legend.position="none")
+  theme(legend.position = "none")
 ```
 
       {{{< /div >}}}

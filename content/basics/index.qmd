@@ -124,6 +124,8 @@ Das **Bag-of-Words-Modell** (BoW) ist eine der einfachsten Methoden, um Texte in
 
 
 ```{r}
+library(tidyverse)
+
 texts <- tibble(
   doc_id = paste0(1:3),
   text = c(
@@ -134,7 +136,7 @@ texts <- tibble(
 )
 
 bow <- texts |>
-  unnest_tokens(word, text) |>
+  tidytext::unnest_tokens(word, text) |>
   count(doc_id, word) |>
   pivot_wider(
     names_from = word,
