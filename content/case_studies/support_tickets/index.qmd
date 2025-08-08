@@ -8,7 +8,6 @@ toc_show: true
 execute:
   echo: false
   message: false
-  cache: false
 ---
 
 
@@ -58,57 +57,13 @@ ggplot2::theme_set(`+`(
     panel.grid.major = ggplot2::element_blank(),
     panel.grid.minor = ggplot2::element_blank(),
     panel.background = ggplot2::element_rect(fill = NA, colour = NA),
-    plot.background = ggplot2::element_rect(fill = NA, colour = NA)
+    plot.background = ggplot2::element_rect(fill = NA, colour = NA),
+    legend.position = "bottom"
   )
 ))
 ```
 
   
-```{r}
-# #| message: false
-# #| output: false
-#
-# color_pal <-
-#   tibble::tribble(
-#   ~color, ~palette,
-#   "#2e2933", "base",
-#   "#837591", "base",
-#   "#e9ebe5", "base",
-#   "#cf597e", "diverging",
-#   "#e88471", "diverging",
-#   "#eeb479", "diverging",
-#   "#e9e29c", "diverging",
-#   "#9ccb86", "diverging",
-#   "#39b185", "diverging",
-#   "#009392", "diverging",
-#   "#f7feae", "sequential",
-#   "#b7e6a5", "sequential",
-#   "#7ccba2", "sequential",
-#   "#46aea0", "sequential",
-#   "#089099", "sequential",
-#   "#00718b", "sequential",
-#   "#045275", "sequential",
-# ) |>
-#   dplyr::mutate(
-#     color_palette_rank = dplyr::row_number(), .by=palette
-#   )
-#
-#
-# library(tidyverse)
-# library(tidytext)
-# library(textdata)
-# library(lubridate)
-# library(topicmodels)
-# library(tm)
-# library(wordcloud)
-# library(stopwords)
-# library(ggplot2)
-# library(textrecipes)
-# library(tidymodels)
-#
-# # TODO: add colors from webapp, to color the plots cohesively
-```
-
 Täglich erreichen Unternehmen zahlreiche Anfragen, Beschwerden oder sonstige Mitteilungen. Um diese effizient zu verwalten, kommen Support-Systeme zum Einsatz, die Kundenanliegen strukturieren und kategorisieren.
 
 In diesem Fallbeispiel zeigen wir, wie sich Methoden der Textanalyse und des maschinellen Lernens nutzen lassen, um Support-Tickets automatisiert nach ihrer Dringlichkeit zu klassifizieren. Ziel ist es, besonders wichtige Anfragen frühzeitig zu erkennen und die Kundenzufriedenheit gezielt zu steigern.
@@ -166,60 +121,46 @@ support <-
       TRUE ~ Bereich
     )
   )
-
-
-# support |>
-#   head(2) |>
-#   gt::gt() |>
-#   gt::tab_header(
-#     title = "Beispiel der ersten Beobachtungen aus dem Rohdatensatz"
-#   ) |>
-#   gt::tab_options(
-#     table.width = gt::pct(100),
-#     table.font.size = gt::px(13),
-#     data_row.padding = gt::px(4),
-#     ihtml.use_pagination = FALSE,
-#     ihtml.use_text_wrapping = TRUE
-#   )
 ```
 
 ```{r}
 library(htmltools)
 
-support |> 
-  slice_sample(n=10) |> 
+support |>
+  slice_sample(n = 10) |>
   mutate(
     Betreff,
     Nachricht,
     Bereich,
     Sprache,
     Dringlichkeit,
-    .keep="none"
-  ) |> 
-  as.list() |> 
-  list_transpose() |> 
-  map(\(.row_list){
+    .keep = "none"
+  ) |>
+  as.list() |>
+  list_transpose() |>
+  map(\(.row_list) {
     tags$div(
-      class="card", style="width: 100%;",
+      class = "card",
+      style = "width: 100%;",
       tags$ul(
-        class="list-group list-group-flush",
-        !!!unname(imap(.row_list, \(.value, .key){
+        class = "list-group list-group-flush",
+        !!!unname(imap(.row_list, \(.value, .key) {
           tags$li(
-            class="list-group-item", 
+            class = "list-group-item",
             tags$div(
-              style=stringi::stri_c(
+              style = stringi::stri_c(
                 "overflow: hidden; width: 100%; display: -webkit-box; ",
                 "-webkit-line-clamp: 8; -webkit-box-orient: vertical;"
               ),
-              tags$code(stringi::stri_c(.key, ":")), 
+              tags$code(stringi::stri_c(.key, ":")),
               .value
             )
           )
         }))
       )
     )
-  }) |> 
-  nd.util::nd_carousel(.title="Beispielbeobachtungen aus dem Rohdatensatz")
+  }) |>
+  nd.util::nd_carousel(.title = "Beispielbeobachtungen aus dem Rohdatensatz")
 ```
 
 
@@ -285,7 +226,6 @@ Das Endresultat ist ein Datensatz in dem jedes Wort eine eigene Zeile darstellt.
 
 
 ```{r}
-
 # word freq
 top_words <- support_tokens_clean |>
   count(word, sort = TRUE)
@@ -295,11 +235,9 @@ freq_plot <- top_words |>
   ggplot(aes(x = reorder(word, n), y = n)) +
   geom_col(show.legend = FALSE, fill = "#837591") +
   coord_flip() +
-  labs(x = "Wort", y = "Anzahl") +
-  theme_minimal()
+  labs(x = "Wort", y = "Anzahl")
 ```
 ```{r}
-#| fig-height: !expr '10 * 0.25 + calc_panel_margin_y_in(freq_plot)'
 freq_plot
 ```
 
@@ -329,7 +267,6 @@ freq_per_class_plot <-
   facet_wrap(~Dringlichkeit, scales = "free_y") +
   scale_x_reordered() +
   coord_flip() +
-  theme_minimal() +
   scale_fill_manual(
     values = c(
       "gering" = "#39b185",
@@ -342,7 +279,6 @@ freq_per_class_plot <-
   )
 ```
 ```{r}
-#| fig-height: !expr '10 * 0.25 + calc_panel_margin_y_in(freq_per_class_plot)'
 freq_per_class_plot
 ```
 
@@ -380,7 +316,6 @@ tfidf_plot <-
   facet_wrap(~Dringlichkeit, scales = "free") +
   scale_x_reordered() +
   coord_flip() +
-  theme_minimal() +
   scale_fill_manual(
     values = c(
       "gering" = "#39b185",
@@ -393,7 +328,6 @@ tfidf_plot <-
   )
 ```
 ```{r}
-#| fig-height: !expr '10 * 0.25 + calc_panel_margin_y_in(tfidf_plot)'
 tfidf_plot
 ```
 
@@ -406,6 +340,8 @@ Im nächsten Schritt bereiten wir die Texte entsprechend vor und erstellen versc
 
 
 ```{r}
+#| html-table-processing: none
+
 support_clean <- support |>
   mutate(
     Zeichenanzahl = str_length(Nachricht),
@@ -452,16 +388,19 @@ comp_table <- support_clean |>
     .groups = "drop"
   )
 
+library(gt)
 
 comp_table |>
   gt::gt() |>
   gt::tab_header(
-    title = "Vergleich sprachlicher Merkmale nach Dringlichkeit"
+    title = gt::md("Vergleich sprachlicher Merkmale nach Dringlichkeit")
   ) |>
   gt::fmt_number(
     columns = where(is.numeric),
     decimals = 2
-  )
+  ) |>
+  gt::as_raw_html(inline_css = TRUE) |>
+  nd.util::render_raw_html()
 
 ```
 
@@ -541,17 +480,14 @@ sentiment_summary_long <- sentiment_summary |>
 
 ```{r}
 #| fig-cap: Distribution of Sentiment
-#| fig-height: 1.263476
+#| fig-height: 1.8
 
 overall_sentiment_plot <-
   ggplot(sentiment_summary_long, aes(x = "", y = Anteil, fill = Sentiment)) +
   geom_bar(stat = "identity", width = 0.4) +
   coord_flip() +
-  labs(
-    x = NULL,
-    y = "Anteil in %",
-  ) +
-  theme_minimal() +
+  guides(fill = guide_legend(reverse = TRUE)) +
+  labs(x = NULL, y = "Anteil in %") +
   scale_fill_manual(
     values = c(
       "Positiv" = "#39b185",
@@ -561,7 +497,7 @@ overall_sentiment_plot <-
   )
 
 if (interactive()) {
-  3 * 0.25 + calc_panel_margin_y_in(overall_sentiment_plot)
+  1 * 0.25 + calc_panel_margin_y_in(overall_sentiment_plot)
 }
 
 overall_sentiment_plot
@@ -584,12 +520,15 @@ avg_sentiment_per_class <- support_summary |>
 
 sentiment_per_urgency_plot <-
   support_summary |>
-  ggplot(aes(x = Dringlichkeit, y = Sentimentwert, fill = Dringlichkeit)) +
+  ggplot(
+    aes(x = Dringlichkeit, y = Sentimentwert, fill = fct_rev(Dringlichkeit))
+  ) +
   geom_violin(trim = FALSE, alpha = 0.8, color = NA) +
   geom_boxplot(width = 0.1, fill = "white", outlier.shape = NA) +
   labs(
     x = "Dringlichkeit",
-    y = "Sentimentwert"
+    y = "Sentimentwert",
+    fill = "Dringlichkeit"
   ) +
   scale_fill_manual(
     values = c(
@@ -597,8 +536,12 @@ sentiment_per_urgency_plot <-
       "hoch" = "#cf597e"
     )
   ) +
+  coord_flip() +
   theme(
-    panel.grid.major = element_line()
+    panel.grid.major = element_line(),
+    axis.title.y = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank()
   )
 
 
@@ -613,40 +556,6 @@ sentiment_per_urgency_plot
 
 Hoch dringliche Nachrichten enthalten häufiger negativ formulierte Texte, etwa bei Problemen oder Störungen. Weniger dringliche Anfragen sind oft neutral oder positiv, z.B. bei allgemeinen Rückfragen oder Wünschen. Die Stimmung im Text kann also ein guter Hinweis auf die Dringlichkeit sein.
 
-
-```{r}
-# #| fig-cap: Sentiment scores per class
-# #| fig-cap-location: top
-# #| echo: false
-#
-# #Sentiment per urgency label
-# avg_sentiment_per_type <- support_summary |>
-#   group_by(Bereich) |>
-#   summarize(avg_sentiment = mean(Sentimentwert, na.rm = TRUE)) |>
-#   arrange(desc(avg_sentiment))
-#
-# print(avg_sentiment_per_type)
-#
-#
-# avg_sentiment_per_type |>
-#   ggplot(aes(x = fct_reorder(Bereich, avg_sentiment),
-#              y = avg_sentiment,
-#              fill = Bereich)) +
-#   geom_col(show.legend = FALSE) +
-#   labs(
-#     x = "Nachrichtentyp",
-#     y = "Ø Sentimentwert"
-#   ) +
-#   theme_minimal() +
-#   scale_fill_manual(values = color_pal |>
-#                       filter(palette %in% c("diverging", "sequential")) |>
-#                       slice_head(n = n_distinct(avg_sentiment_per_type$Bereich)) |>
-#                       pull(color)
-#                     ) +
-#   coord_flip()
-#
-#
-```
 
 ### Klassifikation 
 
@@ -711,7 +620,6 @@ Das Modell wurde mit 75% der Daten trainiert und auf den verbleibenden 25% getes
 
 
 ```{r}
-
 # TODO: Build nice classfier for urgency labels
 
 #

@@ -1,0 +1,92 @@
+---
+title: "Entitätsanalyse"
+subtitle: "Automatisierte Identifikation und Klassifikation von Entitäten und Eigennamen"
+figtitle: "🏷️"
+date: "2024-11-25T14:25:49+01:00"
+toc_show: true
+draft: false
+html-table-processing: none
+---
+
+```{r}
+library(tidyverse)
+```
+
+## Was ist Entitätsanalyse?
+
+Die Entitätsanalyse ist eine NLP-Methode zur automatischen Erkennung und Klassifizierung wichtiger Begriffe (z.B. Personen, Orte, Organisationen) in unstrukturierten Texten. Als Entität bezeichnet man dabei die Information, die aus dem Text extrahiert werden soll. Eine Entität stellt dabei einen Begriff dar, der in einem Text konsequent das gleiche bezeichnet. So lassen sich mittels Entitätsanalyse beispielsweise Namen von Personen, Firmennamen, Orte, Ereignisse oder Zeitangaben erkennen und extrahieren. Dafür sind zwei Schritte grundlegend: Die Identifikation von Entitäten im Text und deren Zuordnung zu vordefinierten Kategorien.
+
+{{{< div class="grid my-4" >}}} {{{< div class="g-col-12" >}}} 
+
+```{r}
+knitr::include_graphics(here::here("content/methods/ner/img/ner.svg"))
+```
+
+{{{< /div >}}} {{{< /div >}}}
+
+## Anwendungen
+
+{{{< fa-ul >}}}
+  {{{< fa-solid-li icon="star"  >}}} **Identifikation sensibler Informationen:** Mittels Entitätsanalyse lassen sich personenbezogene Daten wie Namen oder Adressen automatisch erkennen und pseudonymisieren. Ein wichtiger Schritt zur Einhaltung der DSGVO.
+  {{{< /fa-solid-li >}}}
+  {{{< fa-solid-li icon="lightbulb"  >}}} **Wettbewerbsanalyse:** Durch das Extrahieren von Mitbewerber- oder Produktnamen lassen sich relevante Informationen für Marktanalysen gewinnen.
+  {{{< /fa-solid-li >}}}
+  {{{< fa-solid-li icon="ticket-simple" >}}} **Dokumentenklassifikation:** Die Entitätsanalyse erkennt relevante Begriffe wie „Rechnung“ oder „Projektbericht“ und unterstützt so die automatische Kategorisierung von Dokumenten. {{{< /fa-solid-li >}}}
+{{{< /fa-ul >}}}
+
+
+## Ansätze zur Entitätsanalyse
+
+Für diese Methode stehen unterschiedliche Algorithmen zur Verfügung, für welche Unternehmen sich entscheiden können, je nach ihren Bedürfnissen oder verfügbaren Ressourcen: 
+
+### Regelbasierte Entitätsanalyse 
+
+Regelbasierte Ansätze der Entitätsanalyse nutzen vordefinierte Muster und Wörterlisten, um Entitäten wie Personen, Organisationen oder Orte im Text zu identifizieren. Dabei werden meist zwei Verfahren kombiniert: Lexikonbasierte Erkennung und musterbasierte Regeln.
+
+```{r}
+entity_example <- tibble(
+  Entität = c(
+    "Organisation",
+    "Person",
+    "Ort",
+    "Land",
+    "Datum",
+    "Uhrzeit",
+    "Produkt",
+    "Menge",
+    "Währung",
+    "E-Mail"
+  ),
+  Beispiel = c(
+    "JLU",
+    "Max Msutermann",
+    "Gießen",
+    "Deutschland",
+    "24.05.2024",
+    "13:30",
+    "Laptop",
+    "20.000",
+    "Euro",
+    "max@mustermann.de"
+  )
+)
+
+```
+
+Beim lexikonbasierten Ansatz wird der Text mit einem vordefinierten Wörterverzeichnis abgeglichen, also mit Listen relevanter Namen und Begriffe. Stimmen Wörter im Text mit diesen Einträgen überein, werden sie als Entität klassifiziert. Ergänzend kommen regelbasierte Methoden zum Einsatz, die sprachliche Strukturen analysieren. Diese Regeln basieren oft auf linguistischen Mustern, wie z.B. Großschreibung innerhalb eines Satzes oder typischen Formatierungen wie Datums- oder E-Mail-Strukturen.
+
+{{{< fa-ul >}}}
+  {{{< fa-solid-li icon="thumbs-up" color="#39b185" >}}} Lässt sich unkompliziert umsetzen, selbst mit begrenzten Ressourcen oder ohne eigene Trainingsdaten. {{{< /fa-solid-li >}}}
+  {{{< fa-solid-li icon="thumbs-up" color="#39b185" >}}} Kann gezielt auf spezifische Anwendungsfälle zugeschnitten werden, etwa durch eigene Lexika oder regelbasierte Anpassungen. {{{< /fa-solid-li >}}}
+  {{{< fa-solid-li icon="thumbs-down" color="#cf597e" >}}} Erfordert kontinuierliche Pflege, da Regeln und Lexika regelmäßig aktualisiert werden müssen. {{{< /fa-solid-li >}}}
+  {{{< fa-solid-li icon="thumbs-down" color="#cf597e" >}}} Die Qualität hängt stark von der Sprache und den verwendeten Wörterbüchern ab. {{{< /fa-solid-li >}}}
+  {{{< fa-solid-li icon="thumbs-down" color="#cf597e" >}}} Sprachliche Varianten und Ausnahmen lassen sich nicht immer zuverlässig erfassen. Dadurch können Entitäten übersehen werden. {{{< /fa-solid-li >}}}
+{{{< /fa-ul >}}}
+
+### Kontextuelle Entitätsanalyse
+
+Die Entitätsanalyse ist ein weiterer zentraler Anwendungsfall für vortrainierte Sprachmodelle, wie bereits bei der Sentimentanalyse und Themenmodellierung gezeigt. Es stehen Modelle zur Verfügung, die speziell für die Erkennung benannter Entitäten trainiert wurden. Alternativ können Unternehmen bestehende vortrainierte Modelle übernehmen und mittels Fine-Tuning gezielt an ihre individuellen Anforderungen anpassen.
+
+Besonders empfehlenswert sind Modelle aus der BERT-Familie, da sie speziell für Klassifikationsaufgaben wie die Entitätsanalyse konzipiert wurden und kontextuelle Informationen zuverlässig verarbeiten können.
+
+<!-- TODO: add cross refs  -->

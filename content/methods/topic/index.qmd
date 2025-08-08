@@ -77,7 +77,15 @@ Die Themenmodellierung erfolgt dabei in vier aufeinander aufbauenden Schritten:
 {{{< /fa-ul >}}}
 
 
-<!-- TODO: Insert illustration for BERTopic -->
+{{{< div class="grid my-4" >}}} {{{< div class="g-col-12 g-col-md-10 g-start-md-2" >}}}
+
+```{r}
+knitr::include_graphics(here::here("content/methods/topic/img/bertopic.svg"))
+```
+
+{{{< /div >}}} {{{< /div >}}}
+
+
 
 #### Vor- und Nachteile
 

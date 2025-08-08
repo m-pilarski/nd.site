@@ -11,5 +11,5 @@ draft: true
 ```{r}
 #| echo: false
 #| output: asis
-cat(stringi::stri_rand_lipsum(5), sep="\n\n")
+cat(stringi::stri_rand_lipsum(5), sep = "\n\n")
 ```

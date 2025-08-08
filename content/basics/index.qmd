@@ -122,19 +122,47 @@ Die Vorverarbeitung der Texte allein genügt nicht, um sie vollständig in eine 
 
 Das **Bag-of-Words-Modell** (BoW) ist eine der einfachsten Methoden, um Texte in eine numerische Form zu überführen. Dabei wird für jeden Text gezählt, wie oft bestimmte Wörter vorkommen, unabhängig von ihrer Reihenfolge oder ihrem Kontext. Jeder Text wird dadurch zu einem sogenannten **Wortvektor**, in dem jedes Element die Häufigkeit eines bestimmten Begriffs angibt.
 
-<!-- Insert example vector -->
 
-{{{< p class="pb-0" >}}}
+```{r}
+library(tidyverse)
+
+texts <- tibble(
+  doc_id = paste0(1:3),
+  text = c(
+    "Das Essen war gut.",
+    "Der Service war gut.",
+    "Das Restaurant war sauber."
+  )
+)
+
+bow <- texts |>
+  tidytext::unnest_tokens(word, text) |>
+  count(doc_id, word) |>
+  pivot_wider(
+    names_from = word,
+    values_from = n,
+    values_fill = 0
+  )
+
+bow_with_text <- bow |>
+  left_join(texts, by = "doc_id") |>
+  relocate(text, .after = doc_id) |>
+  select(-doc_id)
+
+# TODO function to make nice tables
+
+```
+
 Dieses Verfahren ist besonders einfach zu implementieren und funktioniert gut für erste Analysen, z.B. für die Analyse von Worthäufigkeiten. Allerdings geht die Bedeutung von Sprache verloren, da weder Satzstruktur noch Wortbedeutung berücksichtigt werden.
-{{{< /p >}}}
+
 
 #### TF-IDF
 
 **TF-IDF** ist eine Weiterentwicklung des Bag-of-Words-Modells. Es zählt nicht nur, wie **oft ein Wort in einem Text vorkommt** (TF = Term Frequency), sondern prüft auch, wie **selten es im gesamten Textkorpus ist** (IDF = Inverse Document Frequency).
 
-{{{< p class="pb-0" >}}}
+
 Alltägliche Wörter wie „ist“ oder „und“ erscheinen in vielen Dokumenten und erhalten deshalb eine niedrige Gewichtung. Fachbegriffe oder thematisch wichtige Wörter, die nur in wenigen Dokumenten auftauchen, werden dagegen stärker gewichtet. So erkennt TF-IDF, welche Begriffe für den jeweiligen Text besonders aussagekräftig sind.
-{{{< /p >}}}
+
 
 ### Kontextuelle Verfahren
 
@@ -149,7 +177,7 @@ Ein früherer Vertreter solcher Einbettungen ist die Word2Vec Methode. Im Gegens
 In der Grafik sieht man, dass das Modell nicht nur erkennt, dass „König“ und „Königin“ zusammengehören, sondern auch die Beziehung zwischen „Mann“ und „Frau“ versteht. Die Richtung und Länge der Pfeile zeigen, dass die Bedeutung von „König“ zu „Königin“ ähnlich ist wie von „Mann“ zu „Frau“. So lassen sich Bedeutungen im Raum nicht nur erkennen, sondern auch rechnerisch ableiten, wie zum Beispiel *König – Mann + Frau = Königin*.
 {{{< /p >}}}
 
-{{{< div class="grid my-4" >}}} {{{< div class="g-col-12 g-col-md-8 g-start-md-3" >}}} 
+{{{< div class="grid my-4" >}}} {{{< div class="g-col-12 g-col-md-6 g-start-md-4" >}}} 
 
 ```{r}
 knitr::include_graphics(here::here("content/basics/img/embeddings.svg"))
