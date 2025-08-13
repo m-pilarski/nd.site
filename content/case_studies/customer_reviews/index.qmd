@@ -265,12 +265,7 @@ custom_stopwords <- tibble(
     product_terms
   ))
 )
-custom_stopwords <- tibble(
-  Wort = tolower(c(
-    quanteda::stopwords(language = "de", source = "nltk"),
-    product_terms
-  ))
-)
+
 
 # tokenize and clean
 review_tokens <- reviews |>
@@ -280,20 +275,6 @@ review_tokens_clean <- review_tokens |>
   filter(!str_detect(Wort, "^\\d+$|^[sa]\\d+$|^[0-9]+[a-z]*$")) |>
   anti_join(custom_stopwords, by = "Wort")
 
-# review_tokens_clean |>
-#   select(-URL) |>
-#   head(5) |>
-#   gt::gt() |>
-#   gt::tab_header(
-#     title = "Beispiel der ersten Beobachtung nach der Vorverarbeitung"
-#   ) |>
-#   gt::tab_options(
-#     table.width = gt::pct(100),
-#     table.font.size = gt::px(13),
-#     data_row.padding = gt::px(4),
-#     ihtml.use_pagination = FALSE,
-#     ihtml.use_text_wrapping = TRUE
-#   )
 
 ```
 
@@ -351,51 +332,7 @@ reviews |>
   nd.util::nd_carousel(.title = "Beispielbeobachtung nach der Vorverarbeitung")
 ```
 
-<!-- Die Verteilung der Bewertungen zeigt, dass die meisten Bewertungen im oberen und unteren Bereich liegen. Im nächsten Schritt wird ermittelt, ob bestimmte Produktkategorieren besonders positiv oder negativ bewertet wurden.  -->
 
-<!-- :::{.columns} -->
-
-<!-- ::: {.column width="70%"} -->
-
-<!-- ```{r} -->
-<!-- #| fig-cap: Rating distribution -->
-<!-- #| fig-height: 1.923071 -->
-<!-- bewertung_plot <- reviews |> -->
-<!--   count(Bewertung = factor(Bewertung)) |>  -->
-<!--   ggplot(aes(y=Bewertung, x = n)) + -->
-<!--   geom_col(aes(fill = Bewertung)) + -->
-<!--   rcartocolor::scale_fill_carto_d( -->
-<!--     type="diverging", palette="Temps", direction=-1 -->
-<!--   ) + -->
-<!--   labs(y = "Bewertung", x = "Anzahl") + -->
-<!--   theme(legend.position="none") -->
-
-<!-- if(interactive()){ -->
-<!--   5 * 0.25 + calc_panel_margin_y_in(bewertung_plot) -->
-<!-- } -->
-
-<!-- bewertung_plot -->
-<!-- ``` -->
-<!-- ::: -->
-
-<!-- ::: {.column width="30%"} -->
-<!-- ```{r} -->
-<!-- reviews |> -->
-<!--   group_by(Produkttyp) |> -->
-<!--   summarise(avg_rating = mean(Bewertung, na.rm = TRUE)) |> -->
-<!--   arrange(desc(avg_rating)) |>  -->
-<!--   gt::gt() |>  -->
-<!--   gt::fmt_number(columns = avg_rating, decimals = 2) |>  -->
-<!--   gt::cols_label( -->
-<!--     Produkttyp = "Produkttyp", -->
-<!--     avg_rating = "Ø Bewertung" -->
-<!--   ) |> -->
-<!--   gt::tab_options( -->
-<!--     table.width = gt::pct(100) -->
-<!--   ) -->
-<!-- ``` -->
-<!-- ::: -->
-<!-- ::: -->
 
 ### Analyse 
 
@@ -459,7 +396,7 @@ wort_plot
 ```
 
 
-Im nächsten Schritt untersuchen wir die häufigsten Begriffe pro Kategorie, um inhaltliche Unterschiede sichtbar zu machen.
+Im nächsten Schritt untersuchen wir die **häufigsten Begriffe pro Kategorie**, um inhaltliche Unterschiede sichtbar zu machen.
 
 ```{r}
 #| fig-height: 3.505128
@@ -491,44 +428,44 @@ produkttyp_plot
 
 Während bei *Smartphones* und *Telefonzubehör* Begriffe wie „funktioniert“ oder „super“ dominieren, tauchen bei *Kopfhörern* vermehrt Wörter wie „kaputt“ oder „wackelkontakt“ auf. In Kombination mit der vergleichsweise niedrigen Durchschnittsbewertung deutet dies darauf hin, dass gerade bei Kopfhörern häufiger Probleme auftreten.
 
-<!-- Häufigkeitsanalysen zeigen dominante Begriffe, vernachlässigen jedoch deren Aussagekraft pro Kategorie. Die TF-IDF-Analyse hebt hingegen kategorietypische Begriffe hervor. Die TF-IDF-Metrik (Term Frequency–Inverse Document Frequency) gewichtet Wörter nicht nur nach ihrer Häufigkeit, sondern berücksichtigt auch, wie exklusiv sie für eine bestimmte Kategorie sind. -->
-
-<!-- In der Grafik wird deutlich: -->
-
-<!-- * Bei Headphones stehen „musik“, „kabelbruch“ und „enttäuschend“ für typische Nutzung und Schwächen. -->
-
-<!-- * Phone Accessories sind geprägt von Begriffen wie „fritzbox“, „router“ und „reichweite“. -->
-
-<!-- * Bei Smartphones dominieren Themen wie „kamera“, „apps“ und „wasserdicht“. -->
-
-<!-- Dadurch lassen sich erste Hinweise auf die zentralen Themen und Probleme pro Produktkategorie identifizieren – ein wichtiger Schritt, um die Inhalte der Rezensionen gezielter auszuwerten und in späteren Analysen (z.B. Sentiment oder Topic Modeling) weiter zu untersuchen. -->
-
-<!-- ```{r} -->
-<!-- #| fig-cap: Tfidf scores per product -->
-<!-- #| echo: false -->
-
-<!-- # TF-IDF -->
-<!-- review_tokens_clean |> -->
-<!--   count(product_type, word) |> -->
-<!--   bind_tf_idf(word, product_type, n) |> -->
-<!--   group_by(product_type) |> -->
-<!--   slice_max(tf_idf, n = 10) |> -->
-<!--   ungroup() |> -->
-<!--   ggplot(aes(x = reorder_within(word, tf_idf, product_type), y = tf_idf, -->
-<!--              fill = product_type)) + -->
-<!--   geom_col(show.legend = FALSE) + -->
-<!--   facet_wrap(~product_type, scales = "free") + -->
-<!--   scale_x_reordered() + -->
-<!--   scale_fill_manual(values = color_pal |>  -->
-<!--                       filter(palette == "diverging") |>  -->
-<!--                       slice_head(n = n_distinct(review_tokens_clean$product_type)) |>  -->
-<!--                       pull(color)) + -->
-<!--   coord_flip() + -->
-<!--   labs(x = NULL, y = "tfidf") + -->
-<!--   theme_minimal() -->
+Häufigkeitsanalysen zeigen dominante Begriffe, vernachlässigen jedoch deren Aussagekraft pro Kategorie. Die TF-IDF-Analyse hebt hingegen kategorietypische Begriffe hervor. Die {{{< crossref path="/basics#tf-idf" label="TF-IDF-Metrik" >}}} gewichtet Wörter nicht nur nach ihrer Häufigkeit, sondern berücksichtigt auch, wie exklusiv sie für eine bestimmte Kategorie sind.
 
 
-<!-- ``` -->
+```{r}
+#| fig-height: 3.505128
+
+# TF-IDF
+tfidf_plot <- review_tokens_clean |>
+  count(Produkttyp, Wort) |>
+  bind_tf_idf(Wort, Produkttyp, n) |>
+  group_by(Produkttyp) |>
+  slice_max(tf_idf, n = 10) |>
+  ungroup() |>
+  ggplot(aes(x = reorder_within(Wort, tf_idf, Produkttyp),
+             y = tf_idf, fill = Produkttyp)) +  
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~Produkttyp, scales = "free") +
+  scale_x_reordered() +
+  rcartocolor::scale_fill_carto_d(type = "diverging", palette = "Temps") +
+  coord_flip() +
+  labs(x = NULL, y = "TF‑IDF")
+
+
+tfidf_plot
+```
+
+In der Grafik wird deutlich:
+
+{{{< fa-ul >}}}
+  {{{< fa-solid-li icon="lightbulb" >}}} Bei Headphones stehen „musik“, „kabelbruch“ und „enttäuschend“ für typische Nutzung und Schwächen. {{{< /fa-solid-li >}}}
+
+  {{{< fa-solid-li icon="lightbulb" >}}} Phone Accessories sind geprägt von Begriffen wie „fritzbox“, „router“ und „reichweite“. {{{< /fa-solid-li >}}}
+
+  {{{< fa-solid-li icon="lightbulb" >}}} Bei Smartphones dominieren Themen wie „kamera“, „apps“ und „wasserdicht“.{{{< /fa-solid-li >}}}
+{{{< /fa-ul >}}}
+
+Dadurch lassen sich erste Hinweise auf die zentralen Themen und Probleme pro Produktkategorie identifizieren. Dies stellt einen wichtiger Schritt dar, um die Inhalte der Rezensionen gezielter auszuwerten und in späteren Analysen (z.B. Sentiment oder Themenmodellierung) weiter zu untersuchen.
+
 
 
 #### Sentimentanalyse 
@@ -606,36 +543,6 @@ sentiment_summary <- review_summary |>
 #   )
 
 ```
-
-
-<!-- Die Sentimentanalyse ergibt einen durchschnittlichen Sentimentwert von -0.08, was auf eine leicht negative Grundstimmung der Bewertungen hinweist. -->
-
-<!-- Die Verteilung der Sentimentklassen zeigt: -->
-
-<!-- * 46% der Rezensionen enthalten überwiegend positive Begriffe, -->
-
-<!-- * 43% zeigen eine negative Sprachverwendung, -->
-
-<!-- * 11% bleiben sprachlich neutral. -->
-
-
-<!-- # ```{r} -->
-<!-- # #| fig-cap: Sentiment per rating score -->
-<!-- # #| echo: false -->
-<!-- #  -->
-<!-- # review_summary |> -->
-<!-- #   group_by(Bewertung) |> -->
-<!-- #   summarise(avg_sentiment = mean(sentiment_score, na.rm = TRUE)) |> -->
-<!-- #   ggplot(aes(x = factor(Bewertung), y = avg_sentiment)) + -->
-<!-- #   geom_col(fill = "#cf597e") + -->
-<!-- #   labs( -->
-<!-- #     x = "Bewertung", -->
-<!-- #     y = "Sentiment" -->
-<!-- #   ) -->
-<!-- # ``` -->
-<!-- #  -->
-<!-- #  -->
-<!-- # Ein Vergleich der Sentimentwerte mit den Bewertungen der Kund:innen zeigt eine klare Tendenz: Mit steigender Sternebewertung nimmt auch das durchschnittliche Sentiment zu. -->
 
 
 
@@ -731,15 +638,121 @@ sentimentclass_plot
 
 Um die Stimmung in den Rezensionen je Produktkategorie besser einordnen zu können, wurden die Anteile positiver, negativer und neutraler Bewertungen berechnet und in einem Vergleichsdiagramm nach Produktgruppen visualisiert.
 
-Die Kateogire *Telefonzubehör* sticht positiv hervor: Sie weist nicht nur den höchsten durchschnittlichen Sentimentwert auf (+0.45), sondern auch den größten Anteil an positiv formulierten Rezensionen (52%).
+Die Kategorie *Telefonzubehör* sticht positiv hervor: Sie weist nicht nur den höchsten durchschnittlichen Sentimentwert auf (+0.45), sondern auch den größten Anteil an positiv formulierten Rezensionen (52%).
 
 *Kopfhörer* hingegen erreichen den niedrigsten Sentimentwert (-0.37) und haben zugleich den geringsten Anteil an positiven Kommentaren (38%). Diese Ergebnisse decken sich mit den bisherigen Beobachtungen.
 
 
+```{r}
+#| fig-height: 3.505128
+
+Sys.setlocale("LC_TIME", "de_DE.UTF-8") 
+
+review_summary <- review_summary |>
+  mutate(Datum = lubridate::dmy(Datum, locale = "de_DE.UTF-8"))
+
+sent_time_q <- review_summary |>
+  filter(!is.na(Datum)) |>
+  mutate(Quartal = floor_date(Datum, "quarter")) |>
+  group_by(Produkttyp, Quartal) |>
+  summarise(
+    avg_sent = mean(sentiment_score, na.rm = TRUE),
+    n_rev    = n(),
+    .groups  = "drop"
+  )
+
+sent_time <-
+  ggplot(sent_time_q, aes(Quartal, avg_sent, color = Produkttyp)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2) +
+  geom_hline(yintercept = 0, linetype = "dashed", colour = "grey60") +
+  labs(
+    x = NULL,
+    y = "Ø Sentiment (quartalsweise)",
+    color = "Produkttyp"
+  ) +
+  ylim(-10, 10) +
+  rcartocolor::scale_color_carto_d(type = "diverging", palette = "Temps") +
+  theme(legend.position = "bottom",
+        panel.grid.major = element_line())
+  
+sent_time
+```
+
+
+Über den Zeitverlauf hinweg zeigen die quartalsweisen Durchschnittswerte des Sentiments in den frühen Jahren teils starke Schwankungen, besonders bei *Kopfhörern* und *Telefonzubehör.* Ab etwa 2018 pendeln sich die Werte aller Produktkategorien nahe der neutralen Linie ein, mit leichten positiven Ausschlägen in den letzten Quartalen. Diese Entwicklung deutet auf eine zunehmende Stabilität in der Kundenwahrnehmung hin und ermöglicht es, potenzielle Stimmungseinbrüche frühzeitig zu erkennen und gezielt gegenzusteuern.
+
+
+Während diese Gesamtentwicklung ein nützliches Stimmungsbarometer darstellt, bleibt jedoch unklar, welche konkreten Produktaspekte zu positiven oder negativen Bewertungen führen. Hier setzt die **aspektbasierte Sentimentanalyse (ABSA)**. Anstatt nur das Gesamtsentiment zu messen, wird jede Rezension auf **inhaltliche Schwerpunkte** wie Preis, Funktionalität, Qualität oder Service untersucht. So lässt sich nachvollziehen, ob ein Produkt trotz positiver Gesamtbewertung z. B. wegen mangelhafter Qualität kritisiert wird oder ob ein guter Service die Stimmung hebt.
+
 
 ```{r}
-#| fig-cap: Sentiment per product category
-#| echo: false
+sentences <- reviews |>
+  select(ID, Produkttyp, Inhalt) |>
+  unnest_tokens(sentence, Inhalt, token = "sentences") |>
+  group_by(ID) |>
+  mutate(sent_idx = row_number(), sent_key = paste(ID, sent_idx, sep = "::")) |>
+  ungroup()
+
+id_map <- tibble(doc_id = seq_len(nrow(sentences)), sent_key = sentences$sent_key)
+
+sent_tbl <- vns::calc_tok_sentidict_tbl(
+  sentences$sentence, .sentidict_tbl = vns.data::gerpolclu_tbl
+) |>
+  group_by(doc_id) |>
+  summarise(sent_score = sum(tok_pol_num, na.rm = TRUE), .groups = "drop") |>
+  left_join(id_map, by = "doc_id") |>
+  select(sent_key, sent_score)
+
+map_aspect <- function(x) {
+  x <- stringi::stri_trans_tolower(x)
+  case_when(
+    str_detect(x, regex("preis|teuer|g(ü|u)nstig|billig|preis[- ]?leistung|kosten", TRUE)) ~ "Preis",
+    str_detect(x, regex("liefer|versand|kundendienst|service|support|r(ü|u)ckgab|antwort|hilfe", TRUE)) ~ "Service",
+    str_detect(x, regex("funktion|funktioniert|akku|laufzeit|kompatib|bedien|einstell|app|software", TRUE)) ~ "Funktionalität",
+    str_detect(x, regex("qualit(ä|a)t|verarbeitung|material|haltbar|lebensdauer|defekt|kaputt|bruch|kabel|wackelkontakt", TRUE)) ~ "Qualität",
+    TRUE ~ NA_character_
+  )
+}
+
+sent_aspects <- sentences |>
+  mutate(Aspect = map_aspect(sentence)) |>
+  filter(!is.na(Aspect)) |>
+  left_join(sent_tbl, by = "sent_key") |>
+  mutate(sent_score = replace_na(sent_score, 0))
+
+min_n <- 10
+aspect_summary <- sent_aspects |>
+  group_by(Produkttyp, Aspect) |>
+  summarise(n_mentions = n(), avg_sent = mean(sent_score), .groups = "drop") |>
+  filter(n_mentions >= min_n)
+
+ggplot(aspect_summary,
+       aes(x = Aspect, y = avg_sent, fill = Produkttyp)) +
+  geom_col(position = position_dodge(width = 0.7), width = 0.65) +
+  geom_hline(yintercept = 0, colour = "grey60") +
+  rcartocolor::scale_fill_carto_d(type = "diverging", palette = "Temps") +
+  labs(x = NULL, y = "Ø Sentiment", fill = "Produkttyp") +
+  theme(legend.position = "bottom")
+
+
+
+```
+
+
+Die durchschnittlichen Sentimentwerte je Aspekt zeigen deutliche Unterschiede zwischen den Produktkategorien. Während Preis in allen Kategorien überwiegend positiv bewertet wird, schneidet Qualität insbesondere bei *Kopfhörern* negativ ab. Funktionalität wird insgesamt neutral bis leicht negativ wahrgenommen, wohingegen der Aspekt Service vor allem bei *Telefonzubehör* besonders positiv bewertet wird. Diese Auswertung verdeutlicht, welche Stärken und Schwächen aus Kundensicht je Kategorie vorliegen.
+
+Die Sentimentanalysen zeigen, dass insbesondere in der Kategorie *Kopfhörer* eine hohe Unzufriedenheit besteht.
+Um die Ursachen dieser negativen Bewertungen besser zu verstehen, wird im Folgenden die Analyse gezielt auf diese Produktkategorie fokussiert. Ziel ist, herauszufinden, welche konkreten Probleme Kund:innen in Verbindung mit Kopfhörern am häufigsten nennen.
+
+
+#### Analyse der Bigramme 
+
+Da die Sentimentanalyse bei Kopfhörern stark negativ ausfiel, lohnt ein genauer Blick auf wiederkehrende **Wortpaare** (Bigramme). Bigramme zeigen, welche Begriffe in den Rezensionen besonders häufig direkt aufeinander folgen und damit inhaltlich zusammengehören. So lassen sich typische Formulierungen und wiederkehrende Sprachmuster identifizieren, die bei der Analyse einzelner Wörter verborgen bleiben.
+
+Eine Untersuchung der am häufigsten vorkommenden Bigramme in den Rezensionen für *Kopfhörer* offenbart ein zentrales Problem:
+
+```{r}
 #| fig-height: 1.673071
 
 bigrams_worst <- reviews |>
@@ -776,104 +789,32 @@ bigrams_worst_plot
 ```
 
 
-#### Analyse der Bigramme 
-
-Eine Analyse der am häufigsten vorkommenden **Wortpaare (Bigrams)** in den Rezensionen für *Kopfhörer* offenbart ein zentrales Problem: 
-
 Wortpaare wie „kaputt gegangen“, „monaten kaputt“, oder „kurzer zeit“ zeigen, dass viele Bewertungen auf schnelle Defekte und kurze Lebensdauer hinweisen. Kund:innen berichten von frühzeitigen Ausfällen, oft bereits nach wenigen Wochen oder Monaten.
 
 Welche konkreten Themen die Konsumenten bezüglich der Produktkategorie *Kopfhörer* beschäftigt, wird im nächsten Schritt mithilfe einer Themenmodellierung betrachtet.
 
 
-<!-- # ```{r} -->
-<!-- # # TM for worst performing (in sentiment) product category -->
-<!-- #  -->
-<!-- # reviews_worst <- review_tokens_clean |> -->
-<!-- #   filter(product_type == "Headphones") |> -->
-<!-- #   mutate( -->
-<!-- #     lemmata = textstem::lemmatize_words(word), -->
-<!-- #     stem = SnowballC::wordStem(lemmata, language = "de") -->
-<!-- #   ) -->
-<!-- #  -->
-<!-- # review_words_worst <- reviews_worst |> -->
-<!-- #   count(row_id, stem) -->
-<!-- #  -->
-<!-- # dtm_worst <- review_words_worst |> -->
-<!-- #   cast_dtm(document = row_id, term = stem, value = n) -->
-<!-- #  -->
-<!-- # set.seed(123) -->
-<!-- # lda_worst <- LDA(dtm_worst, k = 4, control = list(seed = 123), method="Gibbs") -->
-<!-- #  -->
-<!-- # top_terms_worst <- tidy(lda_worst, matrix = "beta") |> -->
-<!-- #   group_by(topic) |> -->
-<!-- #   slice_max(beta, n = 15) |> -->
-<!-- #   summarise(terms = paste(term, collapse = ", ")) |> -->
-<!-- #   arrange(topic) -->
-<!-- #  -->
-<!-- # top_terms_worst -->
-<!-- #  -->
-<!-- #  -->
-<!-- # ``` -->
 
+#### Themenmodellierung
 
+Um die zentralen Kritikpunkte in den Rezensionen zur Produktkategorie *Kopfhörer* präziser herauszuarbeiten, berechnen wir im nächsten Schritt ein **Structural Topic Modelling (STM)**. Diese Methode bietet die Möglichkeit andere Faktoren, die die Themen beeinflussen könnten, zu berücksichtigen, wie die Bewertungen der Kund:innen und das Datum, an dem die Rezension verfasst wurde. Für unser Korpus ergeben sich drei Schwerpunkte: Preis‑Leistung, Langfristige Nutzung und Defekte.
 
-<!-- Um die inhaltlichen Schwerpunkte der Rezensionen gezielt herauszuarbeiten, wurde ein Themenmodell (LDA) mit fünf Themen für die Kategorie Kopfhörer berechnet. Die wichtigsten Begriffe pro Thema lassen sich wie folgt zusammenfassen: -->
-
-<!-- * Klang: Begriffe wie sound, ohr, zeit, gebrauch, soundqualitat, enttäuscht deuten darauf hin, dass viele Bewertungen sich auf Klangqualität im Alltag beziehen – oft verbunden mit nicht erfüllten Erwartungen. -->
-
-<!-- * Preis-Leistung: Diese Gruppe umfasst Wörter wie preis, kabel, okay, recht, halt, klangqualitat. Es geht um Zufriedenheit im Verhältnis zum Preis, aber auch um technische Details wie Kabelverbindungen. -->
-
-<!-- * Funktion: Wörter wie funktioniert, klang, bass, sitz, empfehl und musik legen nahe, dass sich dieses Thema auf Benutzerkomfort und Klangwahrnehmung im täglichen Einsatz konzentriert – tendenziell positiver gefärbt. -->
-
-<!-- * Defekte: Die stärksten negativen Hinweise finden sich hier: kaputt, schlecht, defekt, kabelbruch, stern. Dieses Thema bündelt technische Ausfälle, enttäuschte Erwartungen und Rückgaben. -->
-
-<!-- Die Themenmodellierung bestätigt und vertieft die bisherigen Erkenntnisse. Neben allgemeinem Feedback zu Klang und Preis rücken besonders frühzeitige Defekte und Wackelkontakte in den Vordergrund. -->
-
-
-
-
-<!-- ```{r} -->
-
-<!-- review_topics_worst <- tidy(lda_worst, matrix = "gamma") -->
-
-<!-- row_id_map_worst <- tibble(document = rownames(dtm_worst), row_id = rownames(dtm_worst)) -->
-
-<!-- review_sentiment_by_topic_worst <- review_topics_worst |> -->
-<!--   group_by(document) |> -->
-<!--   slice_max(order_by = gamma, n = 1) |> -->
-<!--   ungroup() |> -->
-<!--   left_join(row_id_map_worst, by = "document") |> -->
-<!--   left_join(review_summary |> select(row_id, sentiment_score), by = "row_id") -->
-
-<!-- topic_labels_worst <- c( -->
-<!--   "1" = "Klang", -->
-<!--   "2" = "Preis-Leistung", -->
-<!--   "3" ="Funktion", -->
-<!--   "4" = "Defekte" -->
-<!-- ) -->
-
-
-<!-- # Sentiment per topic -->
-<!-- review_sentiment_by_topic_worst |> -->
-<!--   group_by(topic) |> -->
-<!--   summarise( -->
-<!--     avg_sentiment = mean(sentiment_score, na.rm = TRUE), -->
-<!--     n_reviews = n() -->
-<!--   ) |> -->
-<!--   arrange(avg_sentiment) |> -->
-<!--   mutate(topic_label = topic_labels_worst[as.character(topic)])  -->
-
-
-<!-- ``` -->
-
+Die folgende Grafik zeigt für jedes Thema die repräsentativsten Begriffe. So wird deutlich, warum wir die Themen so benannt haben (z.B. „kaputt“ oder „schad“ im Defekt‑Thema).
 
 
 
 ```{r}
-#| echo: false
-#| message: false
-#| results: hide
-#| warning: false
+
+# stemming 
+custom_stopwords_ext <- tibble(Wort = c(custom_stopwords$Wort, tolower(c(read_lines("data/german_stopwords_full.txt"))),
+                                        "leider", "immer", "besser"))
+
+review_tokens_clean <- review_tokens_clean |>
+  anti_join(custom_stopwords_ext, by = "Wort") |> 
+  mutate(
+    Wort  = SnowballC::wordStem(Wort, language = "german")
+  )
+
 
 library(stm)
 
@@ -915,7 +856,7 @@ stm_model <- stm(
 
 
 ```{r}
-#| warning: false
+#| fig-height: 2.755128
 
 tidy_topics <- tidy(stm_model)
 
@@ -924,27 +865,26 @@ top_frex <- tidy_topics |>
   slice_max(beta, n = 7) |>
   ungroup()
 
-topic_labels <- c(
-  "1" = "Preis-Leistung",
-  "2" = "Qualität",
-  "3" = "Verarbeitung der Kabel"
+topic_labels <- tibble(
+  topic = 1:3,
+  label = c("Preis-Leistung", "Langfristige Nutzung", "Defekte"),
+  col = c("#cf597e", "#e9e29c", "#009392")
 )
-```
-
-
-```{r}
-#| fig-height: 2.755128
+pal <- setNames(topic_labels$col, topic_labels$label)
 
 topic_frex_plot <- top_frex |>
-  mutate(term = reorder_within(term, beta, topic)) |>
-  ggplot(aes(x = term, y = beta, fill = factor(topic))) +
+  left_join(topic_labels, by = "topic") |>
+  mutate(
+    topic = factor(label),
+    term = reorder_within(term, beta, topic)) |>
+  ggplot(aes(x = term, y = beta, fill = topic)) +
   geom_col(show.legend = FALSE) +
-  facet_wrap(~topic, scales = "free", labeller = as_labeller(topic_labels)) +
+  facet_wrap(~topic, scales = "free") +
   scale_x_reordered() +
   coord_flip() +
-  theme_minimal() +
   labs(x = "Repräsentative Begriffe", y = "Gewichtung") +
-  rcartocolor::scale_fill_carto_d(type = "diverging", palette = "Temps")
+  scale_fill_manual(values = pal)
+
 
 if (interactive()) {
   7 * 0.25 + calc_panel_margin_y_in(topic_frex_plot)
@@ -952,6 +892,46 @@ if (interactive()) {
 
 topic_frex_plot
 ```
+
+Direkt anschließend betrachten wir, wie häufig diese Themen im Gesamtkorpus auftreten. Die Balkenhöhen geben die durchschnittliche Dokument‑Wahrscheinlichkeit je Thema an, was dem durchschnittlichen Anteil entspricht, den ein Thema an einer Rezension hat. Dadurch sehen wir nicht nur Beispiele, sondern die gewichtete Verteilung der Themen über alle Rezensionen hinweg.
+
+
+```{r}
+#| fig-height: 3.505128
+
+# distribution of words across documents
+td_beta <- tidy(stm_model)
+
+td_gamma <- tidy(stm_model, matrix = "gamma",
+                 document_names = rownames(reviews))
+
+gamma_terms <- td_gamma |>
+  group_by(topic) |>
+  summarise(gamma = mean(gamma)) |>
+  arrange(desc(gamma)) |>
+  left_join(topic_labels, by = "topic") |>
+  mutate(topic = reorder(topic, gamma))
+
+topic_doc_distr <- 
+  gamma_terms |>
+  top_n(20, gamma) |>
+  ggplot(aes(topic, gamma, label = label, fill = topic)) +
+  geom_col(show.legend = FALSE) +
+  geom_text(hjust = 0, nudge_y = 0.005, size = 4,
+            family = "Open Sans") +
+  coord_flip() +
+  scale_y_continuous(expand = c(0,0),
+                     limits = c(0, 0.45),
+                     labels = scales::percent_format()) +
+  labs(x = NULL, y = "Wahrscheinlichkeit") +
+  scale_fill_manual(values = setNames(topic_labels$col, topic_labels$topic))
+
+topic_doc_distr
+       
+```
+
+
+Das Thema **Defekte** weist die höchste durchschnittliche Dokument‑Wahrscheinlichkeit auf, gefolgt von **Preis‑Leistung** und **langfristige Nutzung**. Das stützt die Diagnose aus der Sentiment‑ und Bigram‑Analyse: Defekte dominieren die Kopfhörer‑Rezensionen inhaltlich.
 
 
 ```{r}
@@ -977,15 +957,9 @@ topic_sentiment <- topic_assignments |>
 ```
 
 
-#### Themenmodellierung
-
-Um die zentralen Kritikpunkte in den Rezensionen zur Produktkategorie *Kopfhörer* präziser herauszuarbeiten, wurde ein **Structural Topic Modelling (STM)** berechnet. Diese Methode bietet die Möglichkeit andere Faktoren, die die Themen beeinflussen könnten, zu berücksichtigen, wie die Bewertungen der Kund:innen und das Datum, an dem die Rezension verfasst wurde. Dabei stechen drei thematische Schwerpunkte heraus: **Preis-Leistung**, **Qualität**, und **Verarbeitung der Kabel**.
-
-
 
 ```{r}
 #| fig-height: 1.423071
-#| echo: false
 
 topic_summary <- topic_sentiment |>
   group_by(topic) |>
@@ -995,24 +969,15 @@ topic_summary <- topic_sentiment |>
   ) |>
   arrange(avg_sentiment) |>
   left_join(
-    tribble(
-      ~topic,
-      ~topic_label,
-      1,
-      "Preis-Leistung",
-      2,
-      "Qualität",
-      3,
-      "Verarbeitung der Kabel"
-    ),
+    topic_labels,
     by = "topic"
   ) |>
-  select(topic_label, avg_sentiment, n_reviews)
+  select(label, avg_sentiment, n_reviews)
 
 
 topic_summary_plot <- topic_summary |>
-  mutate(topic_label = forcats::fct_reorder(topic_label, avg_sentiment)) |>
-  ggplot(aes(x = topic_label, y = avg_sentiment, fill = topic_label)) +
+  mutate(label = forcats::fct_reorder(label, avg_sentiment)) |>
+  ggplot(aes(x = label, y = avg_sentiment, fill = label)) +
   geom_col(show.legend = FALSE) +
   scale_y_continuous() +
   labs(
@@ -1020,7 +985,7 @@ topic_summary_plot <- topic_summary |>
     y = "Ø Sentimentwert",
   ) +
   coord_flip() +
-  rcartocolor::scale_fill_carto_d(type = "diverging", palette = "Temps")
+  scale_fill_manual(values = pal)
 
 if (interactive()) {
   3 * 0.25 + calc_panel_margin_y_in(topic_summary_plot)
@@ -1030,7 +995,7 @@ topic_summary_plot
 ```
 
 
-Die Analyse der Sentimentwerte zeigt: Die größte Unzufriedenheit äußert sich bezüglich der Kabel der Kopfhörer, die meist kurz nach dem Kauf kaputt gehen. Auch die Themen Qualität und Preis-Leistung werden kritisch bewertet, allerdings nicht in dem Maße wie die fehlerhafte Verarbeitung der Kabel. Eine gezielte Verbesserung der Produktqualität oder des Rückgabeprozesses könnten dazu beitragen, die Kundenzufriedenheit langfristig zu steigern. 
+Die Analyse der Sentimentwerte pro Thema zeigt: Die größte Unzufriedenheit äußert sich bezüglich der vermehrt auftretenden Defekten, die meist kurz nach dem Kauf kaputt gehen. Auch die Themen *langfristige Nutzung* und *Preis-Leistung* werden kritisch bewertet, allerdings nicht in dem Maße wie Defekte, die die Soundqualität beeinträchtigen. Eine gezielte Verbesserung der Produktqualität oder des Rückgabeprozesses könnten dazu beitragen, die Kundenzufriedenheit langfristig zu steigern. 
 
 ### Fazit
 
