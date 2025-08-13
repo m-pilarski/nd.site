@@ -195,3 +195,10 @@ Möglich wird das durch die **Transformer-Architektur**, bei der alle Wörter ei
 
 
 
+
+```{r}
+nd.util:::nd_iframe_app(
+  .url = "https://shiny.dsjlu.wirtschaft.uni-giessen.de/preprocessing_demo/",
+  .height = "4rem"
+)
+```

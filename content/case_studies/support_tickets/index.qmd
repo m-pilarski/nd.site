@@ -215,6 +215,57 @@ support_tokens_clean |>
 ```
 
 
+```{r}
+format_token <- function(.tok) {
+  .tok |>
+    map_chr(\(..str) {
+      stringi::stri_c("\"", ..str, "\"")
+    }) |>
+    stringi::stri_c(collapse = ", ") |>
+    (\(..str) {
+      stringi::stri_c("[", ..str, "]")
+    })()
+}
+
+msg_full <- support |>
+  purrr::pluck("Nachricht", 1) |>
+  stringi::stri_replace_all_fixed("\\n", "\n")
+
+msg_token <- msg_full |>
+  stringi::stri_trans_tolower() |>
+  stringi::stri_split_boundaries(type = "word", skip_word_none = TRUE) |>
+  purrr::pluck(1)
+
+msg_prep <- msg_token |>
+  stringi::stri_subset_regex(
+    "^\\d+$|^[sa]\\d+$|^[0-9]+[a-z]*$",
+    negate = TRUE
+  ) |>
+  setdiff(pull(custom_stopwords, word))
+
+tags$div(
+  class = "d-flex flex-column justify-content-center",
+  tags$div(
+    class = "card nd-card",
+    style = "background-color: #e9ebe5;",
+    msg_full
+  ),
+  tags$i(class = "fa-solid fa-arrow-down"),
+  tags$div(
+    class = "card nd-card",
+    style = "background-color: #e9ebe5;",
+    format_token(msg_token)
+  ),
+  tags$i(class = "fa-solid fa-arrow-down"),
+  tags$div(
+    class = "card nd-card",
+    style = "background-color: #e9ebe5;",
+    format_token(msg_prep)
+  )
+)
+
+```
+
 Das Endresultat ist ein Datensatz in dem jedes Wort eine eigene Zeile darstellt. Welche Begriffe zu welcher Nachrichten gehören, können wir an der ID ausmachen. Hier sind die ersten 5 Begriffe, die nach der Textbereinigung übrig geblieben sind, der ersten Nachricht. 
 
 
