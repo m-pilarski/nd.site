@@ -179,18 +179,10 @@ Anschließend wird der Text **tokenisiert**, also in einzelne Wörter zerlegt. D
 
 custom_stopwords <-
   quanteda::stopwords(language = "de", source = "nltk") |>
+  # fmt: skip
   c(
-    "sehr",
-    "geehrtes",
-    "support",
-    "kundensupport",
-    "team",
-    "kundendienstteam",
-    "kundenservice",
-    "nachricht",
-    "kundendienst",
-    "hoffe",
-    "erreicht"
+    "sehr", "geehrtes", "support", "kundensupport", "team", "kundendienstteam",
+    "kundenservice", "nachricht", "kundendienst", "hoffe", "erreicht" 
   ) |>
   unique() |>
   tibble::as_tibble_col("word")
@@ -205,20 +197,21 @@ support_tokens_clean <- support |>
     !str_detect(word, "^\\d+$|^[sa]\\d+$|^[0-9]+[a-z]*$"),
     !word %in% custom_stopwords$word
   )
+```
 
+```{r}
 support_tokens_clean |>
   head(5) |>
   gt::gt() |>
-  gt::tab_header(
-    title = "Beispiel der ersten Beobachtung nach dem Preprocessing"
-  ) |>
+  gt::tab_caption("Beispiel der ersten Beobachtung nach dem Preprocessing") |>
   gt::tab_options(
     table.width = gt::pct(100),
-    table.font.size = gt::px(13),
     data_row.padding = gt::px(4),
     ihtml.use_pagination = FALSE,
     ihtml.use_text_wrapping = TRUE
-  )
+  ) |>
+  nd.util::nd_gt_tab_options() |>
+  nd.util::nd_gt_to_html()
 ```
 
 
@@ -343,8 +336,6 @@ Im nächsten Schritt bereiten wir die Texte entsprechend vor und erstellen versc
 
 
 ```{r}
-#| html-table-processing: none
-
 support_clean <- support |>
   mutate(
     Zeichenanzahl = str_length(Nachricht),
@@ -382,29 +373,35 @@ comp_table <- support_clean |>
     `Ø Wortanzahl` = mean(Wortanzahl, na.rm = TRUE),
     `Ø Wortlänge` = mean(Wortlänge, na.rm = TRUE),
     `Ø Ausrufezeichen` = mean(`Anzahl Ausrufezeichen`, na.rm = TRUE),
-    `Fragenanteil (%)` = mean(as.numeric(Frage) == 1, na.rm = TRUE) * 100,
-    `Betreff vorhanden (%)` = mean(
+    `Fragenanteil` = mean(as.numeric(Frage) == 1, na.rm = TRUE),
+    `Betreff vorhanden` = mean(
       as.numeric(`Betreff vorhanden`) == 1,
       na.rm = TRUE
-    ) *
-      100,
+    ),
     .groups = "drop"
   )
 
 library(gt)
 
 comp_table |>
-  gt::gt() |>
-  gt::tab_header(
-    title = gt::md("Vergleich sprachlicher Merkmale nach Dringlichkeit")
-  ) |>
+  pivot_longer(-Dringlichkeit) |>
+  pivot_wider(names_from = Dringlichkeit, values_from = value) |>
+  gt::gt(rowname_col = "name") |>
+  gt::tab_caption("Vergleich sprachlicher Merkmale nach Dringlichkeit") |>
   gt::fmt_number(
     columns = where(is.numeric),
     decimals = 2
   ) |>
-  gt::as_raw_html(inline_css = TRUE) |>
-  nd.util::render_raw_html()
-
+  gt::fmt_percent(
+    rows = c("Fragenanteil", "Betreff vorhanden")
+  ) |>
+  gt::tab_spanner(
+    label = "Dringlichkeit",
+    columns = c(gering, hoch)
+  ) |>
+  gt::tab_options(table.width = gt::pct(100)) |>
+  nd.util::nd_gt_tab_options() |>
+  nd.util::nd_gt_to_html()
 ```
 
 
@@ -512,7 +509,7 @@ Mit einem Anteil von 55.4% sind die Nachrichten überwiegend sprachlich negativ 
 Ein Blick auf den durchschnittlichen Sentimentwert für dringende und weniger dringende Nachrichten zeigt bedeutungsvolle Unterschiede: 
 
 ```{r}
-#| fig-height: 2.424034
+#| fig-height: 3
 
 #Sentiment per urgency label
 avg_sentiment_per_class <- support_summary |>
@@ -526,7 +523,7 @@ sentiment_per_urgency_plot <-
   ggplot(
     aes(x = Dringlichkeit, y = Sentimentwert, fill = fct_rev(Dringlichkeit))
   ) +
-  geom_violin(trim = FALSE, alpha = 0.8, color = NA) +
+  geom_violin(trim = FALSE, color = NA) +
   geom_boxplot(width = 0.1, fill = "white", outlier.shape = NA) +
   labs(
     x = "Dringlichkeit",
@@ -589,7 +586,7 @@ tibble(
   Beispiel = map_chr(support_model_data, ~ as.character(.x[1]))
 ) |>
   gt() |>
-  tab_header(title = "Variablenbeschreibung des Modell-Datensatzes") |>
+  tab_caption("Variablenbeschreibung des Modell-Datensatzes") |>
   cols_label(
     Variable = "Variable",
     Typ = "Datentyp",
@@ -600,7 +597,9 @@ tibble(
     table.font.size = px(13),
     data_row.padding = px(4),
     ihtml.use_pagination = FALSE
-  )
+  ) |>
+  nd.util::nd_gt_tab_options() |>
+  nd.util::nd_gt_to_html()
 
 ```
 
@@ -702,8 +701,8 @@ metriken <- final_preds |>
 
 metriken |>
   gt() |>
-  tab_header(
-    title = "Bewertung des Klassifikationsmodells"
+  tab_caption(
+    "Bewertung des Klassifikationsmodells"
   ) |>
   cols_label(
     .metric = "Metrik",
@@ -718,7 +717,9 @@ metriken |>
     table.width = pct(60),
     table.font.size = px(14),
     data_row.padding = px(4)
-  )
+  ) |>
+  nd.util::nd_gt_tab_options() |>
+  nd.util::nd_gt_to_html()
 ```
 
 Das trainierte Klassifikationsmodell erzielt eine Genauigkeit von 97,9% auf den Testdaten. Dies bedeutet, dass nahezu alle Nachrichten korrekt als "hoch" oder "gering" dringlich eingestuft wurden.

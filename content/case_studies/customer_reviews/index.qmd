@@ -52,7 +52,6 @@ calc_panel_margin_y_in <- function(.plot_obj) {
 
 ggplot2::theme_set(`+`(
   ggplot2::theme_minimal(base_size = 14, base_family = "Open Sans"),
-  ggplot2::theme_minimal(base_size = 14, base_family = "Open Sans"),
   ggplot2::theme(
     axis.text.x = ggplot2::element_text(size = 12),
     axis.text.y = ggplot2::element_text(size = 12),
@@ -63,7 +62,8 @@ ggplot2::theme_set(`+`(
     panel.grid.major = ggplot2::element_blank(),
     panel.grid.minor = ggplot2::element_blank(),
     panel.background = ggplot2::element_rect(fill = NA, colour = NA),
-    plot.background = ggplot2::element_rect(fill = NA, colour = NA)
+    plot.background = ggplot2::element_rect(fill = NA, colour = NA),
+    legend.position = "bottom"
   )
 ))
 
@@ -421,7 +421,9 @@ reviews |>
   ) |>
   gt::tab_options(
     table.width = gt::pct(100)
-  )
+  ) |>
+  nd.util::nd_gt_tab_options() |>
+  nd.util::nd_gt_to_html()
 ```
 
 Ein Blick auf den Durchschnitt der Bewertungen nach Produktkategorie zeigt zusätzlich Unterschiede in der Kundenzufriedenheit:
