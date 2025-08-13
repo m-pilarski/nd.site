@@ -395,6 +395,7 @@ comp_table |>
   gt::fmt_percent(
     rows = c("Fragenanteil", "Betreff vorhanden")
   ) |>
+  gt::cols_align_decimal(dec_mark = ".") |>
   gt::tab_spanner(
     label = "Dringlichkeit",
     columns = c(gering, hoch)
