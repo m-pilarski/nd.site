@@ -71,6 +71,15 @@ entity_example <- tibble(
   )
 )
 
+entity_example |>
+  gt::gt() |>
+  gt::tab_options(
+    table.width = gt::pct(40),
+    data_row.padding = gt::px(4)
+  ) |>
+  nd.util::nd_gt_tab_options() |>
+  nd.util::nd_gt_to_html()
+
 ```
 
 Beim lexikonbasierten Ansatz wird der Text mit einem vordefinierten Wörterverzeichnis abgeglichen, also mit Listen relevanter Namen und Begriffe. Stimmen Wörter im Text mit diesen Einträgen überein, werden sie als Entität klassifiziert. Ergänzend kommen regelbasierte Methoden zum Einsatz, die sprachliche Strukturen analysieren. Diese Regeln basieren oft auf linguistischen Mustern, wie z.B. Großschreibung innerhalb eines Satzes oder typischen Formatierungen wie Datums- oder E-Mail-Strukturen.
