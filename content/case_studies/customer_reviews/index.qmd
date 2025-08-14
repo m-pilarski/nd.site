@@ -804,109 +804,158 @@ Welche konkreten Themen die Konsumenten bezüglich der Produktkategorie *Kopfhö
 
 
 
+
 #### Themenmodellierung
 
-Um die zentralen Kritikpunkte in den Rezensionen zur Produktkategorie *Kopfhörer* präziser herauszuarbeiten, berechnen wir im nächsten Schritt ein **Structural Topic Modelling (STM)**. Diese Methode bietet die Möglichkeit andere Faktoren, die die Themen beeinflussen könnten, zu berücksichtigen, wie die Bewertungen der Kund:innen und das Datum, an dem die Rezension verfasst wurde. Für unser Korpus ergeben sich drei Schwerpunkte: Preis‑Leistung, Langfristige Nutzung und Defekte.
+Um die zentralen Kritikpunkte in den Rezensionen zur Produktkategorie *Kopfhörer* präziser herauszuarbeiten, berechnen wir im nächsten Schritt ein **Structural Topic Modelling (STM)**. Diese Methode bietet die Möglichkeit andere Faktoren, die die Themen beeinflussen könnten, zu berücksichtigen, wie die Bewertungen der Kund:innen und das Datum, an dem die Rezension verfasst wurde. Für unser Korpus ergeben sich fünf Schwerpunkte: Langlebigkeit, Verarbeitung, Passform, Sound und Preis-Leistung.
 
-Die folgende Grafik zeigt für jedes Thema die repräsentativsten Begriffe. So wird deutlich, warum wir die Themen so benannt haben (z.B. „kaputt“ oder „schad“ im Defekt‑Thema).
+Die folgende Grafik zeigt für jedes Thema die repräsentativsten Begriffe. So wird deutlich, warum wir die Themen so benannt haben (z.B. „monaten“, „wochen“ oder "lebensdauer" im Thema *Langlebigkeit*).
 
 
 
 ```{r}
 
-# stemming 
-custom_stopwords_ext <- tibble(Wort = c(custom_stopwords$Wort, tolower(c(read_lines("data/german_stopwords_full.txt"))),
-                                        "leider", "immer", "besser"))
+custom_stopwords_ext <- tibble(Wort = c(
+  custom_stopwords$Wort,
+  tolower(readr::read_lines("data/german_stopwords_full.txt")),
+  "leider","immer","besser","produkt","amazon","bestellt","kunden",
+  "gerät","geräte","artikel","funktioniert","super", "jbl", "sony", "gehen", "kaputt", "rechte", "linke",
+  "köpfhörer", "absolut", "gutes", "gut", "schlechtes", "schlecht", "erwarten", "hören", "tag", 
+  "zweite", "richtig", "lange", "musik", "hörer", "gekauft", "kaufen",
+  "produkt", "benutzung", "sterne", "größe", "jahren", "gegangen", "benutze", "kopfhörern", "stern", "preis", "sound", "klang"
+)) |>
+  distinct() |>
+  filter(!is.na(Wort), Wort != "")
+
+
+review_tokens_clean <- review_tokens |>
+  filter(!str_detect(Wort, "^\\d+$|^[sa]\\d+$|^[0-9]+[a-z]*$")) |>
+  anti_join(custom_stopwords_ext, by = "Wort") |>
+  filter(str_count(Wort) >= 3)  
+
+df_tbl <- review_tokens_clean |>
+  distinct(ID, Wort) |>
+  count(Wort, name = "doc_n")
+
+n_docs <- n_distinct(review_tokens_clean$ID)
 
 review_tokens_clean <- review_tokens_clean |>
-  anti_join(custom_stopwords_ext, by = "Wort") |> 
+  inner_join(df_tbl, by = "Wort") |>
+  filter(doc_n >= 10, doc_n <= 0.70 * n_docs) |>
+  select(-doc_n)
+
+tokens_for_stm <- review_tokens_clean |>
   mutate(
-    Wort  = SnowballC::wordStem(Wort, language = "german")
+    Wort_raw  = Wort,
+    Wort      = SnowballC::wordStem(Wort, language = "german")
   )
+
+
+keep_ids <- tokens_for_stm |>
+  count(ID) |>
+  filter(n >= 10) |>    
+  pull(ID)
+
+tokens_for_stm <- tokens_for_stm |>
+  filter(ID %in% keep_ids)
+
 
 
 library(stm)
 
-docs_worst <- review_tokens_clean |>
+docs_worst <- tokens_for_stm |>
   filter(Produkttyp == "Kopfhörer") |>
   group_by(ID) |>
   summarise(text = paste(Wort, collapse = " "), .groups = "drop")
 
 meta_worst <- reviews |>
-  filter(Produkttyp == "Kopfhörer") |>
-  select(ID, Bewertung, Datum) |>
-  mutate(Bewertung = as.factor(Bewertung))
+  filter(Produkttyp == "Kopfhörer", ID %in% docs_worst$ID) |>
+  mutate(Bewertung = as.factor(Bewertung)) |>
+  arrange(match(ID, docs_worst$ID))
 
 processed <- textProcessor(
   documents = docs_worst$text,
-  metadata = meta_worst,
-  language = "de"
+  metadata  = meta_worst,
+  language  = "de",
+  stem      = FALSE,         
+  wordLengths = c(3, Inf)
 )
 
 out <- prepDocuments(
   documents = processed$documents,
-  vocab = processed$vocab,
-  meta = processed$meta,
-  verbose = FALSE
+  vocab     = processed$vocab,
+  meta      = processed$meta,
+  verbose   = FALSE
 )
 
 stm_model <- stm(
   documents = out$documents,
-  vocab = out$vocab,
-  K = 3,
-  prevalence = ~Bewertung,
-  data = out$meta,
+  vocab     = out$vocab,
+  K         = 5,
+  prevalence = ~ Bewertung + Produkt + lubridate::dmy(Datum, locale = "de_DE.UTF-8"),    
+  data      = out$meta,
   init.type = "Spectral",
-  verbose = FALSE,
-  seed = 123
+  verbose   = FALSE,
+  seed      = 123
 )
+
 ```
 
 
 
 ```{r}
-#| fig-height: 2.755128
+#| fig-height: 4.014623
 
-tidy_topics <- tidy(stm_model)
+stem_label_map <- tokens_for_stm |>
+  count(Wort, Wort_raw, sort = TRUE) |>
+  group_by(Wort) |>
+  slice_max(n, n = 1, with_ties = FALSE) |>
+  ungroup() |>
+  select(stem = Wort, show = Wort_raw)
 
-top_frex <- tidy_topics |>
+top_terms <- tidy(stm_model, matrix = "beta") |>
   group_by(topic) |>
-  slice_max(beta, n = 7) |>
-  ungroup()
+  slice_max(beta, n = 10, with_ties = FALSE) |>
+  ungroup() |>
+  left_join(stem_label_map, by = c("term" = "stem")) |>
+  mutate(show = coalesce(show, term))
 
 topic_labels <- tibble(
-  topic = 1:3,
-  label = c("Preis-Leistung", "Langfristige Nutzung", "Defekte"),
-  col = c("#cf597e", "#e9e29c", "#009392")
+  topic = sort(unique(top_terms$topic)),
+  label = c("Langlebigkeit", "Verarbeitung", "Passform", "Sound", "Preis-Leistung")[seq_along(unique(top_terms$topic))],
+  col   = c("#cf597e", "#e9e29c", "#009392", "#9ccb86", "#eeb479")[seq_along(unique(top_terms$topic))]
 )
 pal <- setNames(topic_labels$col, topic_labels$label)
 
-topic_frex_plot <- top_frex |>
+
+topic_plot <- 
+  top_terms |>
   left_join(topic_labels, by = "topic") |>
   mutate(
-    topic = factor(label),
-    term = reorder_within(term, beta, topic)) |>
-  ggplot(aes(x = term, y = beta, fill = topic)) +
+    topic_lab = factor(label, levels = topic_labels$label),
+    show = reorder_within(show, beta, topic_lab)
+  ) |>
+  ggplot(aes(show, beta, fill = topic_lab)) +
   geom_col(show.legend = FALSE) +
-  facet_wrap(~topic, scales = "free") +
+  facet_wrap(~topic_lab, scales = "free") +
   scale_x_reordered() +
   coord_flip() +
-  labs(x = "Repräsentative Begriffe", y = "Gewichtung") +
+  labs(x = NULL, y = "Gewichtung") +
   scale_fill_manual(values = pal)
 
-
 if (interactive()) {
-  7 * 0.25 + calc_panel_margin_y_in(topic_frex_plot)
+  12 * 0.25 + calc_panel_margin_y_in(topic_plot)
 }
 
-topic_frex_plot
+topic_plot
+
 ```
 
 Direkt anschließend betrachten wir, wie häufig diese Themen im Gesamtkorpus auftreten. Die Balkenhöhen geben die durchschnittliche Dokument‑Wahrscheinlichkeit je Thema an, was dem durchschnittlichen Anteil entspricht, den ein Thema an einer Rezension hat. Dadurch sehen wir nicht nur Beispiele, sondern die gewichtete Verteilung der Themen über alle Rezensionen hinweg.
 
 
 ```{r}
-#| fig-height:  1.423071
+#| fig-height: 1.674034
 
 # distribution of words across documents
 td_beta <- tidy(stm_model)
@@ -932,19 +981,24 @@ topic_doc_distr <-
             family = "Open Sans") +
   coord_flip() +
   scale_y_continuous(expand = c(0,0),
-                     limits = c(0, 0.45),
+                     limits = c(0, 0.3),
                      labels = scales::percent_format()) +
   labs(x = NULL, y = "Wahrscheinlichkeit") +
   scale_fill_manual(values = setNames(topic_labels$col, topic_labels$label)) +
   theme(axis.text.y = element_blank(),
         axis.ticks.y = element_blank())
 
+if (interactive()) {
+  4 * 0.25 + calc_panel_margin_y_in(topic_doc_distr)
+}
+
+
 topic_doc_distr
        
 ```
 
 
-Das Thema **Defekte** weist die höchste durchschnittliche Dokument‑Wahrscheinlichkeit auf, gefolgt von **Preis‑Leistung** und **langfristige Nutzung**. Das stützt die Diagnose aus der Sentiment‑ und Bigram‑Analyse: Defekte dominieren die Kopfhörer‑Rezensionen inhaltlich.
+Die Themen treten insgesamt relativ ausgeglichen auf, mit leicht höheren Anteilen für *Langlebigkeit* und *Preis-Leistung*, gefolgt von *Sound*, *Verarbeitung* und *Passform.*
 
 
 ```{r}
@@ -972,7 +1026,7 @@ topic_sentiment <- topic_assignments |>
 
 
 ```{r}
-#| fig-height: 1.423071
+#| fig-height: 1.674034
 
 topic_summary <- topic_sentiment |>
   group_by(topic) |>
@@ -1001,14 +1055,69 @@ topic_summary_plot <- topic_summary |>
   scale_fill_manual(values = pal)
 
 if (interactive()) {
-  3 * 0.25 + calc_panel_margin_y_in(topic_summary_plot)
+  4 * 0.25 + calc_panel_margin_y_in(topic_summary_plot)
 }
 
 topic_summary_plot
 ```
 
 
-Die Analyse der Sentimentwerte pro Thema zeigt: Am meisten Unzufriedenheit verursachen Defekte, die oft schon kurz nach dem Kauf auftreten und die Nutzung deutlich einschränken. Auch die Themen *langfristige Nutzung* und *Preis-Leistung* werden kritisch bewertet, allerdings nicht in dem Maße wie Defekte, die die Soundqualität beeinträchtigen. Eine gezielte Verbesserung der Produktqualität oder des Rückgabeprozesses könnten dazu beitragen, die Kundenzufriedenheit langfristig zu steigern. 
+Nachdem wir die Häufigkeit der Themen im Gesamtkorpus betrachtet haben, wenden wir uns nun der Frage zu, wie positiv oder negativ diese jeweils bewertet werden. Die Analyse der Sentimentwerte pro Thema zeigt: Am stärksten negativ wird die *Verarbeitung* bewertet. Auch beim *Sound* äußern Kunden deutliche Kritik, vermutlich aufgrund auftretender Probleme bei hohen Tönen, wie aus der Worthäufigkeitsanalyse der Themen hervorgeht. Die Themen *Preis-Leistung*, *Passform* und *Langlebigkeit* schneiden im Vergleich etwas besser ab, weisen jedoch ebenfalls einen negativen Grundton auf. 
+
+
+```{r}
+#| fig-height: 2.317425
+
+doc_gamma <- as_tibble(stm_model$theta) |>
+  mutate(
+    ID = as.character(out$meta$ID),
+    Datum = out$meta$Datum
+  ) |>
+  pivot_longer(
+    starts_with("V"),
+    names_to = "topic", names_prefix = "V",
+    names_transform = list(topic = as.integer),
+    values_to = "gamma"
+  ) |>
+  left_join(topic_labels, by = "topic") |>
+  filter(!is.na(Datum)) |>
+  mutate(
+    Datum = lubridate::dmy(Datum, locale = "de_DE.UTF-8"),
+    Quartal = lubridate::floor_date(Datum, "quarter")
+  )
+
+topic_share_q <- doc_gamma |>
+  filter(label %in% topic_labels$label) |>
+  group_by(Quartal, label) |>
+  summarise(share = mean(gamma, na.rm = TRUE), .groups = "drop") |>
+  group_by(Quartal) |>
+  mutate(share = share / sum(share)) |>
+  ungroup()
+
+stacked_topics_plot <-
+  ggplot(topic_share_q |> 
+         filter(Quartal >= as.Date("2017-01-01")),
+              aes(x = Quartal, y = share, fill = label)) +
+     geom_area(position = "fill", alpha = 0.9, color = NA) +
+     scale_fill_manual(values = pal, name = NULL) +
+     scale_y_continuous(labels = scales::percent_format()) +
+     scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
+    labs(x = NULL, y = "Anteil der Themen") +
+     theme(panel.grid.minor = element_blank(),
+           legend.position = "bottom")
+
+if (interactive()) {
+  5 * 0.25 + calc_panel_margin_y_in(stacked_topics_plot)
+}
+
+
+stacked_topics_plot
+
+```
+
+Die zeitliche Entwicklung der Themenanteile zeigt deutliche Verschiebungen in den Rezensionen: 2017 dominierten noch *Passform* und *Verarbeitung*, die in den ersten Monaten besonders häufig genannt wurden. Im Zeitverlauf rückten dagegen *Sound*, *Preis‑Leistung* und *Langlebigkeit* in den Vordergrund und lösten die zuvor dominierenden Themen ab. Das deutet darauf hin, dass sich die Kundenerwartungen von der anfänglichen Produktanpassung hin zu langfristiger Qualität zu einem fairen Preis verlagert haben. Positiv anzumerken ist, dass damit das Thema mit der negativsten Stimmung deutlich zurückgegangen ist.
+
+
 
 ### Fazit
 
