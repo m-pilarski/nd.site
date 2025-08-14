@@ -605,7 +605,8 @@ sentiment_per_urgency_plot <-
     panel.grid.major = element_line(),
     axis.title.y = element_blank(),
     axis.text.y = element_blank(),
-    axis.ticks.y = element_blank()
+    axis.ticks.y = element_blank(),
+    legend.position = "bottom"
   )
 
 
@@ -804,13 +805,13 @@ conf_df <- final_preds |>
   yardstick::conf_mat(truth = urgency, estimate = .pred_class) |>
   tidy() |>
   mutate(
-    truth = rep(c("Hoch", "Gering"), each = 2),
-    prediction = rep(c("Hoch", "Gering"), times = 2),
+    truth = rep(c("Hoch", "Gering"), each = 2) |> factor(),
+    prediction = rep(c("Hoch", "Gering"), times = 2) |> factor(),
     richtig = name %in% c("cell_1_1", "cell_2_2")
   )
 
 conf_plot <-
-  ggplot(conf_df, aes(x = prediction, y = truth, fill = richtig)) +
+  ggplot(conf_df, aes(x = prediction |> fct_rev(), y = truth, fill = richtig)) +
   geom_tile(color = "white", width = 0.9, height = 0.9) +
   geom_text(aes(label = value), size = 6, fontface = "bold", color = "white") +
   scale_fill_manual(values = c("TRUE" = "#39b185", "FALSE" = "#cf597e")) +
