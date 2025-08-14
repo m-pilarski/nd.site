@@ -149,7 +149,20 @@ bow_with_text <- bow |>
   relocate(text, .after = doc_id) |>
   select(-doc_id)
 
-# TODO function to make nice tables
+bow |>
+  left_join(texts, by = "doc_id") |>
+  relocate(text, .after = doc_id) |>
+  select(-doc_id) |>
+  gt::gt() |>
+  gt::fmt_number(columns = 2:8, decimals = 0) |>
+  gt::cols_label(
+    text = "",
+  ) |>
+  gt::tab_options(
+    table.width = gt::pct(100)
+  ) |>
+  nd.util::nd_gt_tab_options() |>
+  nd.util::nd_gt_to_html()
 
 ```
 
