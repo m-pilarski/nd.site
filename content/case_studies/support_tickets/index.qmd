@@ -64,7 +64,7 @@ ggplot2::theme_set(`+`(
 ```
 
   
-Täglich erreichen Unternehmen zahlreiche Anfragen, Beschwerden oder sonstige Mitteilungen. Um diese effizient zu verwalten, kommen Support-Systeme zum Einsatz, die Kundenanliegen strukturieren und kategorisieren.
+Täglich erreichen Unternehmen zahlreiche Anfragen, Beschwerden oder sonstige Mitteilungen. Um diese effizient zu verwalten, kommen Support-Systeme zum Einsatz, die Kundenanliegen strukturieren und kategorisieren. Doch selbst mit diesen Systemen vergeht oftmals wertvolle Zeit, bis dringende Kundenanliegen an die richtige Stelle gelangen, mit längeren Ausfallzeiten und sinkender Kundenzufriedenheit als mögliche Folgen.
 
 In diesem Fallbeispiel zeigen wir, wie sich Methoden der Textanalyse und des maschinellen Lernens nutzen lassen, um Support-Tickets automatisiert nach ihrer Dringlichkeit zu klassifizieren. Ziel ist es, besonders wichtige Anfragen frühzeitig zu erkennen und die Kundenzufriedenheit gezielt zu steigern.
 
@@ -166,7 +166,7 @@ support |>
 
 ### Vorverarbeitung
 
-Bevor der Text für weitere Analysen genutzt werden kann, muss er, wie in den Grundlagen beschrieben, in ein geeignetes Format überführt werden.
+Bevor der Text für weitere Analysen genutzt werden kann, muss er, wie in den {{{< crossref path="/basics#textdaten-für-analysen-vorbereiten" label="Grundlagen" >}}} beschrieben, in ein geeignetes Format überführt werden.
 
 Dazu entfernen wir unter anderem sogenannte **Stoppwörter**, also sehr häufige Wörter ohne inhaltliche Aussagekraft. Zusätzlich bereinigen wir die Texte um wiederkehrende Formulierungen wie „Sehr geehrtes Support-Team“ oder „Sehr geehrter Kundenservice“, da auch diese keinen Mehrwert für die inhaltliche Analyse bieten.
 
@@ -266,8 +266,15 @@ tags$div(
 
 ```
 
-Das Endresultat ist ein Datensatz in dem jedes Wort eine eigene Zeile darstellt. Welche Begriffe zu welcher Nachrichten gehören, können wir an der ID ausmachen. Hier sind die ersten 5 Begriffe, die nach der Textbereinigung übrig geblieben sind, der ersten Nachricht. 
 
+
+### Analyse
+
+#### Worthäufigkeiten
+
+Bevor wir mit der Modellierung beginnen, schauen wir uns den Datensatz etwas genauer an, um ein besseres Verständnis für die enthaltenen Texte zu gewinnen. Insbesondere bei textbasierten Daten bietet es sich an, zunächst **Worthäufigkeiten** zu betrachten, um zentrale Begriffe und mögliche Muster zu erkennen.
+
+Die zehn häufigsten Begriffe im Datensatz deuten darauf hin, dass der Kundenservice vor allem bei technischen Problemen oder Fragen zur Software kontaktiert wird. 
 
 ```{r}
 # word freq
@@ -283,20 +290,16 @@ freq_plot <- top_words |>
 ```
 
 ```{r}
+#| fig-height: 3.173071
+
 freq_plot
 ```
 
 
-### Analyse
-
-#### Worthäufigkeiten
-
-Bevor wir mit der Modellierung beginnen, schauen wir uns den Datensatz etwas genauer an, um ein besseres Verständnis für die enthaltenen Texte zu gewinnen. Insbesondere bei textbasierten Daten bietet es sich an, zunächst **Worthäufigkeiten** zu betrachten, um zentrale Begriffe und mögliche Muster zu erkennen.
-
-Die zehn häufigsten Begriffe im Datensatz deuten darauf hin, dass der Kundenservice vor allem bei technischen Problemen oder Fragen zur Software kontaktiert wird. Allerdings wird hiermit noch nicht deutlich, welche Begriffe dringendere Nachrichten darstellen. Dazu betrachten wir in der nächsten Abbildung die häufigsten Begriffe nach Dringlichkeit. 
+Allerdings wird hiermit noch nicht deutlich, welche Begriffe dringendere Nachrichten darstellen. Dazu betrachten wir in der nächsten Abbildung die häufigsten Begriffe nach Dringlichkeit. 
 
 ```{r}
-#| fig-height: 2.498452
+
 freq_per_class_plot <-
   support_tokens_clean |>
   count(Dringlichkeit, word, sort = TRUE) |>
@@ -325,6 +328,8 @@ freq_per_class_plot <-
 ```
 
 ```{r}
+#| fig-height: 3.173071
+
 freq_per_class_plot
 ```
 
