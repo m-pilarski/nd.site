@@ -235,7 +235,7 @@ reviews <-
 
 In dieser Analyse kommen überwiegend **lexikon- und regelbasierte Verfahren** zum Einsatz, die empfindlich auf irrelevante Inhalte reagieren. Bevor sich jedoch das Signal erkennen lässt, muss das Rauschen entfernt werden.
 
-Als erster Schritt wird der Text daher so aufbereitet, dass aus der Vielzahl an Formulierungen, Füllwörtern und inhaltsarmen Begriffen jene sprachlichen Elemente herausgefiltert werden, die einen **bedeutungsvollen Mehrwert** bieten. Dieser Prozess ist als **Vorverarbeitung** bekannt und bildet die Grundlage für konsistente und aussagekräftige Ergebnisse.
+Als erster Schritt wird der Text daher so aufbereitet, dass aus der Vielzahl an Formulierungen, Füllwörtern und inhaltsarmen Begriffen jene sprachlichen Elemente herausgefiltert werden, die einen **bedeutungsvollen Mehrwert** bieten. Dieser Prozess ist als {{{< crossref path="/basics#textdaten-für-analysen-vorbereiten" label="Vorverarbeitung" >}}} bekannt und bildet die Grundlage für konsistente und aussagekräftige Ergebnisse.
 
 Die folgenden Schritte wurden dabei durchgeführt:
 
@@ -457,11 +457,11 @@ tfidf_plot
 In der Grafik wird deutlich:
 
 {{{< fa-ul >}}}
-  {{{< fa-solid-li icon="lightbulb" >}}} Bei Headphones stehen „musik“, „kabelbruch“ und „enttäuschend“ für typische Nutzung und Schwächen. {{{< /fa-solid-li >}}}
+  {{{< fa-solid-li icon="lightbulb" >}}} Bei *Kopfhörern* stehen „musik“, „kabelbruch“ und „enttäuschend“ für typische Nutzung und Schwächen. {{{< /fa-solid-li >}}}
 
-  {{{< fa-solid-li icon="lightbulb" >}}} Phone Accessories sind geprägt von Begriffen wie „fritzbox“, „router“ und „reichweite“. {{{< /fa-solid-li >}}}
+  {{{< fa-solid-li icon="lightbulb" >}}} Bei *Smartphones* dominieren Themen wie „kamera“, „videos“ und „wasserdicht“. {{{< /fa-solid-li >}}}
 
-  {{{< fa-solid-li icon="lightbulb" >}}} Bei Smartphones dominieren Themen wie „kamera“, „apps“ und „wasserdicht“.{{{< /fa-solid-li >}}}
+  {{{< fa-solid-li icon="lightbulb" >}}} Die Kategorie *Telefonzubehör* ist geprägt von Begriffen wie „fritzbox“, „router“ und „reichweite“.{{{< /fa-solid-li >}}}
 {{{< /fa-ul >}}}
 
 Dadurch lassen sich erste Hinweise auf die zentralen Themen und Probleme pro Produktkategorie identifizieren. Dies stellt einen wichtiger Schritt dar, um die Inhalte der Rezensionen gezielter auszuwerten und in späteren Analysen (z.B. Sentiment oder Themenmodellierung) weiter zu untersuchen.
@@ -673,8 +673,11 @@ sent_time <-
   ) +
   ylim(-10, 10) +
   rcartocolor::scale_color_carto_d(type = "diverging", palette = "Temps") +
-  theme(legend.position = "bottom",
-        panel.grid.major = element_line())
+   theme(
+      legend.text = ggplot2::element_text(size = 12),
+      legend.position = "bottom",
+      panel.grid.major = element_line()
+    )
   
 sent_time
 ```
@@ -687,6 +690,8 @@ Während diese Gesamtentwicklung ein nützliches Stimmungsbarometer darstellt, b
 
 
 ```{r}
+#| fig-height: 3.505128
+
 sentences <- reviews |>
   select(ID, Produkttyp, Inhalt) |>
   unnest_tokens(sentence, Inhalt, token = "sentences") |>
@@ -727,20 +732,24 @@ aspect_summary <- sent_aspects |>
   summarise(n_mentions = n(), avg_sent = mean(sent_score), .groups = "drop") |>
   filter(n_mentions >= min_n)
 
-ggplot(aspect_summary,
+asbs_plot <- 
+  ggplot(aspect_summary,
        aes(x = Aspect, y = avg_sent, fill = Produkttyp)) +
   geom_col(position = position_dodge(width = 0.7), width = 0.65) +
   geom_hline(yintercept = 0, colour = "grey60") +
   rcartocolor::scale_fill_carto_d(type = "diverging", palette = "Temps") +
-  labs(x = NULL, y = "Ø Sentiment", fill = "Produkttyp") +
-  theme(legend.position = "bottom")
+  labs(x = NULL, y = "Ø Sentiment", fill = NULL) +
+    theme(
+      legend.text = ggplot2::element_text(size = 12),
+      legend.position = "bottom"
+      )
 
-
+asbs_plot
 
 ```
 
 
-Die durchschnittlichen Sentimentwerte je Aspekt zeigen deutliche Unterschiede zwischen den Produktkategorien. Während Preis in allen Kategorien überwiegend positiv bewertet wird, schneidet Qualität insbesondere bei *Kopfhörern* negativ ab. Funktionalität wird insgesamt neutral bis leicht negativ wahrgenommen, wohingegen der Aspekt Service vor allem bei *Telefonzubehör* besonders positiv bewertet wird. Diese Auswertung verdeutlicht, welche Stärken und Schwächen aus Kundensicht je Kategorie vorliegen.
+Die durchschnittlichen Sentimentwerte je Aspekt zeigen deutliche Unterschiede zwischen den Produktkategorien. Während **Preis** in allen Kategorien überwiegend positiv bewertet wird, schneidet **Qualität** insbesondere bei *Kopfhörern* negativ ab. **Funktionalität** wird insgesamt neutral bis leicht negativ wahrgenommen, wohingegen der Aspekt **Service** vor allem bei *Telefonzubehör* besonders positiv bewertet wird. Diese Auswertung verdeutlicht, welche **Stärken und Schwächen aus Kundensicht je Kategorie** vorliegen.
 
 Die Sentimentanalysen zeigen, dass insbesondere in der Kategorie *Kopfhörer* eine hohe Unzufriedenheit besteht.
 Um die Ursachen dieser negativen Bewertungen besser zu verstehen, wird im Folgenden die Analyse gezielt auf diese Produktkategorie fokussiert. Ziel ist, herauszufinden, welche konkreten Probleme Kund:innen in Verbindung mit Kopfhörern am häufigsten nennen.
@@ -748,7 +757,7 @@ Um die Ursachen dieser negativen Bewertungen besser zu verstehen, wird im Folgen
 
 #### Analyse der Bigramme 
 
-Da die Sentimentanalyse bei Kopfhörern stark negativ ausfiel, lohnt ein genauer Blick auf wiederkehrende **Wortpaare** (Bigramme). Bigramme zeigen, welche Begriffe in den Rezensionen besonders häufig direkt aufeinander folgen und damit inhaltlich zusammengehören. So lassen sich typische Formulierungen und wiederkehrende Sprachmuster identifizieren, die bei der Analyse einzelner Wörter verborgen bleiben.
+Da die Sentimentanalyse bei Kopfhörern stark negativ ausfiel, lohnt es sich einen genaueren Blick auf wiederkehrende **Wortpaare** (Bigramme) zu werfen. Bigramme zeigen, welche Begriffe in den Rezensionen besonders häufig direkt aufeinander folgen und damit inhaltlich zusammengehören. So lassen sich typische Formulierungen und wiederkehrende Sprachmuster identifizieren, die bei der Analyse einzelner Wörter verborgen bleiben.
 
 Eine Untersuchung der am häufigsten vorkommenden Bigramme in den Rezensionen für *Kopfhörer* offenbart ein zentrales Problem:
 
@@ -770,7 +779,7 @@ bigrams_worst <- reviews |>
 bigrams_worst_plot <-
   bigrams_worst |>
   count(bigram, sort = TRUE) |>
-  slice_max(n, n = 3) |>
+  slice_max(n, n = 5) |>
   ggplot(aes(x = reorder(bigram, n), y = n)) +
   geom_col(fill = "#46aea0") +
   coord_flip() +
@@ -897,7 +906,7 @@ Direkt anschließend betrachten wir, wie häufig diese Themen im Gesamtkorpus au
 
 
 ```{r}
-#| fig-height: 3.505128
+#| fig-height:  1.423071
 
 # distribution of words across documents
 td_beta <- tidy(stm_model)
@@ -910,12 +919,14 @@ gamma_terms <- td_gamma |>
   summarise(gamma = mean(gamma)) |>
   arrange(desc(gamma)) |>
   left_join(topic_labels, by = "topic") |>
-  mutate(topic = reorder(topic, gamma))
+  mutate(topic = reorder(topic, gamma)) |>
+  select(-topic)
 
 topic_doc_distr <- 
   gamma_terms |>
   top_n(20, gamma) |>
-  ggplot(aes(topic, gamma, label = label, fill = topic)) +
+  mutate(label = reorder(label, gamma)) |>
+  ggplot(aes(label, gamma, label = label, fill = label)) +
   geom_col(show.legend = FALSE) +
   geom_text(hjust = 0, nudge_y = 0.005, size = 4,
             family = "Open Sans") +
@@ -924,7 +935,9 @@ topic_doc_distr <-
                      limits = c(0, 0.45),
                      labels = scales::percent_format()) +
   labs(x = NULL, y = "Wahrscheinlichkeit") +
-  scale_fill_manual(values = setNames(topic_labels$col, topic_labels$topic))
+  scale_fill_manual(values = setNames(topic_labels$col, topic_labels$label)) +
+  theme(axis.text.y = element_blank(),
+        axis.ticks.y = element_blank())
 
 topic_doc_distr
        
@@ -995,11 +1008,11 @@ topic_summary_plot
 ```
 
 
-Die Analyse der Sentimentwerte pro Thema zeigt: Die größte Unzufriedenheit äußert sich bezüglich der vermehrt auftretenden Defekten, die meist kurz nach dem Kauf kaputt gehen. Auch die Themen *langfristige Nutzung* und *Preis-Leistung* werden kritisch bewertet, allerdings nicht in dem Maße wie Defekte, die die Soundqualität beeinträchtigen. Eine gezielte Verbesserung der Produktqualität oder des Rückgabeprozesses könnten dazu beitragen, die Kundenzufriedenheit langfristig zu steigern. 
+Die Analyse der Sentimentwerte pro Thema zeigt: Am meisten Unzufriedenheit verursachen Defekte, die oft schon kurz nach dem Kauf auftreten und die Nutzung deutlich einschränken. Auch die Themen *langfristige Nutzung* und *Preis-Leistung* werden kritisch bewertet, allerdings nicht in dem Maße wie Defekte, die die Soundqualität beeinträchtigen. Eine gezielte Verbesserung der Produktqualität oder des Rückgabeprozesses könnten dazu beitragen, die Kundenzufriedenheit langfristig zu steigern. 
 
 ### Fazit
 
-In dieser Fallstudie haben wir gezeigt, welches Potenzial in der **systematischen Auswertung von Kundenrezensionen** steckt. Der freie Text in Rezensionen liefert wertvolle Informationen, ohne dass zusätzliche Befragungen oder aufwändige Erhebungen notwendig sind, wodurch Ressourcen gespart und anders eingesetzt werden können. Mithilfe geeigneter Analysemethoden lassen sich daraus konkrete Hinweise auf Produktqualität, Nutzererwartungen und mögliche Verbesserungspotenziale ableiten. Unternehmen können diese Einsichten gezielt nutzen, um Schwachstellen zu erkennen und ihre Produkte noch konsequenter an den Bedürfnissen der Kund:innen auszurichten.
+In dieser Fallstudie haben wir gezeigt, welches Potenzial in der **systematischen Auswertung von Kundenrezensionen** steckt. Der freie Text in Rezensionen liefert wertvolle Informationen, ohne dass zusätzliche Befragungen oder aufwändige Erhebungen notwendig sind, wodurch **Ressourcen gespart** und anders eingesetzt werden können. Mithilfe geeigneter Analysemethoden lassen sich daraus konkrete Hinweise auf Produktqualität, Nutzererwartungen und mögliche Verbesserungspotenziale ableiten. Darüber hinaus kann die Analyse als **Echtzeit-Stimmungsbarometer** dienen. Unternehmen können frühzeitig erkennen, wenn sich negative Trends abzeichnen, und zeitnah reagieren, etwa durch Qualitätsverbesserungen, gezielte Kundenkommunikation oder Anpassung des Serviceangebots. So lassen sich Schwachstellen schneller beheben und die Produkte noch konsequenter an den Bedürfnissen der Kund:innen ausrichten.
 
 ```{r}
 review_tokens_clean |>
