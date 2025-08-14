@@ -345,7 +345,7 @@ Es lassen sich klare inhaltliche Unterschiede zwischen den Klassen erkennen:
 
 #### Charakteristische Begriffe pro Klasse (TF-IDF)
 
-Neben der Betrachtung der häufigsten Begriffe ist es oft noch aufschlussreicher, charakteristische Wörter pro Klasse zu identifizieren. Die TF-IDF-Methode hebt dabei Begriffe hervor, die besonders typisch für eine Klasse sind, aber in anderen weniger häufig vorkommen. So lassen sich sprachliche Muster erkennen, die beim automatisierten Erkennen der Dringlichkeit besonders hilfreich sind. Die folgende Grafik zeigt die jeweils 10 prägnantesten Begriffe pro Klasse.
+Neben der Betrachtung der häufigsten Begriffe ist es oft noch aufschlussreicher, charakteristische Wörter pro Klasse zu identifizieren. Die {{{< crossref path="/basics#tf-idf" label="TF-IDF-Methode" >}}} hebt dabei Begriffe hervor, die besonders typisch für eine Klasse sind, aber in anderen weniger häufig vorkommen. So lassen sich sprachliche Muster erkennen, die beim automatisierten Erkennen der Dringlichkeit besonders hilfreich sind. Die folgende Grafik zeigt die jeweils 10 prägnantesten Begriffe pro Klasse.
 
 
 ```{r}
@@ -364,8 +364,11 @@ tfidf_plot <-
     fill = Dringlichkeit
   )) +
   geom_col(show.legend = FALSE) +
-  facet_wrap(~Dringlichkeit, scales = "free") +
+  facet_wrap(~Dringlichkeit, scales = "free_y") +
   scale_x_reordered() +
+  scale_y_continuous(
+  breaks = scales::breaks_pretty(n = 3)
+  ) +
   coord_flip() +
   scale_fill_manual(
     values = c(
@@ -388,7 +391,7 @@ tfidf_plot
 
 Um die Dringlichkeit von Nachrichten automatisch einschätzen zu können, müssen aus dem Text sinnvolle **Merkmale** gewonnen werden. Dabei helfen sprachliche Hinweise wie **Ausrufezeichen**, **Fragen** oder die **durchschnittliche Wortlänge**. Solche Merkmale lassen sich mit sogenannten **Regular Expressions** erkennen. Das sind spezielle Suchmuster, mit denen bestimmte Zeichenfolgen im Text gezielt gefunden und gezählt werden können, etwa Ausrufezeichen oder Fragewörter.
 
-Im nächsten Schritt bereiten wir die Texte entsprechend vor und erstellen verschiedene Merkmale, die später als **Grundlage für das Modell** dienen.
+Diese Merkmalsextraktion bildet die **Grundlage für das Klassifikationsmodell**: Je präziser die relevanten Muster erkannt werden, desto besser kann das System dringende Anliegen priorisieren und schnell an die richtige Stelle leiten.
 
 
 ```{r}
@@ -464,7 +467,7 @@ comp_table |>
 
 Ein Vergleich sprachlicher Merkmale zeigt deutliche Unterschiede zwischen dringenden und weniger dringenden Nachrichten. Besonders auffällig ist der Fragenanteil: Während nur etwa 39% der weniger dringenden Nachrichten eine Frage enthalten, liegt dieser Anteil bei dringenden Nachrichten bei über 92%. Auch die durchschnittliche Wortlänge ist bei dringenden Anliegen leicht erhöht.
 
-Andere Merkmale wie Zeichen- und Wortanzahl oder die Häufigkeit von Ausrufezeichen unterscheiden sich dagegen kaum. Der Anteil an Nachrichten mit Betreff ist in beiden Klassen nahezu identisch. Diese Unterschiede deuten darauf hin, dass dringende Nachrichten sprachlich oft direkter formuliert sind und klarere Handlungsaufforderungen enthalten. 
+Andere Merkmale wie Zeichen- und Wortanzahl oder der Einsatz von Ausrufezeichen unterscheiden sich dagegen kaum, und der Anteil an Nachrichten mit Betreff ist nahezu identisch. Diese Erkenntnisse sind für das Klassifikationsmodell entscheidend: Ein hoher Fragenanteil in Kombination mit leicht komplexerer Sprache, erkennbar an der höheren Wortlänge, kann als starker Indikator für Dringlichkeit genutzt werden.
 
 
 #### Sentimentanalyse 
@@ -536,26 +539,30 @@ sentiment_summary_long <- sentiment_summary |>
 
 
 ```{r}
-#| fig-cap: Distribution of Sentiment
-#| fig-height: 1.8
+#| fig-height: 2.050507
 
 overall_sentiment_plot <-
-  ggplot(sentiment_summary_long, aes(x = "", y = Anteil, fill = Sentiment)) +
+  ggplot(sentiment_summary_long, aes(x = "", y = Anteil / 100, fill = Sentiment)) +
   geom_bar(stat = "identity", width = 0.4) +
   coord_flip() +
   guides(fill = guide_legend(reverse = TRUE)) +
-  labs(x = NULL, y = "Anteil in %") +
   scale_fill_manual(
     values = c(
       "Positiv" = "#39b185",
       "Neutral" = "#e9e29c",
       "Negativ" = "#cf597e"
     )
-  )
+  ) +
+  scale_y_continuous(
+    labels = scales::label_percent(accuracy = 1)
+  ) +
+  labs(x = NULL, fill = NULL, y = "Prozent") +
+  guides(fill = guide_legend(reverse = TRUE)) |>
+    theme(
+      legend.text = ggplot2::element_text(size = 12),
+      legend.position = "bottom"
+    )
 
-if (interactive()) {
-  1 * 0.25 + calc_panel_margin_y_in(overall_sentiment_plot)
-}
 
 overall_sentiment_plot
 ```
