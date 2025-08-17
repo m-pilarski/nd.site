@@ -814,12 +814,12 @@ conf_plot <-
   ggplot(conf_df, aes(x = prediction |> fct_rev(), y = truth, fill = richtig)) +
   geom_tile(color = "white", width = 0.9, height = 0.9) +
   geom_text(aes(label = value), size = 6, fontface = "bold", color = "white") +
-  scale_fill_manual(values = c("TRUE" = "#39b185", "FALSE" = "#cf597e")) +
   labs(
     x = "Vorhergesagt",
     y = "Tatsächlich",
     fill = NULL
   ) +
+  scale_fill_manual(values = c("TRUE" = "#39b185", "FALSE" = "#cf597e")) +
   theme(legend.position = "none")
 
 if (interactive()) {
@@ -830,8 +830,136 @@ conf_plot
 ```
 
 
+Damit das Modell im Alltag akzeptiert wird, ist es wichtig, seine **Entscheidungsgrundlagen transparent und nachvollziehbar darzustellen**. Wenn Mitarbeitende erkennen können, warum ein Ticket als dringend eingestuft wurde, könnte die Bereitschaft steigen, die Empfehlungen des Systems als sinnvolle Unterstützung zu nutzen.
+
+Um diese Transparenz zu schaffen, haben wir die **zentralen Textmerkmale** aus dem Random-Forest-Modell extrahiert und direkt in den Originalnachrichten hervorgehoben.
+
+
+```{r}
+
+# library(vip)
+# vip::vi(final_rf_fit) |>
+#   filter(str_detect(Variable, "^tfidf_Nachricht_")) |>
+#   mutate(
+#     token = str_remove(Variable, "^tfidf_Nachricht_"),
+#     token = str_replace_all(token, "_", " ")
+#   ) |>
+#   arrange(desc(Importance)) |>
+#   readr::write_csv("data/importance_rf.csv")
+
+importance_data <- readr::read_csv(fs::path(data_dir, "importance_rf.csv"))
+
+urgency_cues_rf <- importance_data |>
+  slice_head(n = 150) |>        
+  pull(token) |>
+  unique()
+
+neg_lex <- vns.data::sentiws_tbl |>
+  filter(tok_pol_num < 0) |>
+  pull(tok_str) |>
+  unique() |>
+  tolower()
+
+highlight_ticket_rf <- function(text, urgency_terms, negative_terms) {
+  toks <- stringr::str_split(text, "(?<=\\b)|(?=\\b)")[[1]] 
+  out <- vapply(toks, function(tok) {
+    clean <- stringr::str_to_lower(stringr::str_replace_all(tok, "[^\\p{L}\\p{N}]+", ""))
+    is_urg <- clean %in% urgency_terms
+    is_neg <- clean %in% negative_terms
+
+    if (is_urg && is_neg) {
+      sprintf("<b><span style='color:#cf597e'>%s</span></b>", htmlEscape(tok))
+    } else if (is_urg) {
+      sprintf("<b>%s</b>", htmlEscape(tok))
+    } else if (is_neg) {
+      sprintf("<span style='color:#cf597e'>%s</span>", htmlEscape(tok))
+    } else {
+      htmlEscape(tok)
+    }
+  }, character(1))
+  HTML(paste0(out, collapse = ""))
+}
+
+
+set.seed(42)
+n_hoch   <- 10
+n_gering <- 10
+
+
+examples <- bind_rows(
+  support |> filter(Dringlichkeit == "hoch")   |> slice_sample(n = n_hoch),
+  support |> filter(Dringlichkeit == "gering") |> slice_sample(n = n_gering)
+) |>
+  mutate(
+    Dringlichkeit = as.character(Dringlichkeit),
+    Betreff = ifelse(is.na(Betreff) | str_trim(Betreff) == "", "(ohne Betreff)", Betreff),
+    Nachricht = str_replace_all(Nachricht, "\\\\n", " "),
+    Nachricht = str_replace_all(Nachricht, "\n", " "),
+    Nachricht = str_replace_all(Nachricht, "<br\\s*/?>", " "),
+    Nachricht = str_squish(Nachricht),
+    Nachricht_annot = map(Nachricht, ~ highlight_ticket_rf(.x, urgency_cues_rf, neg_lex))
+  ) |>
+  slice_sample(n = n_hoch + n_gering)  
+
+legend_html <- tags$div(
+  tags$span("Legende: "),
+  tags$span(style="font-weight:600;", "Fett"), " = RF-Signal (wichtiges Token); ",
+  tags$span(style="color:#cf597e;", "Rot"), " = negatives Sentiment; ",
+  tags$span(style="font-weight:600;color:#cf597e;", "Fett + Rot"), " = beides"
+)
+
+card_items <- pmap(
+  list(examples$Betreff, examples$Nachricht_annot, examples$Bereich, examples$Dringlichkeit),
+  function(betreff, nachricht_html, bereich, dring) {
+
+    badge_col <- if (tolower(dring) == "hoch") "#cf597e" else "#39b185"
+
+    tags$div(
+      class = "card", style = "width: 100%;",
+      tags$ul(
+        class = "list-group list-group-flush",
+
+        tags$li(class = "list-group-item",
+                tags$code("Betreff: "), betreff),
+
+        tags$li(class = "list-group-item",
+                tags$code("Bereich: "), bereich),
+
+        tags$li(class = "list-group-item",
+                tags$code("Dringlichkeit: "),
+                tags$span(class = "badge",
+                          style = paste0("background-color:", badge_col, ";"),
+                          dring)
+        ),
+
+        tags$li(class = "list-group-item",
+                tags$code("Legende: "), legend_html),
+
+        tags$li(
+          class = "list-group-item",
+          tags$code("Nachricht:"),
+          tags$div(
+            style = paste(
+              "overflow: hidden; width: 100%; display: -webkit-box;",
+              "-webkit-line-clamp: 8; -webkit-box-orient: vertical; font-size: 0.95rem;"
+            ),
+            nachricht_html
+          )
+        )
+      )
+    )
+  }
+)
+
+nd.util::nd_carousel(card_items, .title = "Dringlichkeits-Hinweise des Klassifikationsmodells")
+
+```
+
+
+Damit wird sichtbar, dass das Modell z. B. bei Formulierungen wie „Fehler“, „Problem“ oder „Schwierigkeiten“ eher zu einer hohen Dringlichkeit tendiert. Tickets mit neutraleren oder allgemeineren Formulierungen landen dagegen häufiger in der gering dringlich-Kategorie.
+
+
 ### Fazit
 
-Dieses Fallbeispiel zeigt, wie sich textbasierte Informationen gezielt nutzen lassen, um fundierte Entscheidungen zu treffen. Schon einfache sprachliche Merkmale wie Wortwahl, Satzzeichen oder Stimmung reichen aus, um komplexe Aufgaben wie die automatische Klassifikation von Support-Nachrichten zuverlässig zu lösen. Solche Modelle können Unternehmen dabei untersützen, ihren Kundenservice effizienter zu gestalten und die Zufriedenheit ihrer Kundinnen und Kunden zu steigern.
-
+In dieser Fallstudie haben wir gezeigt, wie sich Support-Tickets allein anhand der Nachricht automatisiert nach Dringlichkeit klassifizieren lassen. Schon **einfache sprachliche Merkmale** wie Wortwahl, Fragen oder Stimmung liefern ausreichend Informationen, um ein leistungsfähiges Modell zu trainieren. Dadurch können Unternehmen **kritische Anliegen schneller identifizieren**, **Bearbeitungszeiten verkürzen** und die **Kundenzufriedenheit gezielt steigern**. Zudem schafft die Hervorhebung wichtiger Textsignale **Transparenz** und erleichtert die **Akzeptanz** solcher Systeme im Arbeitsalltag.
 
