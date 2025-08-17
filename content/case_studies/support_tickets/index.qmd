@@ -73,6 +73,10 @@ Dabei konzentrieren wir uns bewusst vor allem auf textbasierte Variablen, um zu 
 
 ### Laden des Datensatzes 
 
+Der Datensatz umfasst 8.867 deutschsprachige Support-Tickets eines Unternehmens. Dabei enthält jede Beobachtung  strukturierte Informationen über, Betreff, Nachrichtentext der Kundenanfrage, Fachbereich (z.B. IT-Support) und der Dringlichkeitsstufe des Tickets (kategorisiert als "gering" oder "hoch").
+
+Diese Datenstruktur ermöglicht es, sowohl den Inhalt der Anfragen als auch deren Priorisierung zu analysieren. Für die nachfolgende Textanalyse mittels Machine Learning-Verfahren werden die Textdaten zunächst in ein maschinenlesbares Format transformieren. Dieser Prozess, wird im nächsten Abschnitt detailliert erläutert. 
+
 ```{r}
 #| echo: false
 #| message: false
