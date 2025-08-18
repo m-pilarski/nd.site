@@ -4,7 +4,7 @@ subtitle: "Automatisierte Identifikation und Klassifikation von Entitäten und E
 figtitle: "🏷️"
 date: "2024-11-25T14:25:49+01:00"
 toc_show: true
-draft: false
+draft: true
 html-table-processing: none
 ---
 
@@ -37,6 +37,8 @@ knitr::include_graphics(here::here("content/methods/ner/img/ner.svg"))
 
 ## Ansätze zur Entitätsanalyse
 
+<!-- TODO: Reichen die beiden Ansätze? Oder auch "machine learning" basiert (zB Spacy)? -->
+
 Für diese Methode stehen unterschiedliche Algorithmen zur Verfügung, für welche Unternehmen sich entscheiden können, je nach ihren Bedürfnissen oder verfügbaren Ressourcen: 
 
 ### Regelbasierte Entitätsanalyse 
@@ -48,7 +50,7 @@ entity_example <- tibble(
   Entität = c(
     "Organisation",
     "Person",
-    "Ort",
+    "Ortsname",
     "Land",
     "Datum",
     "Uhrzeit",
@@ -59,7 +61,7 @@ entity_example <- tibble(
   ),
   Beispiel = c(
     "JLU",
-    "Max Msutermann",
+    "Max Mustermann",
     "Gießen",
     "Deutschland",
     "24.05.2024",
@@ -67,14 +69,14 @@ entity_example <- tibble(
     "Laptop",
     "20.000",
     "Euro",
-    "max@mustermann.de"
+    "mustermann@beispiel.de"
   )
 )
 
 entity_example |>
   gt::gt() |>
   gt::tab_options(
-    table.width = gt::pct(40),
+    table.width = gt::pct(50),
     data_row.padding = gt::px(4)
   ) |>
   nd.util::nd_gt_tab_options() |>
@@ -99,3 +101,18 @@ Die Entitätsanalyse ist ein weiterer zentraler Anwendungsfall für vortrainiert
 Besonders empfehlenswert sind Modelle aus der BERT-Familie, da sie speziell für Klassifikationsaufgaben wie die Entitätsanalyse konzipiert wurden und kontextuelle Informationen zuverlässig verarbeiten können.
 
 <!-- TODO: add cross refs  -->
+
+<!-- TODO: Add illustration for kontextuelle Entit.  -->
+
+## Exemplarische Anwendung mit BERT
+
+### Ausprobieren
+
+Klicken Sie auf **Zufälliger Google News Artikel**, um einen Artikel mit farblich hervorgehobenen Entitäten anzuzeigen.
+
+```{r}
+nd.util:::nd_iframe_app(
+  .url="https://shiny.dsjlu.wirtschaft.uni-giessen.de/ner_demo/",
+  .height="4rem"
+)
+```
