@@ -106,6 +106,9 @@ Besonders empfehlenswert sind Modelle aus der BERT-Familie, da sie speziell für
 
 ## Exemplarische Anwendung mit BERT
 
+Für die folgende Demo kommt ein Sprachmodell zum Einsatz, das speziell für die **Entitätsanalyse** trainiert wurde. Es kann in deutschsprachigen Texten automatisch Personen, Orte, Organisationen oder andere wichtige Begriffe identifizieren.  
+
+
 ### Ausprobieren
 
 Klicken Sie auf **Zufälliger Google News Artikel**, um einen Artikel mit farblich hervorgehobenen Entitäten anzuzeigen.
