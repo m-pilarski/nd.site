@@ -59,11 +59,11 @@ ggplot2::theme_set(`+`(
     axis.title.y = ggplot2::element_text(size = 14),
     title = ggplot2::element_text(size = 14),
     strip.text = ggplot2::element_text(size = 14),
-    panel.grid.major = ggplot2::element_blank(),
     panel.grid.minor = ggplot2::element_blank(),
     panel.background = ggplot2::element_rect(fill = NA, colour = NA),
     plot.background = ggplot2::element_rect(fill = NA, colour = NA),
-    legend.position = "bottom"
+    legend.position = "bottom",
+    legend.text = ggplot2::element_text(size = 12)
   )
 ))
 
@@ -385,7 +385,8 @@ wort_plot <- review_tokens_clean |>
   ggplot(aes(x = reorder(Wort, n), y = n)) +
   geom_col(show.legend = FALSE, fill = "#837591") +
   coord_flip() +
-  labs(x = "Wort", y = "Anzahl")
+  labs(x = "Wort", y = "Anzahl") +
+  theme(panel.grid.major.y = element_blank())
 
 if (interactive()) {
   10 * 0.25 + calc_panel_margin_y_in(wort_plot)
@@ -415,7 +416,8 @@ produkttyp_plot <- review_tokens_clean |>
   scale_x_reordered() +
   rcartocolor::scale_fill_carto_d(type = "diverging", palette = "Temps") +
   coord_flip() +
-  labs(x = NULL, y = "Wortanzahl")
+  labs(x = NULL, y = "Wortanzahl") +
+  theme(panel.grid.major.y = element_blank())
 
 if (interactive()) {
   10 * 0.25 + calc_panel_margin_y_in(produkttyp_plot)
@@ -431,7 +433,7 @@ Häufigkeitsanalysen zeigen dominante Begriffe, vernachlässigen jedoch deren Au
 
 
 ```{r}
-#| fig-height: 3.505128
+#| fig-height: 3.831082
 
 # TF-IDF
 tfidf_plot <- review_tokens_clean |>
@@ -440,15 +442,26 @@ tfidf_plot <- review_tokens_clean |>
   group_by(Produkttyp) |>
   slice_max(tf_idf, n = 10) |>
   ungroup() |>
-  ggplot(aes(x = reorder_within(Wort, tf_idf, Produkttyp),
-             y = tf_idf, fill = Produkttyp)) +  
+  ggplot(aes(
+    x = reorder_within(Wort, tf_idf, Produkttyp),
+    y = tf_idf,
+    fill = Produkttyp
+  )) +
   geom_col(show.legend = FALSE) +
   facet_wrap(~Produkttyp, scales = "free") +
   scale_x_reordered() +
+  scale_y_continuous(breaks = scales::pretty_breaks(3)) +
   rcartocolor::scale_fill_carto_d(type = "diverging", palette = "Temps") +
   coord_flip() +
-  labs(x = NULL, y = "TF‑IDF")
+  labs(x = NULL, y = "TF‑IDF") +
+  theme(
+    panel.grid.major.y = element_blank(),
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)
+  )
 
+if (interactive()) {
+  10 * 0.25 + calc_panel_margin_y_in(tfidf_plot)
+}
 
 tfidf_plot
 ```
@@ -622,7 +635,9 @@ sentimentclass_plot <- sentiment_summary_per_class |>
     labels = scales::label_percent(accuracy = 1)
   ) +
   labs(y = NULL, fill = NULL, x = "Prozent") +
-  guides(fill = guide_legend(reverse = TRUE))
+  guides(fill = guide_legend(reverse = TRUE)) +
+  theme(panel.grid.major.y = element_blank())
+
 
 if (interactive()) {
   3 * 0.25 + calc_panel_margin_y_in(sentimentclass_plot)
@@ -641,10 +656,11 @@ Die Kategorie *Telefonzubehör* sticht positiv hervor: Sie weist nicht nur den h
 ```{r}
 #| fig-height: 3.505128
 
-Sys.setlocale("LC_TIME", "de_DE.UTF-8") 
+# Sys.setlocale("LC_ALL", "de_DE.UTF-8")
 
 review_summary <- review_summary |>
-  mutate(Datum = lubridate::dmy(Datum, locale = "de_DE.UTF-8"))
+  # mutate(Datum = lubridate::dmy(Datum, locale = "de_DE.UTF-8"))
+  mutate(Datum = lubridate::dmy(Datum))
 
 sent_time_q <- review_summary |>
   filter(!is.na(Datum)) |>
@@ -652,8 +668,8 @@ sent_time_q <- review_summary |>
   group_by(Produkttyp, Quartal) |>
   summarise(
     avg_sent = mean(sentiment_score, na.rm = TRUE),
-    n_rev    = n(),
-    .groups  = "drop"
+    n_rev = n(),
+    .groups = "drop"
   )
 
 sent_time <-
@@ -668,12 +684,12 @@ sent_time <-
   ) +
   ylim(-10, 10) +
   rcartocolor::scale_color_carto_d(type = "diverging", palette = "Temps") +
-   theme(
-      legend.text = ggplot2::element_text(size = 12),
-      legend.position = "bottom",
-      panel.grid.major = element_line()
-    )
-  
+  theme(
+    legend.text = ggplot2::element_text(size = 12),
+    legend.position = "bottom",
+    panel.grid.major = element_line()
+  )
+
 sent_time
 ```
 
@@ -694,10 +710,14 @@ sentences <- reviews |>
   mutate(sent_idx = row_number(), sent_key = paste(ID, sent_idx, sep = "::")) |>
   ungroup()
 
-id_map <- tibble(doc_id = seq_len(nrow(sentences)), sent_key = sentences$sent_key)
+id_map <- tibble(
+  doc_id = seq_len(nrow(sentences)),
+  sent_key = sentences$sent_key
+)
 
 sent_tbl <- vns::calc_tok_sentidict_tbl(
-  sentences$sentence, .sentidict_tbl = vns.data::gerpolclu_tbl
+  sentences$sentence,
+  .sentidict_tbl = vns.data::gerpolclu_tbl
 ) |>
   group_by(doc_id) |>
   summarise(sent_score = sum(tok_pol_num, na.rm = TRUE), .groups = "drop") |>
@@ -707,10 +727,35 @@ sent_tbl <- vns::calc_tok_sentidict_tbl(
 map_aspect <- function(x) {
   x <- stringi::stri_trans_tolower(x)
   case_when(
-    str_detect(x, regex("preis|teuer|g(ü|u)nstig|billig|preis[- ]?leistung|kosten", TRUE)) ~ "Preis",
-    str_detect(x, regex("liefer|versand|kundendienst|service|support|r(ü|u)ckgab|antwort|hilfe", TRUE)) ~ "Service",
-    str_detect(x, regex("funktion|funktioniert|akku|laufzeit|kompatib|bedien|einstell|app|software", TRUE)) ~ "Funktionalität",
-    str_detect(x, regex("qualit(ä|a)t|verarbeitung|material|haltbar|lebensdauer|defekt|kaputt|bruch|kabel|wackelkontakt", TRUE)) ~ "Qualität",
+    str_detect(
+      x,
+      regex("preis|teuer|g(ü|u)nstig|billig|preis[- ]?leistung|kosten", TRUE)
+    ) ~
+      "Preis",
+    str_detect(
+      x,
+      regex(
+        "liefer|versand|kundendienst|service|support|r(ü|u)ckgab|antwort|hilfe",
+        TRUE
+      )
+    ) ~
+      "Service",
+    str_detect(
+      x,
+      regex(
+        "funktion|funktioniert|akku|laufzeit|kompatib|bedien|einstell|app|software",
+        TRUE
+      )
+    ) ~
+      "Funktionalität",
+    str_detect(
+      x,
+      regex(
+        "qualit(ä|a)t|verarbeitung|material|haltbar|lebensdauer|defekt|kaputt|bruch|kabel|wackelkontakt",
+        TRUE
+      )
+    ) ~
+      "Qualität",
     TRUE ~ NA_character_
   )
 }
@@ -727,17 +772,15 @@ aspect_summary <- sent_aspects |>
   summarise(n_mentions = n(), avg_sent = mean(sent_score), .groups = "drop") |>
   filter(n_mentions >= min_n)
 
-asbs_plot <- 
-  ggplot(aspect_summary,
-       aes(x = Aspect, y = avg_sent, fill = Produkttyp)) +
+asbs_plot <-
+  ggplot(aspect_summary, aes(x = Aspect, y = avg_sent, fill = Produkttyp)) +
   geom_col(position = position_dodge(width = 0.7), width = 0.65) +
   geom_hline(yintercept = 0, colour = "grey60") +
   rcartocolor::scale_fill_carto_d(type = "diverging", palette = "Temps") +
   labs(x = NULL, y = "Ø Sentiment", fill = NULL) +
-    theme(
-      legend.text = ggplot2::element_text(size = 12),
-      legend.position = "bottom"
-      )
+  theme(
+    panel.grid.major.x = element_blank()
+  )
 
 asbs_plot
 
@@ -757,7 +800,7 @@ Da die Sentimentanalyse bei Kopfhörern stark negativ ausfiel, lohnt es sich ein
 Eine Untersuchung der am häufigsten vorkommenden Bigramme in den Rezensionen für *Kopfhörer* offenbart ein zentrales Problem:
 
 ```{r}
-#| fig-height: 1.673071
+#| fig-height: 1.926543
 
 bigrams_worst <- reviews |>
   filter(Produkttyp == "Kopfhörer") |>
@@ -783,10 +826,11 @@ bigrams_worst_plot <-
       stringi::stri_replace_all_fixed(.labs, "_", " ")
     }
   ) +
-  labs(x = NULL, y = "Anzahl")
+  labs(x = NULL, y = "Anzahl") +
+  theme(panel.grid.major.y = element_blank())
 
 if (interactive()) {
-  4 * 0.25 + calc_panel_margin_y_in(bigrams_worst_plot)
+  5 * 0.25 + calc_panel_margin_y_in(bigrams_worst_plot)
 }
 
 bigrams_worst_plot
@@ -809,16 +853,19 @@ Die folgende Grafik zeigt für jedes Thema die repräsentativsten Begriffe. So w
 
 
 ```{r}
+#| output: false
 
-custom_stopwords_ext <- tibble(Wort = c(
-  custom_stopwords$Wort,
-  tolower(readr::read_lines("data/german_stopwords_full.txt")),
-  "leider","immer","besser","produkt","amazon","bestellt","kunden",
-  "gerät","geräte","artikel","funktioniert","super", "jbl", "sony", "gehen", "kaputt", "rechte", "linke",
-  "köpfhörer", "absolut", "gutes", "gut", "schlechtes", "schlecht", "erwarten", "hören", "tag", 
-  "zweite", "richtig", "lange", "musik", "hörer", "gekauft", "kaufen",
-  "produkt", "benutzung", "sterne", "größe", "jahren", "gegangen", "benutze", "kopfhörern", "stern", "preis", "sound", "klang"
-)) |>
+custom_stopwords_ext <- custom_stopwords |>
+  # fmt: skip
+  tibble::add_case(Wort = c(
+    "leider", "immer", "besser", "produkt", "amazon", "bestellt", "kunden", 
+    "gerät", "geräte", "artikel", "funktioniert", "super", "jbl", "sony", 
+    "gehen", "kaputt", "rechte", "linke", "köpfhörer", "absolut", "gutes", 
+    "gut", "schlechtes", "schlecht", "erwarten", "hören", "tag", "zweite", 
+    "richtig", "lange", "musik", "hörer", "gekauft", "kaufen", "produkt", 
+    "benutzung", "sterne", "größe", "jahren", "gegangen", "benutze", 
+    "kopfhörern", "stern", "preis", "sound", "klang"
+  )) |>
   distinct() |>
   filter(!is.na(Wort), Wort != "")
 
@@ -826,7 +873,7 @@ custom_stopwords_ext <- tibble(Wort = c(
 review_tokens_clean <- review_tokens |>
   filter(!str_detect(Wort, "^\\d+$|^[sa]\\d+$|^[0-9]+[a-z]*$")) |>
   anti_join(custom_stopwords_ext, by = "Wort") |>
-  filter(str_count(Wort) >= 3)  
+  filter(str_count(Wort) >= 3)
 
 df_tbl <- review_tokens_clean |>
   distinct(ID, Wort) |>
@@ -841,19 +888,18 @@ review_tokens_clean <- review_tokens_clean |>
 
 tokens_for_stm <- review_tokens_clean |>
   mutate(
-    Wort_raw  = Wort,
-    Wort      = SnowballC::wordStem(Wort, language = "german")
+    Wort_raw = Wort,
+    # Wort = SnowballC::wordStem(Wort, language = "german")
+    Wort = quanteda::char_wordstem(Wort, language = "de")
   )
-
 
 keep_ids <- tokens_for_stm |>
   count(ID) |>
-  filter(n >= 10) |>    
+  filter(n >= 10) |>
   pull(ID)
 
 tokens_for_stm <- tokens_for_stm |>
   filter(ID %in% keep_ids)
-
 
 
 library(stm)
@@ -870,28 +916,30 @@ meta_worst <- reviews |>
 
 processed <- textProcessor(
   documents = docs_worst$text,
-  metadata  = meta_worst,
-  language  = "de",
-  stem      = FALSE,         
+  metadata = meta_worst,
+  language = "de",
+  stem = FALSE,
   wordLengths = c(3, Inf)
 )
 
 out <- prepDocuments(
   documents = processed$documents,
-  vocab     = processed$vocab,
-  meta      = processed$meta,
-  verbose   = FALSE
+  vocab = processed$vocab,
+  meta = processed$meta,
+  verbose = FALSE
 )
 
 stm_model <- stm(
   documents = out$documents,
-  vocab     = out$vocab,
-  K         = 5,
-  prevalence = ~ Bewertung + Produkt + lubridate::dmy(Datum, locale = "de_DE.UTF-8"),    
-  data      = out$meta,
+  vocab = out$vocab,
+  K = 5,
+  prevalence = ~ Bewertung +
+    Produkt +
+    lubridate::dmy(Datum, locale = "de_DE.UTF-8"),
+  data = out$meta,
   init.type = "Spectral",
-  verbose   = FALSE,
-  seed      = 123
+  verbose = FALSE,
+  seed = 123
 )
 
 ```
@@ -899,7 +947,7 @@ stm_model <- stm(
 
 
 ```{r}
-#| fig-height: 4.014623
+#| fig-height: 6.602073
 
 stem_label_map <- tokens_for_stm |>
   count(Wort, Wort_raw, sort = TRUE) |>
@@ -917,13 +965,25 @@ top_terms <- tidy(stm_model, matrix = "beta") |>
 
 topic_labels <- tibble(
   topic = sort(unique(top_terms$topic)),
-  label = c("Langlebigkeit", "Verarbeitung", "Passform", "Sound", "Preis-Leistung")[seq_along(unique(top_terms$topic))],
-  col   = c("#cf597e", "#e9e29c", "#009392", "#9ccb86", "#eeb479")[seq_along(unique(top_terms$topic))]
+  label = c(
+    "Langlebigkeit",
+    "Verarbeitung",
+    "Passform",
+    "Sound",
+    "Preis-Leistung"
+  )[seq_along(unique(top_terms$topic))],
+  col = c(
+    "#cf597e",
+    "#e9e29c",
+    "#009392",
+    "#9ccb86",
+    "#eeb479"
+  )[seq_along(unique(top_terms$topic))]
 )
 pal <- setNames(topic_labels$col, topic_labels$label)
 
 
-topic_plot <- 
+topic_plot <-
   top_terms |>
   left_join(topic_labels, by = "topic") |>
   mutate(
@@ -936,27 +996,32 @@ topic_plot <-
   scale_x_reordered() +
   coord_flip() +
   labs(x = NULL, y = "Gewichtung") +
-  scale_fill_manual(values = pal)
+  scale_fill_manual(values = pal) +
+  theme(panel.grid.major.y = element_blank())
 
 if (interactive()) {
-  12 * 0.25 + calc_panel_margin_y_in(topic_plot)
+  # spacing between grid rows is ~15mm
+  grid::convertUnit(unit(15, "mm"), "in", valueOnly = TRUE)
+  20 * 0.25 + calc_panel_margin_y_in(topic_plot) + 0.59
 }
 
 topic_plot
-
 ```
 
 Direkt anschließend betrachten wir, wie häufig diese Themen im Gesamtkorpus auftreten. Die Balkenhöhen geben die durchschnittliche Dokument‑Wahrscheinlichkeit je Thema an, was dem durchschnittlichen Anteil entspricht, den ein Thema an einer Rezension hat. Dadurch sehen wir nicht nur Beispiele, sondern die gewichtete Verteilung der Themen über alle Rezensionen hinweg.
 
 
 ```{r}
-#| fig-height: 1.674034
+#| fig-height: 1.926543
 
 # distribution of words across documents
 td_beta <- tidy(stm_model)
 
-td_gamma <- tidy(stm_model, matrix = "gamma",
-                 document_names = rownames(reviews))
+td_gamma <- tidy(
+  stm_model,
+  matrix = "gamma",
+  document_names = rownames(reviews)
+)
 
 gamma_terms <- td_gamma |>
   group_by(topic) |>
@@ -966,25 +1031,25 @@ gamma_terms <- td_gamma |>
   mutate(topic = reorder(topic, gamma)) |>
   select(-topic)
 
-topic_doc_distr <- 
+topic_doc_distr <-
   gamma_terms |>
   top_n(20, gamma) |>
   mutate(label = reorder(label, gamma)) |>
   ggplot(aes(label, gamma, label = label, fill = label)) +
   geom_col(show.legend = FALSE) +
-  geom_text(hjust = 0, nudge_y = 0.005, size = 4,
-            family = "Open Sans") +
+  # geom_text(hjust = 0, nudge_y = 0.005, size = 4, family = "Open Sans") +
   coord_flip() +
-  labs(x = "Repräsentative Begriffe", y = "Gewichtung") +
-  rcartocolor::scale_fill_carto_d(type = "diverging", palette = "Temps")
+  labs(x = "Repräsentative\n Begriffe", y = "Gewichtung") +
+  rcartocolor::scale_fill_carto_d(type = "diverging", palette = "Temps") +
+  theme(panel.grid.major.y = element_blank())
 
 if (interactive()) {
-  4 * 0.25 + calc_panel_margin_y_in(topic_doc_distr)
+  5 * 0.25 + calc_panel_margin_y_in(topic_doc_distr)
 }
 
 
 topic_doc_distr
-       
+
 ```
 
 
@@ -1016,7 +1081,7 @@ topic_sentiment <- topic_assignments |>
 
 
 ```{r}
-#| fig-height: 1.674034
+#| fig-height: 1.926543
 
 topic_summary <- topic_sentiment |>
   group_by(topic) |>
@@ -1042,10 +1107,11 @@ topic_summary_plot <- topic_summary |>
     y = "Ø Sentimentwert",
   ) +
   coord_flip() +
-  scale_fill_manual(values = pal)
+  scale_fill_manual(values = pal) +
+  theme(panel.grid.major.y = element_blank())
 
 if (interactive()) {
-  4 * 0.25 + calc_panel_margin_y_in(topic_summary_plot)
+  5 * 0.25 + calc_panel_margin_y_in(topic_summary_plot)
 }
 
 topic_summary_plot
@@ -1065,7 +1131,8 @@ doc_gamma <- as_tibble(stm_model$theta) |>
   ) |>
   pivot_longer(
     starts_with("V"),
-    names_to = "topic", names_prefix = "V",
+    names_to = "topic",
+    names_prefix = "V",
     names_transform = list(topic = as.integer),
     values_to = "gamma"
   ) |>
@@ -1085,16 +1152,17 @@ topic_share_q <- doc_gamma |>
   ungroup()
 
 stacked_topics_plot <-
-  ggplot(topic_share_q |> 
-         filter(Quartal >= as.Date("2017-01-01")),
-              aes(x = Quartal, y = share, fill = label)) +
-     geom_area(position = "fill", alpha = 0.9, color = NA) +
-     scale_fill_manual(values = pal, name = NULL) +
-     scale_y_continuous(labels = scales::percent_format()) +
-     scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
-    labs(x = NULL, y = "Anteil der Themen") +
-     theme(panel.grid.minor = element_blank(),
-           legend.position = "bottom")
+  ggplot(
+    topic_share_q |>
+      filter(Quartal >= as.Date("2017-01-01")),
+    aes(x = Quartal, y = share, fill = label)
+  ) +
+  geom_area(position = "fill", alpha = 0.9, color = NA) +
+  scale_fill_manual(values = pal, name = NULL) +
+  scale_y_continuous(labels = scales::percent_format()) +
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
+  labs(x = NULL, y = "Anteil der\nThemen") +
+  theme(panel.grid.minor = element_blank(), legend.position = "bottom")
 
 if (interactive()) {
   5 * 0.25 + calc_panel_margin_y_in(stacked_topics_plot)
