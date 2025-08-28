@@ -12,11 +12,6 @@ layout: "home"
 toc_show: false
 ---
 
-<!-- Kommunikationsdaten umfassen Informationen, die bei der Interaktion zwischen Personen oder zwischen Personen und Geräten anfallen. Dazu gehören nicht nur die unmittelbaren Inhalte der Kommunikation, sondern auch verschiedene Metadaten wie Sender- und Empfängerinformationen, Zeitstempel, Betreffzeilen und mehr. Diese Daten können aus verschiedenen Quellen stammen, wie E-Mails, Textnachrichten, Chatprotokollen, sozialen Medien, Kundenanfragen und Kundenbefragungen. Für hessische Unternehmen können diese Kommunikationsdaten eine wertvolle Informationsquelle darstellen, deren Analyse wirtschaftlichen Mehrwert generieren kann.. -->
-
-<!-- {{{< div id="chart" >}}} {{{< /div >}}}
-<script src="/assets/js/wordcloud.js"></script> -->
-
 {{{< div class="container-fluid pb-2" style="background: #e9ebe5 !important;" >}}}
   {{{< div class="container-xxl py-4 grid row-gap-0 nd-article" >}}}
     {{{< div class="g-col-12" >}}} {{{< span class="h1" >}}} Einsatz neuer Daten in Kommunikationszusammenhängen auf Unternehmensebene {{{< /span >}}} <br> {{{< span class="lead" >}}} ***Förderprogramm Distr@l Digitalisierung*** {{{< /span >}}} {{{< /div >}}}
@@ -33,27 +28,33 @@ toc_show: false
 library(dplyr)
 
 readr::read_rds(here::here("content", "data", "wordcloud_data.rds")) |>
-  slice_head(n=100) |> 
+  slice_head(n = 100) |>
   mutate(
     text = Wort,
     size = 16 + 24 * (n - min(n)) / (max(n - min(n))),
-    rotate = sample(c(-90, 0, 90), size = n(), replace = TRUE, prob=c(1, 2, 1)),
+    rotate = sample(
+      c(-90, 0, 90),
+      size = n(),
+      replace = TRUE,
+      prob = c(1, 2, 1)
+    ),
     # color = sample(
-    #   rcartocolor::carto_pal(5, "Temps"), 
-    #   size = n(), 
+    #   rcartocolor::carto_pal(5, "Temps"),
+    #   size = n(),
     #   replace = TRUE
     # ),
     color = sample(
-      rcartocolor::carto_pal(7, "BluYl")[3:7], 
-      size = n(), 
+      rcartocolor::carto_pal(7, "BluYl")[3:7],
+      size = n(),
       replace = TRUE
     ),
-    .keep="none"
-  ) |> 
-  nd.util::d3_wordcloud(.element_id = "nd-18321312") |> 
-  as.character() |> 
+    .keep = "none"
+  ) |>
+  nd.util::d3_wordcloud(.element_id = "nd-18321312") |>
+  as.character() |>
   nd.util::render_raw_html()
 ```
+
     {{{< /div >}}}
   {{{< /div >}}}
 {{{< /div >}}}

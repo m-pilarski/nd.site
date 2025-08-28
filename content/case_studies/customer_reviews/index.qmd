@@ -52,7 +52,6 @@ calc_panel_margin_y_in <- function(.plot_obj) {
 
 ggplot2::theme_set(`+`(
   ggplot2::theme_minimal(base_size = 14, base_family = "Open Sans"),
-  ggplot2::theme_minimal(base_size = 14, base_family = "Open Sans"),
   ggplot2::theme(
     axis.text.x = ggplot2::element_text(size = 12),
     axis.text.y = ggplot2::element_text(size = 12),
@@ -69,7 +68,6 @@ ggplot2::theme_set(`+`(
 
 data_dir <- here::here("content", "case_studies", "customer_reviews", "data")
 ```
-
 
 Kundenrezensionen bieten wertvolle Einblicke in die Nutzung und Bewertung von Produkten, oft jedoch in unstrukturierter Form. Mittels Methoden der Textanalyse lassen sich diese Informationen systematisch aufbereiten und helfen, Nutzerbedürfnisse gezielt zu erkennen. Ziel dieser Case Study ist es, ein differenziertes Bild der Kundenerfahrungen mit verschiedenen technischen Produktgruppen zu zeichnen und daraus Verbesserungspotenziale abzuleiten.
 
@@ -714,11 +712,7 @@ sentimentclass_plot <- sentiment_summary_per_class |>
     labels = scales::label_percent(accuracy = 1)
   ) +
   labs(y = NULL, fill = NULL, x = "Prozent") +
-  guides(fill = guide_legend(reverse = TRUE)) |>
-    theme(
-      legend.text = ggplot2::element_text(size = 12),
-      legend.position = "bottom"
-    )
+  guides(fill = guide_legend(reverse = TRUE))
 
 if (interactive()) {
   3 * 0.25 + calc_panel_margin_y_in(sentimentclass_plot)
@@ -940,7 +934,6 @@ topic_frex_plot <- top_frex |>
   facet_wrap(~topic, scales = "free", labeller = as_labeller(topic_labels)) +
   scale_x_reordered() +
   coord_flip() +
-  theme_minimal() +
   labs(x = "Repräsentative Begriffe", y = "Gewichtung") +
   rcartocolor::scale_fill_carto_d(type = "diverging", palette = "Temps")
 
