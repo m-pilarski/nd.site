@@ -107,8 +107,15 @@ knitr::include_graphics(here::here("content/basics/img/stemm_lemm.svg"))
 
 {{{< /div >}}} {{{< /div >}}}
 
-<!-- Die folgende Tabelle bietet eine **Übersicht der gängigsten Vorverarbeitungsschritte für Textdaten**, sowie kurze Beispiele dazu.  -->
-<!-- insert table (maybe where users can select different steps and the text gets shown according to the selection of preprocessing steps chosen - like in an app)  -->
+
+Die interaktive Demo zeigt, wie sich **gängige Vorverarbeitungsschritte** auf Textdaten auswirken. Sie können einen Text auswählen und anschließend die einzelnen Schritte nach Belieben anwenden, um den Effekt direkt zu sehen.
+
+```{r}
+nd.util:::nd_iframe_app(
+  .url = "https://shiny.dsjlu.wirtschaft.uni-giessen.de/preprocessing_demo/",
+  .height = "4rem"
+)
+```
 
 
 ## Texte numerisch darstellen
@@ -149,7 +156,20 @@ bow_with_text <- bow |>
   relocate(text, .after = doc_id) |>
   select(-doc_id)
 
-# TODO function to make nice tables
+bow |>
+  left_join(texts, by = "doc_id") |>
+  relocate(text, .after = doc_id) |>
+  select(-doc_id) |>
+  gt::gt() |>
+  gt::fmt_number(columns = 2:8, decimals = 0) |>
+  gt::cols_label(
+    text = "",
+  ) |>
+  gt::tab_options(
+    table.width = gt::pct(100)
+  ) |>
+  nd.util::nd_gt_tab_options() |>
+  nd.util::nd_gt_to_html()
 
 ```
 
@@ -163,6 +183,7 @@ Dieses Verfahren ist besonders einfach zu implementieren und funktioniert gut f�
 
 Alltägliche Wörter wie „ist“ oder „und“ erscheinen in vielen Dokumenten und erhalten deshalb eine niedrige Gewichtung. Fachbegriffe oder thematisch wichtige Wörter, die nur in wenigen Dokumenten auftauchen, werden dagegen stärker gewichtet. So erkennt TF-IDF, welche Begriffe für den jeweiligen Text besonders aussagekräftig sind.
 
+<!-- TODO: Illustration? -->
 
 ### Kontextuelle Verfahren
 
@@ -193,5 +214,5 @@ Anders als frühere Verfahren wie Word2Vec, bei denen jedes Wort einen festen Ve
 
 Möglich wird das durch die **Transformer-Architektur**, bei der alle Wörter eines Satzes gleichzeitig betrachtet und ihre Beziehungen zueinander gewichtet werden. So entstehen präzise Vektoren, die sich für anspruchsvolle Aufgaben eignen.
 
-
+<!-- TODO: very basic illustration of transformers architecture? or how it respects context? -->
 
