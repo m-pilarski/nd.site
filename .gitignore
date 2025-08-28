@@ -3,7 +3,6 @@
 condaenv/
 renv/
 .Rproj.user
-.Rprofile
 .Renviron
 hugo/resources/_gen/
 _freeze/
@@ -13,3 +12,4 @@ content/**/*.md
 public/
 public_serve/
 content/**/*_cache/
+index.markdown_strict_files/
