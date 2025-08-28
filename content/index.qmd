@@ -3,9 +3,6 @@ title: "Einsatz neuer Daten in Kommunikationszusammenhängen auf Unternehmensebe
 figtitle: "💾"
 date: "2024-11-25T14:25:49+01:00"
 draft: false
-tags: 
-    - "foo"
-    - "bar"
 format: "hugo-md"
 output-file: "_index.md"
 layout: "home"
@@ -58,54 +55,51 @@ readr::read_rds(here::here("content", "data", "wordcloud_data.rds")) |>
     {{{< /div >}}}
   {{{< /div >}}}
 {{{< /div >}}}
+
 {{{< div class="container-fluid" style="background: #fefffc !important;" >}}} {{{< div class="container-xxl py-4 nd-article" >}}} 
 
-## Methoden
-
-<!-- `{r} stringi::stri_rand_lipsum(1)` -->
-<!-- Datenwissenschaftliche Methoden ermöglichen es, große Mengen an Textdaten zu analysieren, zu strukturieren und wertvolle Erkenntnisse daraus zu gewinnen. Verschiedene Techniken helfen dabei, Muster zu erkennen, Informationen zu kategorisieren und komplexe Zusammenhänge sichtbar zu machen. -->
-
 {{{< div class="grid py-2" >}}} 
-    {{{< div class="g-col-12 g-col-md-6 g-col-xl-4 nd-article" >}}} 
-        {{{< p class="nd-article" >}}} Von Stimmungsanalysen bis hin zu Themenerkennung – moderne Analysemethoden ermöglichen es, versteckte Botschaften in großen Textmengen aufzudecken. Wählen Sie eine Methode, um zu erfahren, wie sie funktioniert und welche Erkenntnisse sie liefern kann. {{{< /p >}}}
-    {{{< /div >}}} 
-    {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
-        {{{< bs_card card_img_src="/assets/img/sentiment_cover.svg" card_img_bg="#9c9c9c" card_title="Sentimentanalyse" card_text="Sentimentanalyse ist ein Verfahren der Data Science, das darauf abzielt, Meinungen, Emotionen und Einstellungen in Textdaten automatisch zu identifizieren und zu klassifizieren." card_href="/methods/sentiment" >}}}
-    {{{< /div >}}} 
-    {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
-        {{{< bs_card card_img_src="/assets/img/topic_cover.svg" card_img_bg="#9c9c9c" card_title="Themenmodellierung" card_text="Die Themenmodellierung extrahiert automatisiert Hauptthemen aus Texten. Dies ermöglicht die Extraktion semantisch verwandter Begriffe, sowie die Gruppierung thematisch ähnlicher Dokumente." card_href="/methods/topic" >}}}
-    {{{< /div >}}} 
+  {{{< div class="g-col-12 g-col-md-6 g-col-xl-4 nd-article" >}}} 
+    {{{< span class="h2" >}}} Fallstudien {{{< /span >}}}
+    {{{< p class="nd-article" >}}} Von Stimmungsanalysen bis hin zu Themenerkennung – moderne Analysemethoden ermöglichen es, versteckte Botschaften in großen Textmengen aufzudecken. Wählen Sie eine Methode, um zu erfahren, wie sie funktioniert und welche Erkenntnisse sie liefern kann. {{{< /p >}}}
+  {{{< /div >}}} 
+  {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
+    {{{< bs_card card_img_src="/assets/img/sentiment_cover.svg" card_img_bg="#9c9c9c" card_title="Sentimentanalyse" card_text="Sentimentanalyse ist ein Verfahren der Data Science, das darauf abzielt, Meinungen, Emotionen und Einstellungen in Textdaten automatisch zu identifizieren und zu klassifizieren." card_href="/methods/sentiment" >}}}
+  {{{< /div >}}} 
+  {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
+    {{{< bs_card card_img_src="/assets/img/topic_cover.svg" card_img_bg="#9c9c9c" card_title="Themenmodellierung" card_text="Die Themenmodellierung extrahiert automatisiert Hauptthemen aus Texten. Dies ermöglicht die Extraktion semantisch verwandter Begriffe, sowie die Gruppierung thematisch ähnlicher Dokumente." card_href="/methods/topic" >}}}
+  {{{< /div >}}} 
+  {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
+    {{{< bs_card_emoji emoji_code="1f4f0" emoji_bg="#9c9c9c" card_title="Fallstudie III" card_text="Lorem Ipsum" card_href="/case_studies/case_study-3" >}}}
+  {{{< /div >}}} 
 {{{< /div >}}} 
 
 {{{< /div >}}} {{{< /div >}}} 
 
-
-
 {{{< div class="container-fluid" >}}} {{{< div class="container-xxl py-4 nd-article" >}}}
-
-## Fallstudien
 
 <!-- `{r} stringi::stri_rand_lipsum(1)` -->
 
 {{{< div class="grid py-2" >}}} 
-    {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
-        {{{< p class="nd-article" >}}} Unsere Fallstudien veranschaulichen, wie Technologien der Textanalyse auf reale Daten angewendet werden. Entdecken Sie konkrete Beispiele für den Einsatz von Sentimentanalyse, Themenmodellierung und weiteren Methoden. {{{< /p >}}}
-    {{{< /div >}}} 
-    {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
-        {{{< bs_card_emoji emoji_code="2b50" emoji_bg="#837591" card_title="Kundenrezensionen" card_text="In dieser Case Study zeigen wir, wie unstrukturierte Kundenrezensionen mithilfe von Textanalyse systematisch ausgewertet werden können, um differenzierte Einblicke in die Nutzung technischer Produkte zu gewinnen und gezielt Verbesserungspotenziale zu identifizieren." card_href="/case_studies/customer_reviews" >}}}
-    {{{< /div >}}} 
-    {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
-        {{{< bs_card_emoji emoji_code="1f4e9" emoji_bg="#837591" card_title="Analyse von Support-Tickets" card_text="Dieses Fallbeispiel zeigt, wie sich Support-Anfragen allein anhand der Texte automatisiert nach Dringlichkeit klassifizieren lassen. Durch den gezielten Einsatz von Textanalyse und Machine Learning werden besonders kritische Anliegen frühzeitig erkannt, um den Kundenservice effizienter zu gestalten." card_href="/case_studies/support_tickets" >}}}
-    {{{< /div >}}} 
-    {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
-        {{{< bs_card_emoji emoji_code="1f4f0" emoji_bg="#9c9c9c" card_title="Fallstudie I" card_text="Lorem Ipsum" card_href="/case_studies/case_study-1" >}}}
-    {{{< /div >}}} 
-    {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
-        {{{< bs_card_emoji emoji_code="1f4f0" emoji_bg="#9c9c9c" card_title="Fallstudie II" card_text="Lorem Ipsum" card_href="/case_studies/case_study-2" >}}}
-    {{{< /div >}}} 
-    {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
-        {{{< bs_card_emoji emoji_code="1f4f0" emoji_bg="#9c9c9c" card_title="Fallstudie III" card_text="Lorem Ipsum" card_href="/case_studies/case_study-3" >}}}
-    {{{< /div >}}} 
+  {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
+    {{{< span class="h2" >}}} Fallstudien {{{< /span >}}}
+    {{{< p class="nd-article" >}}} Unsere Fallstudien veranschaulichen, wie Technologien der Textanalyse auf reale Daten angewendet werden. Entdecken Sie konkrete Beispiele für den Einsatz von Sentimentanalyse, Themenmodellierung und weiteren Methoden. {{{< /p >}}}
+  {{{< /div >}}} 
+  {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
+    {{{< bs_card_emoji emoji_code="2b50" emoji_bg="#837591" card_title="Kundenrezensionen" card_text="In dieser Case Study zeigen wir, wie unstrukturierte Kundenrezensionen mithilfe von Textanalyse systematisch ausgewertet werden können, um differenzierte Einblicke in die Nutzung technischer Produkte zu gewinnen und gezielt Verbesserungspotenziale zu identifizieren." card_href="/case_studies/customer_reviews" >}}}
+  {{{< /div >}}} 
+  {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
+    {{{< bs_card_emoji emoji_code="1f4e9" emoji_bg="#837591" card_title="Analyse von Support-Tickets" card_text="Dieses Fallbeispiel zeigt, wie sich Support-Anfragen allein anhand der Texte automatisiert nach Dringlichkeit klassifizieren lassen. Durch den gezielten Einsatz von Textanalyse und Machine Learning werden besonders kritische Anliegen frühzeitig erkannt, um den Kundenservice effizienter zu gestalten." card_href="/case_studies/support_tickets" >}}}
+  {{{< /div >}}} 
+  {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
+    {{{< bs_card_emoji emoji_code="1f4f0" emoji_bg="#9c9c9c" card_title="Fallstudie I" card_text="Lorem Ipsum" card_href="/case_studies/case_study-1" >}}}
+  {{{< /div >}}} 
+  {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
+    {{{< bs_card_emoji emoji_code="1f4f0" emoji_bg="#9c9c9c" card_title="Fallstudie II" card_text="Lorem Ipsum" card_href="/case_studies/case_study-2" >}}}
+  {{{< /div >}}} 
+  {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
+    {{{< bs_card_emoji emoji_code="1f4f0" emoji_bg="#9c9c9c" card_title="Fallstudie III" card_text="Lorem Ipsum" card_href="/case_studies/case_study-3" >}}}
+  {{{< /div >}}} 
 {{{< /div >}}}
 
 {{{< /div >}}} {{{< /div >}}}
