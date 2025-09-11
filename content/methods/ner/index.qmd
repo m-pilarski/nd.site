@@ -102,7 +102,15 @@ Besonders empfehlenswert sind Modelle aus der BERT-Familie, da sie speziell für
 
 <!-- TODO: add cross refs  -->
 
-<!-- TODO: Add illustration for kontextuelle Entit.  -->
+Um den Unterschied der beiden Methoden zu verdeutlichen, zeigen wir, wie jede Methode den folgendenen Sätze klassifizieren würde: 
+
+```{r}
+knitr::include_graphics(here::here("content/methods/ner/img/context_ner.svg"))
+```
+
+Der kontextuelle Ansatz berücksichtigt die Wörter um den zentralen Begriff und entscheidet so, ob es sich bei "Bank" um eine Parkbank oder ein Finanzinstitut handelt. Grundsätzlich könnte auch ein regelbasierter Ansatz die Ambiguität von "Bank" auflösen, etwa über spezifisch formulierte Regeln. Solche Regeln funktionieren in kontrollierten Szenarien, skalieren jedoch schlecht, sind anfällig für Formulierungsvarianten und erfordern kontinuierliche Wartung. Kontextuelle Verfahren lernen diese Muster aus Daten und treffen die Unterscheidung in neuen Sätzen zuverlässiger.
+
+
 
 {{{< fa-ul >}}}
 {{{< fa-solid-li icon="thumbs-up" color="#39b185" >}}} Analysiert die Bedeutung eines Wortes im Zusammenhang des Satzes und erkennt dadurch unterschiedliche Verwendungen. {{{< /fa-solid-li >}}}
@@ -111,15 +119,6 @@ Besonders empfehlenswert sind Modelle aus der BERT-Familie, da sie speziell für
 {{{< fa-solid-li icon="thumbs-down" color="#cf597e" >}}} Wenn Modelle in der Cloud laufen (z. B. über APIs), kann das problematisch sein, wenn sensible Geschäftsdaten oder Kundendaten verarbeitet werden. {{{< /fa-solid-li >}}}
 {{{< /fa-ul >}}}
 
-
-Um den Unterschied der beiden Methoden zu verdeutlichen, zeigen wir, wie jede Methode den folgendenen Sätze klassifizieren würde: 
-
-{{{< fa-ul >}}}
-  {{{< fa-solid-li >}}} Ich habe mein Buch auf der **Bank** liegen lassen. {{{< /fa-solid-li >}}}
-  {{{< fa-solid-li >}}} Die **Bank** schließt bald. {{{< /fa-solid-li >}}}
-{{{< /fa-ul >}}}
-
-Ein regelbasierter Ansatz würde beide Vorkommen von Bank als Finanzinstitut klassifizieren, wenn das Wort im Lexikon so hinterlegt ist. Ein kontextueller Ansatz erkennt dagegen den Unterschied, da es dein Kontext um den Begriff berücksichtigt.
 
 
 
