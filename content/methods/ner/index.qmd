@@ -27,7 +27,7 @@ knitr::include_graphics(here::here("content/methods/ner/img/ner.svg"))
 ## Anwendungen
 
 {{{< fa-ul >}}}
-  {{{< fa-solid-li icon="star"  >}}} **Identifikation sensibler Informationen:** Mittels Entitätsanalyse lassen sich personenbezogene Daten wie Namen oder Adressen automatisch erkennen und pseudonymisieren. Ein wichtiger Schritt zur Einhaltung der DSGVO.
+  {{{< fa-solid-li icon="star"  >}}} **Identifikation sensibler Informationen:** Mittels Entitätsanalyse lassen sich personenbezogene Daten wie Namen oder Adressen automatisch erkennen und pseudonymisieren.
   {{{< /fa-solid-li >}}}
   {{{< fa-solid-li icon="lightbulb"  >}}} **Wettbewerbsanalyse:** Durch das Extrahieren von Mitbewerber- oder Produktnamen lassen sich relevante Informationen für Marktanalysen gewinnen.
   {{{< /fa-solid-li >}}}
@@ -39,7 +39,7 @@ knitr::include_graphics(here::here("content/methods/ner/img/ner.svg"))
 
 <!-- TODO: Reichen die beiden Ansätze? Oder auch "machine learning" basiert (zB Spacy)? -->
 
-Für diese Methode stehen unterschiedliche Algorithmen zur Verfügung, für welche Unternehmen sich entscheiden können, je nach ihren Bedürfnissen oder verfügbaren Ressourcen: 
+Für diese Methode gibt es verschiedene Algorithmen, aus denen Unternehmen je nach Bedarf und verfügbaren Ressourcen wählen können: 
 
 ### Regelbasierte Entitätsanalyse 
 
@@ -84,7 +84,7 @@ entity_example |>
 
 ```
 
-Beim lexikonbasierten Ansatz wird der Text mit einem vordefinierten Wörterverzeichnis abgeglichen, also mit Listen relevanter Namen und Begriffe. Stimmen Wörter im Text mit diesen Einträgen überein, werden sie als Entität klassifiziert. Ergänzend kommen regelbasierte Methoden zum Einsatz, die sprachliche Strukturen analysieren. Diese Regeln basieren oft auf linguistischen Mustern, wie z.B. Großschreibung innerhalb eines Satzes oder typischen Formatierungen wie Datums- oder E-Mail-Strukturen.
+Beim lexikonbasierten Ansatz wird der Text mit einem vordefinierten Lexikon abgeglichen, also mit Listen relevanter Namen und Begriffe. Stimmen Wörter im Text mit diesen Einträgen überein, werden sie als Entität klassifiziert. Ergänzend kommen regelbasierte Methoden zum Einsatz, die sprachliche Strukturen analysieren. Diese Regeln basieren oft auf linguistischen Mustern, wie z.B. Großschreibung innerhalb eines Satzes oder typischen Formatierungen wie Datums- oder E-Mail-Strukturen.
 
 {{{< fa-ul >}}}
   {{{< fa-solid-li icon="thumbs-up" color="#39b185" >}}} Lässt sich unkompliziert umsetzen, selbst mit begrenzten Ressourcen oder ohne eigene Trainingsdaten. {{{< /fa-solid-li >}}}
@@ -103,6 +103,25 @@ Besonders empfehlenswert sind Modelle aus der BERT-Familie, da sie speziell für
 <!-- TODO: add cross refs  -->
 
 <!-- TODO: Add illustration for kontextuelle Entit.  -->
+
+{{{< fa-ul >}}}
+{{{< fa-solid-li icon="thumbs-up" color="#39b185" >}}} Analysiert die Bedeutung eines Wortes im Zusammenhang des Satzes und erkennt dadurch unterschiedliche Verwendungen. {{{< /fa-solid-li >}}}
+{{{< fa-solid-li icon="thumbs-up" color="#39b185" >}}} Vortrainierte Modelle können durch Fine-Tuning an spezifische Domänen angepasst werden. {{{< /fa-solid-li >}}}
+{{{< fa-solid-li icon="thumbs-down" color="#cf597e" >}}} Erfodert mehr Rechenressourcen im Vergleich zu regelbasierten Verfahren. {{{< /fa-solid-li >}}}
+{{{< fa-solid-li icon="thumbs-down" color="#cf597e" >}}} Wenn Modelle in der Cloud laufen (z. B. über APIs), kann das problematisch sein, wenn sensible Geschäftsdaten oder Kundendaten verarbeitet werden. {{{< /fa-solid-li >}}}
+{{{< /fa-ul >}}}
+
+
+Um den Unterschied der beiden Methoden zu verdeutlichen, zeigen wir, wie jede Methode den folgendenen Sätze klassifizieren würde: 
+
+{{{< fa-ul >}}}
+  {{{< fa-solid-li >}}} Ich habe mein Buch auf der **Bank** liegen lassen. {{{< /fa-solid-li >}}}
+  {{{< fa-solid-li >}}} Die **Bank** schließt bald. {{{< /fa-solid-li >}}}
+{{{< /fa-ul >}}}
+
+Ein regelbasierter Ansatz würde beide Vorkommen von Bank als Finanzinstitut klassifizieren, wenn das Wort im Lexikon so hinterlegt ist. Ein kontextueller Ansatz erkennt dagegen den Unterschied, da es dein Kontext um den Begriff berücksichtigt.
+
+
 
 ## Exemplarische Anwendung mit BERT
 
