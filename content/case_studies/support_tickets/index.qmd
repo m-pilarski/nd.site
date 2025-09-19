@@ -8,6 +8,7 @@ toc_show: true
 execute:
   echo: false
   message: false
+  cache: true
 ---
 
 
@@ -220,11 +221,12 @@ support_tokens_clean |>
 
 
 ```{r}
+#| output: asis
 format_token <- function(.tok) {
   htmltools::tagList(
     htmltools::tags$p(
       class = "token-stream mb-0 pb-0",
-      purrr::map(.tok, htmltools::span, class = "badge token text-bg-primary")
+      purrr::map(.tok, htmltools::span, class = "badge token")
     ),
     htmltools::tags$style(stringi::stri_c(
       ".token-stream .badge.token {",
@@ -235,7 +237,8 @@ format_token <- function(.tok) {
       "  border: 1px solid var(--bs-border-color);",
       "  font-size: var(--bs-body-font-size);",
       "  font-weight: var(--bs-body-font-weight);",
-      # "  background: #f8f9fa;",
+      "  color: var(--bs-body-color);",
+      "  background: #e9ebe5;",
       "}",
       sep = "\n"
     ))
@@ -265,29 +268,23 @@ msg_prep <- msg_token |>
   setdiff(pull(custom_stopwords, word))
 
 tags$div(
-  class = "d-flex flex-column justify-content-center",
+  class = "d-flex flex-wrap pb-2",
   tags$div(
-    class = "card nd-card",
+    class = "card nd-card p-1",
     style = "background-color: #e9ebe5;",
-    htmltools::tags$p(class = "pb-0", msg_full)
+    purrr::map(
+      purrr::pluck(stringi::stri_split_regex(msg_full, "\\n+"), 1),
+      \(.par) {
+        htmltools::tags$p(class = "py-1 px-2", style = "text-indent: 0;", .par)
+      }
+    )
   ),
-  tags$i(class = "fa-solid fa-arrow-down"),
-  tags$div(
-    class = "card nd-card",
-    style = "background-color: #e9ebe5;",
-    format_token(msg_token)
-  ),
-  tags$i(class = "fa-solid fa-arrow-down"),
-  tags$div(
-    class = "card nd-card",
-    style = "background-color: #e9ebe5;",
-    format_token(msg_prep)
-  )
+  tags$i(class = "fa-solid fa-arrow-down my-2"),
+  format_token(msg_token),
+  tags$i(class = "fa-solid fa-arrow-down my-2"),
+  format_token(msg_prep)
 )
-
 ```
-
-
 
 ### Analyse
 
