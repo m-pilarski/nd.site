@@ -205,18 +205,18 @@ support_tokens_clean <- support |>
 ```
 
 ```{r}
-support_tokens_clean |>
-  head(5) |>
-  gt::gt() |>
-  gt::tab_caption("Beispiel der ersten Beobachtung nach dem Preprocessing") |>
-  gt::tab_options(
-    table.width = gt::pct(100),
-    data_row.padding = gt::px(4),
-    ihtml.use_pagination = FALSE,
-    ihtml.use_text_wrapping = TRUE
-  ) |>
-  nd.util::nd_gt_tab_options() |>
-  nd.util::nd_gt_to_html()
+# support_tokens_clean |>
+#   head(5) |>
+#   gt::gt() |>
+#   gt::tab_caption("Beispiel der ersten Beobachtung nach dem Preprocessing") |>
+#   gt::tab_options(
+#     table.width = gt::pct(100),
+#     data_row.padding = gt::px(4),
+#     ihtml.use_pagination = FALSE,
+#     ihtml.use_text_wrapping = TRUE
+#   ) |>
+#   nd.util::nd_gt_tab_options() |>
+#   nd.util::nd_gt_to_html()
 ```
 
 
@@ -224,21 +224,23 @@ support_tokens_clean |>
 #| output: asis
 format_token <- function(.tok) {
   htmltools::tagList(
-    htmltools::tags$p(
-      class = "token-stream mb-0 pb-0",
-      purrr::map(.tok, htmltools::span, class = "badge token")
+    htmltools::tags$div(
+      class = "d-flex flex-wrap gap-1 mb-0 pb-0",
+      purrr::map(.tok, htmltools::span, class = "token")
     ),
     htmltools::tags$style(stringi::stri_c(
-      ".token-stream .badge.token {",
+      ".token {",
       "  padding: .15rem .4rem;",
       "  margin: .08rem .16rem .08rem 0;",
       "  font-weight: 500;",
-      "  border-radius: .35rem;",
-      "  border: 1px solid var(--bs-border-color);",
       "  font-size: var(--bs-body-font-size);",
       "  font-weight: var(--bs-body-font-weight);",
       "  color: var(--bs-body-color);",
       "  background: #e9ebe5;",
+      "  background-clip: border-box;",
+      # "  border: var(--bs-border-width) solid var(--bs-border-color);",
+      "  border: var(--bs-border-width) solid #cdcfca;",
+      "  border-radius: var(--bs-border-radius);",
       "}",
       sep = "\n"
     ))
@@ -268,9 +270,9 @@ msg_prep <- msg_token |>
   setdiff(pull(custom_stopwords, word))
 
 tags$div(
-  class = "d-flex flex-wrap pb-2",
+  class = "d-flex flex-column justify-content-center pb-2",
   tags$div(
-    class = "card nd-card p-1",
+    class = "card p-1",
     style = "background-color: #e9ebe5;",
     purrr::map(
       purrr::pluck(stringi::stri_split_regex(msg_full, "\\n+"), 1),

@@ -7,6 +7,6 @@
     "[quarto]": {
         "editor.formatOnSave": true,
         "editor.defaultFormatter": "quarto.quarto",
-    	"render.previewReveal": false,
+    	"render.previewType": "none"
     }
 }
