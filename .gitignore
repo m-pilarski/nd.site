@@ -13,3 +13,5 @@ public/
 public_serve/
 content/**/*_cache/
 index.markdown_strict_files/
+
+**/*.quarto_ipynb
