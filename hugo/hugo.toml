@@ -41,10 +41,10 @@ defaultContentLanguageInSubdir = false
         name = "Themenmodellierung"
         url = "/methods/topic/"
     [[menu.main]]
-        weight = 2
+        weight = 3
         identifier = "ner"
         parent = "methods"
-        name = "Eigennamenerkennung"
+        name = "Entitätsanalyse"
         url = "/methods/ner/"
     [[menu.main]]
         weight = 3

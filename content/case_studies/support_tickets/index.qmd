@@ -8,6 +8,7 @@ toc_show: true
 execute:
   echo: false
   message: false
+  cache: true
 ---
 
 
@@ -204,36 +205,57 @@ support_tokens_clean <- support |>
 ```
 
 ```{r}
-support_tokens_clean |>
-  head(5) |>
-  gt::gt() |>
-  gt::tab_caption("Beispiel der ersten Beobachtung nach dem Preprocessing") |>
-  gt::tab_options(
-    table.width = gt::pct(100),
-    data_row.padding = gt::px(4),
-    ihtml.use_pagination = FALSE,
-    ihtml.use_text_wrapping = TRUE
-  ) |>
-  nd.util::nd_gt_tab_options() |>
-  nd.util::nd_gt_to_html()
+# support_tokens_clean |>
+#   head(5) |>
+#   gt::gt() |>
+#   gt::tab_caption("Beispiel der ersten Beobachtung nach dem Preprocessing") |>
+#   gt::tab_options(
+#     table.width = gt::pct(100),
+#     data_row.padding = gt::px(4),
+#     ihtml.use_pagination = FALSE,
+#     ihtml.use_text_wrapping = TRUE
+#   ) |>
+#   nd.util::nd_gt_tab_options() |>
+#   nd.util::nd_gt_to_html()
 ```
 
 
 ```{r}
+#| output: asis
 format_token <- function(.tok) {
-  .tok |>
-    map_chr(\(..str) {
-      stringi::stri_c("\"", ..str, "\"")
-    }) |>
-    stringi::stri_c(collapse = ", ") |>
-    (\(..str) {
-      stringi::stri_c("[", ..str, "]")
-    })()
+  htmltools::tagList(
+    htmltools::tags$div(
+      class = "d-flex flex-wrap gap-1 mb-0 pb-0",
+      purrr::map(.tok, htmltools::span, class = "token")
+    ),
+    htmltools::tags$style(stringi::stri_c(
+      ".token {",
+      "  padding: .15rem .4rem;",
+      "  margin: .08rem .16rem .08rem 0;",
+      "  font-weight: 500;",
+      "  font-size: var(--bs-body-font-size);",
+      "  font-weight: var(--bs-body-font-weight);",
+      "  color: var(--bs-body-color);",
+      "  background: #e9ebe5;",
+      "  background-clip: border-box;",
+      # "  border: var(--bs-border-width) solid var(--bs-border-color);",
+      "  border: var(--bs-border-width) solid #cdcfca;",
+      "  border-radius: var(--bs-border-radius);",
+      "}",
+      sep = "\n"
+    ))
+  )
 }
 
-msg_full <- support |>
-  purrr::pluck("Nachricht", 1) |>
-  stringi::stri_replace_all_fixed("\\n", "\n")
+# msg_full <- support |>
+#   purrr::pluck("Nachricht", 1) |>
+#   stringi::stri_replace_all_fixed("\\n", "\n")
+
+msg_full <- stringi::stri_c(
+  "Sehr geehrtes Support-Team,\n\nich möchte einen gravierenden ",
+  "Sicherheitsvorfall melden, der gegenwärtig mehrere Komponenten unserer ",
+  "Infrastruktur betrifft."
+)
 
 msg_token <- msg_full |>
   stringi::stri_trans_tolower() |>
@@ -248,29 +270,23 @@ msg_prep <- msg_token |>
   setdiff(pull(custom_stopwords, word))
 
 tags$div(
-  class = "d-flex flex-column justify-content-center",
+  class = "d-flex flex-column justify-content-center pb-2",
   tags$div(
-    class = "card nd-card",
+    class = "card p-1",
     style = "background-color: #e9ebe5;",
-    msg_full
+    purrr::map(
+      purrr::pluck(stringi::stri_split_regex(msg_full, "\\n+"), 1),
+      \(.par) {
+        htmltools::tags$p(class = "py-1 px-2", style = "text-indent: 0;", .par)
+      }
+    )
   ),
-  tags$i(class = "fa-solid fa-arrow-down"),
-  tags$div(
-    class = "card nd-card",
-    style = "background-color: #e9ebe5;",
-    format_token(msg_token)
-  ),
-  tags$i(class = "fa-solid fa-arrow-down"),
-  tags$div(
-    class = "card nd-card",
-    style = "background-color: #e9ebe5;",
-    format_token(msg_prep)
-  )
+  tags$i(class = "fa-solid fa-arrow-down my-2"),
+  format_token(msg_token),
+  tags$i(class = "fa-solid fa-arrow-down my-2"),
+  format_token(msg_prep)
 )
-
 ```
-
-
 
 ### Analyse
 
@@ -371,7 +387,7 @@ tfidf_plot <-
   facet_wrap(~Dringlichkeit, scales = "free_y") +
   scale_x_reordered() +
   scale_y_continuous(
-  breaks = scales::breaks_pretty(n = 3)
+    breaks = scales::breaks_pretty(n = 3)
   ) +
   coord_flip() +
   scale_fill_manual(
@@ -546,7 +562,10 @@ sentiment_summary_long <- sentiment_summary |>
 #| fig-height: 2.050507
 
 overall_sentiment_plot <-
-  ggplot(sentiment_summary_long, aes(x = "", y = Anteil / 100, fill = Sentiment)) +
+  ggplot(
+    sentiment_summary_long,
+    aes(x = "", y = Anteil / 100, fill = Sentiment)
+  ) +
   geom_bar(stat = "identity", width = 0.4) +
   coord_flip() +
   guides(fill = guide_legend(reverse = TRUE)) +
@@ -854,7 +873,7 @@ Um diese Transparenz zu schaffen, haben wir die **zentralen Textmerkmale** aus d
 importance_data <- readr::read_csv(fs::path(data_dir, "importance_rf.csv"))
 
 urgency_cues_rf <- importance_data |>
-  slice_head(n = 150) |>        
+  slice_head(n = 150) |>
   pull(token) |>
   unique()
 
@@ -865,79 +884,102 @@ neg_lex <- vns.data::sentiws_tbl |>
   tolower()
 
 highlight_ticket_rf <- function(text, urgency_terms, negative_terms) {
-  toks <- stringr::str_split(text, "(?<=\\b)|(?=\\b)")[[1]] 
-  out <- vapply(toks, function(tok) {
-    clean <- stringr::str_to_lower(stringr::str_replace_all(tok, "[^\\p{L}\\p{N}]+", ""))
-    is_urg <- clean %in% urgency_terms
-    is_neg <- clean %in% negative_terms
+  toks <- stringr::str_split(text, "(?<=\\b)|(?=\\b)")[[1]]
+  out <- vapply(
+    toks,
+    function(tok) {
+      clean <- stringr::str_to_lower(stringr::str_replace_all(
+        tok,
+        "[^\\p{L}\\p{N}]+",
+        ""
+      ))
+      is_urg <- clean %in% urgency_terms
+      is_neg <- clean %in% negative_terms
 
-    if (is_urg && is_neg) {
-      sprintf("<b><span style='color:#cf597e'>%s</span></b>", htmlEscape(tok))
-    } else if (is_urg) {
-      sprintf("<b>%s</b>", htmlEscape(tok))
-    } else if (is_neg) {
-      sprintf("<span style='color:#cf597e'>%s</span>", htmlEscape(tok))
-    } else {
-      htmlEscape(tok)
-    }
-  }, character(1))
+      if (is_urg && is_neg) {
+        sprintf("<b><span style='color:#cf597e'>%s</span></b>", htmlEscape(tok))
+      } else if (is_urg) {
+        sprintf("<b>%s</b>", htmlEscape(tok))
+      } else if (is_neg) {
+        sprintf("<span style='color:#cf597e'>%s</span>", htmlEscape(tok))
+      } else {
+        htmlEscape(tok)
+      }
+    },
+    character(1)
+  )
   HTML(paste0(out, collapse = ""))
 }
 
 
 set.seed(42)
-n_hoch   <- 10
+n_hoch <- 10
 n_gering <- 10
 
 
 examples <- bind_rows(
-  support |> filter(Dringlichkeit == "hoch")   |> slice_sample(n = n_hoch),
+  support |> filter(Dringlichkeit == "hoch") |> slice_sample(n = n_hoch),
   support |> filter(Dringlichkeit == "gering") |> slice_sample(n = n_gering)
 ) |>
   mutate(
     Dringlichkeit = as.character(Dringlichkeit),
-    Betreff = ifelse(is.na(Betreff) | str_trim(Betreff) == "", "(ohne Betreff)", Betreff),
+    Betreff = ifelse(
+      is.na(Betreff) | str_trim(Betreff) == "",
+      "(ohne Betreff)",
+      Betreff
+    ),
     Nachricht = str_replace_all(Nachricht, "\\\\n", " "),
     Nachricht = str_replace_all(Nachricht, "\n", " "),
     Nachricht = str_replace_all(Nachricht, "<br\\s*/?>", " "),
     Nachricht = str_squish(Nachricht),
-    Nachricht_annot = map(Nachricht, ~ highlight_ticket_rf(.x, urgency_cues_rf, neg_lex))
+    Nachricht_annot = map(
+      Nachricht,
+      ~ highlight_ticket_rf(.x, urgency_cues_rf, neg_lex)
+    )
   ) |>
-  slice_sample(n = n_hoch + n_gering)  
+  slice_sample(n = n_hoch + n_gering)
 
 legend_html <- tags$div(
   tags$span("Legende: "),
-  tags$span(style="font-weight:600;", "Fett"), " = RF-Signal (wichtiges Token); ",
-  tags$span(style="color:#cf597e;", "Rot"), " = negatives Sentiment; ",
-  tags$span(style="font-weight:600;color:#cf597e;", "Fett + Rot"), " = beides"
+  tags$span(style = "font-weight:600;", "Fett"),
+  " = RF-Signal (wichtiges Token); ",
+  tags$span(style = "color:#cf597e;", "Rot"),
+  " = negatives Sentiment; ",
+  tags$span(style = "font-weight:600;color:#cf597e;", "Fett + Rot"),
+  " = beides"
 )
 
 card_items <- pmap(
-  list(examples$Betreff, examples$Nachricht_annot, examples$Bereich, examples$Dringlichkeit),
+  list(
+    examples$Betreff,
+    examples$Nachricht_annot,
+    examples$Bereich,
+    examples$Dringlichkeit
+  ),
   function(betreff, nachricht_html, bereich, dring) {
-
     badge_col <- if (tolower(dring) == "hoch") "#cf597e" else "#39b185"
 
     tags$div(
-      class = "card", style = "width: 100%;",
+      class = "card",
+      style = "width: 100%;",
       tags$ul(
         class = "list-group list-group-flush",
 
-        tags$li(class = "list-group-item",
-                tags$code("Betreff: "), betreff),
+        tags$li(class = "list-group-item", tags$code("Betreff: "), betreff),
 
-        tags$li(class = "list-group-item",
-                tags$code("Bereich: "), bereich),
+        tags$li(class = "list-group-item", tags$code("Bereich: "), bereich),
 
-        tags$li(class = "list-group-item",
-                tags$code("Dringlichkeit: "),
-                tags$span(class = "badge",
-                          style = paste0("background-color:", badge_col, ";"),
-                          dring)
+        tags$li(
+          class = "list-group-item",
+          tags$code("Dringlichkeit: "),
+          tags$span(
+            class = "badge",
+            style = paste0("background-color:", badge_col, ";"),
+            dring
+          )
         ),
 
-        tags$li(class = "list-group-item",
-                tags$code("Legende: "), legend_html),
+        tags$li(class = "list-group-item", tags$code("Legende: "), legend_html),
 
         tags$li(
           class = "list-group-item",
@@ -955,7 +997,10 @@ card_items <- pmap(
   }
 )
 
-nd.util::nd_carousel(card_items, .title = "Dringlichkeits-Hinweise des Klassifikationsmodells")
+nd.util::nd_carousel(
+  card_items,
+  .title = "Dringlichkeits-Hinweise des Klassifikationsmodells"
+)
 
 ```
 
