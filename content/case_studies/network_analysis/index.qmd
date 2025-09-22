@@ -1,0 +1,311 @@
+---
+title: "Netzwerkanalyse"
+subtitle: "Eine Netzwerkanalyse basierend auf der ORG-Entität: Justus Liebig Universität"
+draft: false
+toc_show: true
+execute:
+  echo: false
+  warning: false
+  message: false
+editor: 
+  markdown: 
+    wrap: 72
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 3
+---
+
+## 🎯 Motivation der Fallstudie
+
+Unternehmen, Organisationen, Personen und mit ihnen verbundende Orte
+stehen heute in einem **dichten Geflecht öffentlicher Kommunikation**.
+
+Täglich erscheinen Hunderte von Nachrichtenartikel, die über sie
+berichten und sie in Zusammenhang mit verschiedenen Akteuren nennen.
+
+Für kleine und mittlere Unternehmen (KMUs) wie auch für andere
+Organisationen wie z.B. der Hochschule "Justus-Liebig-Universität
+Gießen" gilt:
+
+-   Die eigene Sichtbarkeit in den Medien ist wichtig, um **Kunden,
+    Partner und Förderer** zu erreichen.
+
+<!-- -->
+
+-   Gleichzeitig ist es entscheidend zu verstehen, **mit wem** man in
+    den Nachrichten in Verbindung gebracht wird.
+
+Hierfür eignet sich die Anwendung einer Netzwerkanalyse!
+
+## Warum Netzwerkanalyse?
+
+Eine **Netzwerkanalyse** hilft dabei, genau dieses Beziehungsgeflecht
+sichtbar zu machen:
+
+-   **Knoten** sind die **Entitäten** – also Personen (PER),
+    Organisationen (ORG) und Orte (LOC), die in Nachrichten erwähnt
+    werden.
+
+-    **Kanten** entstehen, wenn zwei Entitäten **gemeinsam in einem
+    Artikel** auftauchen.
+
+-    Aus vielen einzelnen Artikeln entsteht so ein **Netzwerk**, das
+    zeigt, wer mit wem in Verbindung gebracht wird und welche Akteure
+    besonders zentral sind.
+
+## Vorteile einer Netzwerkanalyse
+
+Eine Netzwerkanalyse bietet eine Reihe von Vorteilen:
+
+🔍 **Durchblick gewinnen** – eine Netzwerkanalyse verdichtet viele
+Einzelinformationen und macht **Zusammenhänge und Beziehungen**
+sichtbar.
+
+👥 **Wichtige Akteure erkennen** – man sieht sofort, **welche Personen,
+Organisationen und Orte im Mittelpunkt stehen** und welche Verbindungen
+besonders stark sind.
+
+📊 **Einfach verständlich darstellen** – komplexe Beziehungen werden in
+**anschaulichen Grafiken** sichtbar und leicht kommunizierbar.
+
+## Anwendungsbeispiel
+
+Am Beispiel der ORG-Entität **"Justus-Liebig-Universität"** wird ein
+exemplarisches Netzwerk aufgebaut. Grundlage sind **100 aktuelle
+Nachrichtenartikel**, die über die Justus-Liebig-Universität in
+**lokaler und überregionaler Berichterstattung** erschienen sind und im
+Google-News-Feed gelistet wurden. Diese Artikel werden automatisiert
+extrahiert und mithilfe eines **Eigennamenerkennungsmodells**
+analysiert. Das Modell identifiziert in den Texten **Personennamen
+(PER)**, **Ortsnamen (LOC)** und **Organisationsnamen (ORG)**. Auf
+dieser Basis lassen sich zentrale Akteure bestimmen und ihre Beziehungen
+sichtbar machen.
+
+Das folgende Beispiel zeigt einen Ausschnitt aus einem
+Nachrichtenartikel, in dem die relevanten Entitäten farblich
+hervorgehoben sind:
+
+::: {.callout-note icon="false"}
+## Beispielausschnitt eines Nachrichtenartikels mit hervogehobenen Entitäten
+
+```{=html}
+<style>
+mark.org { background:#e6f2ff; border:1px solid #b3d4ff; padding:0 .25em; border-radius:.25rem; }
+mark.loc { background:#e9ffe6; border:1px solid #b8f0b2; padding:0 .25em; border-radius:.25rem; }
+mark.per { background:#fff0e6; border:1px solid #ffd2b3; padding:0 .25em; border-radius:.25rem; }
+</style>
+```
+
+(...)Die beiden traditionsreichsten Universitäten in
+<mark class="loc">Hessen (LOC)</mark> gehen gemeinsam in den Wettbewerb
+um den begehrten Titel »Exzellenzuniversität«. Die
+<mark class="org">Justus-Liebig-Universität Gießen (ORG)</mark>
+(<mark class="org">JLU (ORG)</mark>) und die
+<mark class="org">Philipps-Universität Marburg (ORG)</mark>
+(<mark class="org">UMR (ORG)</mark>) haben eine Absichtserklärung für
+einen Verbundantrag in der zweiten Förderlinie der Exzellenzstrategie
+eingereicht.
+
+Nach dem großen Erfolg der beiden Universitäten, die im Mai insgesamt
+vier Exzellenzcluster eingeworben haben, steht nun der nächste Schritt
+im bundesweiten Spitzenforschungswettbewerb an.
+
+»Dass wir nach unserem hervorragenden Abschneiden in der ersten
+Förderlinie unsere Kompetenzen bündeln und uns gemeinsam positionieren,
+ist die richtige Entscheidung«, sagt Prof. Dr.
+<mark class="per">Katharina Lorenz (PER)</mark>, Präsidentin der
+<mark class="org">Justus-Liebig-Universität (ORG)</mark>.
+
+»Wir blicken auf eine lange gemeinsame Geschichte zurück, die
+insbesondere in den letzten Jahrzehnten von einem sehr
+partnerschaftlichen Geist getragen ist.«(...)
+:::
+
+In diesem Beispiel werden der Ort **„Hessen“**, die Person **„Katharina
+Lorenz“** sowie die Organisationen **„UMR“** und **„JLU“** als Entitäten
+erkannt. Wendet man dieses Verfahren systematisch auf alle JLU-bezogenen
+Nachrichtenartikel an, lassen sich die identifizierten Entitäten in
+einer **Häufigkeitstabelle** zusammenfassen. Auf diese Weise treten die
+wichtigsten Akteure deutlicher hervor.
+
+Die folgende Tabelle zeigt die Häufigkeiten ausgewählter Entitäten:
+
+**Häufgkeit ausgewählter Entitäten in Bezug auf JLU bezogenen
+Nachrichten**
+
+| Rang | Entität                                  | Typ | Häufigkeit |
+|-----:|------------------------------------------|-----|------------|
+|    1 | JLU                                      | ORG | 375        |
+|    2 | Gießen                                   | LOC | 245        |
+|    3 | Hessen                                   | LOC | 62         |
+|    4 | Deutschland                              | LOC | 42         |
+|    5 | Katharina Lorenz                         | PER | 38         |
+|    6 | Philipps-Universität Marburg (UMR)       | ORG | 20         |
+|    7 | THM (Technische Hochschule Mittelhessen) | ORG | 20         |
+|   11 | AStA                                     | ORG | 9          |
+|   18 | DFG                                      | ORG | 6          |
+
+Auf Basis dieser Tabelle lässt sich ein erstes Netzwerk aufbauen: Die
+**JLU** steht im Zentrum, alle weiteren Entitäten werden als Knoten mit
+ihrem **Typ (Farbe)** visualisiert. Kanten verbinden die JLU mit den
+wichtigsten, häufig genannten Akteuren in der aktuellen
+Berichterstattung.
+
+```{r}
+#install.packages("remotes")
+#remotes::install_version("ggforce", version = "0.4.2", repos = "https://cran.rstudio.com")
+#remotes::install_version("ggraph",  version = "2.2.1", repos = "https://cran.rstudio.com")
+
+library(ggforce)
+library(tidyverse)
+library(tidygraph)
+library(ggraph)
+
+nodes = tibble::tribble(
+  ~name, ~Typ,
+  "JLU", "ORG",
+  "Gießen", "LOC",
+  "Hessen", "LOC",
+  "Deutschland", "LOC",
+  "Katharina Lorenz", "PER",
+  "UMR", "ORG",
+  "THM", "ORG",
+  "AStA", "ORG",
+  "DFG", "ORG"
+)
+
+edges = nodes %>%
+  filter(name != "JLU") %>%
+  transmute(from = "JLU", to = name)
+
+graph = tbl_graph(nodes = nodes, edges = edges, directed = TRUE)
+
+color_typ = c(ORG="#e6f2ff", LOC = "#e9ffe6", PER ="#fff0e6")
+
+ggraph(graph,layout = "kk")+
+  geom_edge_link(color = "grey60")+
+  geom_node_point(aes(color = Typ), size = 6) +
+  geom_node_text(aes(label = name),repel = TRUE, size = 4)+
+  scale_color_manual(values = color_typ) +
+  theme_void()
+```
+
+Bisher wurde das Netzwerk nur ausgehend von der JLU betrachtet. Doch ein
+vollständigeres Bild entsteht, wenn man auch die **Verbindungen der
+angrenzenden Akteure** untersucht. Werden die Nachrichtenartikel zu
+diesen Entitäten ebenfalls auf ihre zentralen Personen, Orte und
+Organisationen hin analysiert, wächst das Netz Schritt für Schritt
+weiter. So lässt sich nachvollziehen, **wie sich das Umfeld der JLU über
+die zweite Ebene hinweg verzweigt und verdichtet**.
+
+Das folgende Schaubild zeigt die erweiterte Netzwerkstruktur:
+
+```{r}
+library(tidygraph)
+library(ggraph)
+
+# --- Nodes ---
+nodes <- data.frame(
+  name = c("JLU","Gießen","Hessen","Deutschland",
+           "Katharina Lorenz","Philipps-Universität Marburg",
+           "THM","AStA","DFG","Friedberg","Matthias Willems",
+           "Berlin","SPD","CDU","Friedrich Merz",
+           "SFB","Katja Becker",
+           "StuPa","KuZe","Uni Potsdam",
+           "Goesmann","Martin Kramer","Joybrato Mukherjee",
+           "Frankfurt","Anke Hofmann",
+           "Marburg","Landgrafenhaus","Thomas Nauss",
+           "Timon Gremmels","Wiesbaden"),
+  Typ = c("ORG","LOC","LOC","LOC",
+           "PER","ORG",
+           "ORG","ORG","ORG","LOC","PER",
+           "LOC","ORG","ORG","PER",
+           "ORG","PER",
+           "ORG","ORG","ORG",
+           "PER","PER","PER",
+           "LOC","PER",
+           "LOC","LOC","PER",
+           "PER","LOC"),
+  stringsAsFactors = FALSE
+)
+
+# --- Edges ---
+edges <- data.frame(
+  from = c(
+    # JLU -> Hauptakteure
+    "JLU","JLU","JLU","JLU","JLU","JLU","JLU","JLU",
+    # THM -> verbundene Entitäten
+    "THM","THM","THM","THM","THM",
+    # Deutschland -> verbundene Entitäten
+    "Deutschland","Deutschland","Deutschland","Deutschland",
+    # DFG -> verbundene Entitäten
+    "DFG","DFG","DFG","DFG",
+    # AStA -> verbundene Entitäten
+    "AStA","AStA","AStA",
+    # Katharina Lorenz -> Personen
+    "Katharina Lorenz","Katharina Lorenz","Katharina Lorenz","Katharina Lorenz",
+    # Hessen -> verbundene Entitäten
+    "Hessen","Hessen","Hessen",
+    # UMR (Philipps-Universität Marburg) -> verbundene Entitäten
+    "Philipps-Universität Marburg","Philipps-Universität Marburg",
+    "Philipps-Universität Marburg","Philipps-Universität Marburg",
+    "Philipps-Universität Marburg",
+    # JLU -> Timon Gremmels
+    "JLU",
+    # Timon Gremmels -> verbundene Entitäten
+    "Timon Gremmels","Timon Gremmels","Timon Gremmels","Timon Gremmels"
+  ),
+  to   = c(
+    "Gießen","Hessen","Deutschland","Katharina Lorenz",
+    "Philipps-Universität Marburg","THM","AStA","DFG",
+    "Friedberg","Deutschland","Gießen","JLU","Matthias Willems",
+    "Berlin","SPD","CDU","Friedrich Merz",
+    "Deutschland","Berlin","SFB","Katja Becker",
+    "StuPa","KuZe","Uni Potsdam",
+    "Goesmann","Martin Kramer","Joybrato Mukherjee","Timon Gremmels",
+    "Frankfurt","Gießen","Anke Hofmann",
+    "Gießen","Marburg","Landgrafenhaus","Matthias Willems","Thomas Nauss",
+    "Timon Gremmels",
+    "SPD","Frankfurt","Wiesbaden","Hessen"
+  )
+)
+
+
+graph <- tbl_graph(nodes = nodes, edges = edges, directed = FALSE)
+
+color_typ = c(ORG="#e6f2ff", LOC = "#e9ffe6", PER ="#fff0e6")
+
+
+ggraph(graph, layout = "kk") +
+  geom_edge_link(color = "grey60", alpha = 0.7) +
+  geom_node_point(aes(color = Typ), size = 8) +
+  geom_node_text(aes(label = name), repel = TRUE, size = 3.5) +
+  scale_color_manual(values = color_typ) +
+  theme_void()
+```
+
+Durch die Erweiterung des Netzwerks entsteht ein viel dichteres
+Beziehungsnetz. Es zeigt sich, dass die Universität nicht nur lokal mit
+Gießen und Hessen verbunden ist, sondern auch eng mit überregionalen
+Akteuren aus Wissenschaft, Politik und Gesellschaft verwoben ist.
+Einzelpersonen wie Katharina Lorenz oder Timon Gremmels treten dabei
+ebenso in Erscheinung wie Organisationen wie die DFG, der AStA oder
+regionale Partneruniversitäten. Die JLU ist damit eingebettet in ein
+Netz von Institutionen, Orten und Personen.
+
+*Das Netzwerk kann prinzipiell um beliebig viele weitere Ebenen
+erweitert werden. Für die Zwecke dieser Fallstudie belassen wir es
+jedoch bei der aktuellen Darstellung, um die Übersichtlichkeit zu
+wahren.*
+
+## Fazit
+
+Die Fallstudie zeigt exemplarisch, wie sich aus Nachrichtenartikeln mit
+Bezug zur Justus-Liebig-Universität ein Netzwerk aus Personen,
+Organisationen und Orten ableiten lässt. Netzwerkanalysen sind wichtig,
+um **Beziehungen sichtbar zu machen und zentrale Akteure aufzudecken**.
+Sie lassen sich ausgehend von jeder beliebigen Entität – sei es eine
+Organisation, ein Ort oder eine Person – aufbauen und Schritt für
+Schritt erweitern.
