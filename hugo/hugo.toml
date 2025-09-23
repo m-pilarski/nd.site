@@ -70,18 +70,18 @@ defaultContentLanguageInSubdir = false
         parent = "case_studies"
         name = "Netzwerkanalyse"
         url = "/case_studies/network_analysis"
-    [[menu.main]]
-        weight = 4
-        identifier = "case_studies-case_study-1"
-        parent = "case_studies"
-        name = "Fallstudie I"
-        url = "/case_studies/case_study-1/"
-    [[menu.main]]
-        weight = 5
-        identifier = "case_studies-case_study-2"
-        parent = "case_studies"
-        name = "Fallstudie II"
-        url = "/case_studies/case_study-2/"
+    # [[menu.main]]
+    #     weight = 4
+    #     identifier = "case_studies-case_study-1"
+    #     parent = "case_studies"
+    #     name = "Fallstudie I"
+    #     url = "/case_studies/case_study-1/"
+    # [[menu.main]]
+    #     weight = 5
+    #     identifier = "case_studies-case_study-2"
+    #     parent = "case_studies"
+    #     name = "Fallstudie II"
+    #     url = "/case_studies/case_study-2/"
     # [[menu.main]]
     #     weight = 4
     #     identifier = "misc"

@@ -108,5 +108,10 @@ Auf dieser Seite können Sie ein BERTopic-Modell in Aktion erleben. Das Modell w
 
 Geben Sie einen beliebigen Text in das untenstehende Feld ein, und unser BERTopic-Modell wird ihn analysieren und das wahrscheinlichste Thema bestimmen.
 
-**[Freitext-Eingabefeld für Nutzereingaben]**
+```{r}
+nd.util:::nd_iframe_app(
+  .url = "https://shiny.dsjlu.wirtschaft.uni-giessen.de/ner_demo/",
+  .height = "4rem"
+)
+```
 

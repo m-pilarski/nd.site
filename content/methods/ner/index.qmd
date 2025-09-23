@@ -4,7 +4,7 @@ subtitle: "Automatisierte Identifikation und Klassifikation von Entitäten und E
 figtitle: "🏷️"
 date: "2024-11-25T14:25:49+01:00"
 toc_show: true
-draft: true
+draft: false
 html-table-processing: none
 ---
 
@@ -133,7 +133,7 @@ Klicken Sie auf **Zufälliger Google News Artikel**, um einen Artikel mit farbli
 
 ```{r}
 nd.util:::nd_iframe_app(
-  .url="https://shiny.dsjlu.wirtschaft.uni-giessen.de/ner_demo/",
-  .height="4rem"
+  .url = "https://shiny.dsjlu.wirtschaft.uni-giessen.de/ner_demo/",
+  .height = "4rem"
 )
 ```

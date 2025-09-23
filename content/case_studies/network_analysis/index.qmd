@@ -10,12 +10,29 @@ execute:
   message: false
 ---
 
+```{r}
+ggplot2::theme_set(`+`(
+  ggplot2::theme_minimal(base_size = 14, base_family = "Open Sans"),
+  ggplot2::theme(
+    axis.text.x = ggplot2::element_text(size = 12),
+    axis.text.y = ggplot2::element_text(size = 12),
+    axis.title.x = ggplot2::element_text(size = 14),
+    axis.title.y = ggplot2::element_text(size = 14),
+    title = ggplot2::element_text(size = 14),
+    strip.text = ggplot2::element_text(size = 14),
+    panel.grid.major = ggplot2::element_blank(),
+    panel.grid.minor = ggplot2::element_blank(),
+    panel.background = ggplot2::element_rect(fill = NA, colour = NA),
+    plot.background = ggplot2::element_rect(fill = NA, colour = NA),
+    legend.position = "bottom"
+  )
+))
+```
+
 <!-- ## 🎯 Motivation der Fallstudie -->
 ## Motivation der Fallstudie
 
-Unternehmen, Organisationen, Personen und mit ihnen verbundende Orte stehen heute in einem **dichten Geflecht öffentlicher Kommunikation**.
-
-Täglich erscheinen Hunderte von Nachrichtenartikel, die über sie berichten und sie in Zusammenhang mit verschiedenen Akteuren nennen.
+Unternehmen, Organisationen, Personen und mit ihnen verbundende Orte stehen heute in einem **dichten Geflecht öffentlicher Kommunikation**. Täglich erscheinen Hunderte von Nachrichtenartikel, die über sie berichten und sie in Zusammenhang mit verschiedenen Akteuren nennen.
 
 Für kleine und mittlere Unternehmen (KMUs) wie auch für andere Organisationen wie z.B. der Hochschule "Justus-Liebig-Universität Gießen" gilt:
 
@@ -60,21 +77,20 @@ Das folgende Beispiel zeigt einen Ausschnitt aus einem Nachrichtenartikel, in de
 
 ```{=html}
 <style>
-mark.org { background:#e6f2ff; border:1px solid #b3d4ff; padding:0 .25em; border-radius:.25rem; }
-mark.loc { background:#e9ffe6; border:1px solid #b8f0b2; padding:0 .25em; border-radius:.25rem; }
-mark.per { background:#fff0e6; border:1px solid #ffd2b3; padding:0 .25em; border-radius:.25rem; }
+/* mark.org { background:#e6f2ff; border:1px solid #b3d4ff; padding:0 .25em; border-radius:.25rem; } */
+/* mark.loc { background:#e9ffe6; border:1px solid #b8f0b2; padding:0 .25em; border-radius:.25rem; } */
+/* mark.per { background:#fff0e6; border:1px solid #ffd2b3; padding:0 .25em; border-radius:.25rem; } */
+</style>
+```
+```{=html}
+<style>
+mark.org { background: #837591; color: #fefffc; padding:0 .25em; border-radius:.25rem; }
+mark.loc { background: #009392; color: #fefffc; padding:0 .25em; border-radius:.25rem; }
+mark.per { background: #cf597e; color: #fefffc; padding:0 .25em; border-radius:.25rem; }
 </style>
 ```
 
-(...)Die beiden traditionsreichsten Universitäten in
-<mark class="loc">Hessen (LOC)</mark> gehen gemeinsam in den Wettbewerb
-um den begehrten Titel »Exzellenzuniversität«. Die
-<mark class="org">Justus-Liebig-Universität Gießen (ORG)</mark>
-(<mark class="org">JLU (ORG)</mark>) und die
-<mark class="org">Philipps-Universität Marburg (ORG)</mark>
-(<mark class="org">UMR (ORG)</mark>) haben eine Absichtserklärung für
-einen Verbundantrag in der zweiten Förderlinie der Exzellenzstrategie
-eingereicht.
+[...] Die beiden traditionsreichsten Universitäten in <mark class="loc">Hessen (LOC)</mark> gehen gemeinsam in den Wettbewerb um den begehrten Titel »Exzellenzuniversität«. Die <mark class="org">Justus-Liebig-Universität Gießen (ORG)</mark> (<mark class="org">JLU (ORG)</mark>) und die <mark class="org">Philipps-Universität Marburg (ORG)</mark> (<mark class="org">UMR (ORG)</mark>) haben eine Absichtserklärung für einen Verbundantrag in der zweiten Förderlinie der Exzellenzstrategie eingereicht.
 
 Nach dem großen Erfolg der beiden Universitäten, die im Mai insgesamt vier Exzellenzcluster eingeworben haben, steht nun der nächste Schritt im bundesweiten Spitzenforschungswettbewerb an.
 
@@ -155,23 +171,31 @@ edges = nodes %>%
 
 graph = tbl_graph(nodes = nodes, edges = edges, directed = TRUE)
 
-color_typ = c(ORG = "#e6f2ff", LOC = "#e9ffe6", PER = "#fff0e6")
+color_typ = c(ORG = "#837591", LOC = "#009392", PER = "#cf597e")
 
 ggraph(graph, layout = "kk") +
   geom_edge_link(color = "grey60") +
-  geom_node_point(aes(color = Typ), size = 6) +
-  geom_node_text(aes(label = name), repel = TRUE, size = 4) +
-  scale_color_manual(values = color_typ) +
+  geom_node_point(
+    aes(fill = Typ),
+    color = "#fefffc",
+    size = 6,
+    shape = 21,
+    stroke = 2
+  ) +
+  geom_node_text(
+    aes(label = name),
+    repel = TRUE,
+    size = 4,
+    family = "Open Sans",
+    color = "#212529",
+    bg.color = "#fefffc",
+    bg.r = 0.1
+  ) +
+  scale_fill_manual(values = color_typ) +
   theme_void()
 ```
 
-Bisher wurde das Netzwerk nur ausgehend von der JLU betrachtet. Doch ein
-vollständigeres Bild entsteht, wenn man auch die **Verbindungen der
-angrenzenden Akteure** untersucht. Werden die Nachrichtenartikel zu
-diesen Entitäten ebenfalls auf ihre zentralen Personen, Orte und
-Organisationen hin analysiert, wächst das Netz Schritt für Schritt
-weiter. So lässt sich nachvollziehen, **wie sich das Umfeld der JLU über
-die zweite Ebene hinweg verzweigt und verdichtet**.
+Bisher wurde das Netzwerk nur ausgehend von der JLU betrachtet. Doch ein vollständigeres Bild entsteht, wenn man auch die **Verbindungen der angrenzenden Akteure** untersucht. Werden die Nachrichtenartikel zu diesen Entitäten ebenfalls auf ihre zentralen Personen, Orte und Organisationen hin analysiert, wächst das Netz Schritt für Schritt weiter. So lässt sich nachvollziehen, **wie sich das Umfeld der JLU über die zweite Ebene hinweg verzweigt und verdichtet**.
 
 Das folgende Schaubild zeigt die erweiterte Netzwerkstruktur:
 
@@ -180,7 +204,7 @@ library(tidygraph)
 library(ggraph)
 
 # --- Nodes ---
-cat(datapasta::tribble_construct(nodes))
+# cat(datapasta::tribble_construct(nodes))
 
 nodes <- data.frame(
   name = c(
@@ -353,13 +377,25 @@ edges <- data.frame(
 
 graph <- tbl_graph(nodes = nodes, edges = edges, directed = FALSE)
 
-color_typ = c(ORG = "#e6f2ff", LOC = "#e9ffe6", PER = "#fff0e6")
-
 ggraph(graph, layout = "kk") +
   geom_edge_link(color = "grey60", alpha = 0.7) +
-  geom_node_point(aes(color = Typ), size = 8) +
-  geom_node_text(aes(label = name), repel = TRUE, size = 3.5) +
-  scale_color_manual(values = color_typ) +
+  geom_node_point(
+    aes(fill = Typ),
+    color = "#fefffc",
+    size = 8,
+    shape = 21,
+    stroke = 2
+  ) +
+  geom_node_text(
+    aes(label = name),
+    repel = TRUE,
+    size = 3.5,
+    family = "Open Sans",
+    color = "#212529",
+    bg.color = "#fefffc",
+    bg.r = 0.1
+  ) +
+  scale_fill_manual(values = color_typ) +
   theme_void()
 ```
 
@@ -370,3 +406,4 @@ Durch die Erweiterung des Netzwerks entsteht ein viel dichteres Beziehungsnetz. 
 ## Fazit
 
 Die Fallstudie zeigt exemplarisch, wie sich aus Nachrichtenartikeln mit Bezug zur Justus-Liebig-Universität ein Netzwerk aus Personen, Organisationen und Orten ableiten lässt. Netzwerkanalysen sind wichtig, um **Beziehungen sichtbar zu machen und zentrale Akteure aufzudecken**. Sie lassen sich ausgehend von jeder beliebigen Entität – sei es eine Organisation, ein Ort oder eine Person – aufbauen und Schritt für Schritt erweitern.
+
