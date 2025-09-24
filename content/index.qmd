@@ -65,7 +65,7 @@ readr::read_rds(here::here("content", "data", "wordcloud_data.rds")) |>
         {{{< bs_card card_img_src="/assets/img/topic_cover.svg" card_img_bg="#9c9c9c" card_title="Themenmodellierung" card_text="Die Themenmodellierung extrahiert automatisiert Hauptthemen aus Texten. Dies ermöglicht die Extraktion semantisch verwandter Begriffe, sowie die Gruppierung thematisch ähnlicher Dokumente." card_href="/methods/topic" >}}}
       {{{< /div >}}} 
       {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
-        {{{< bs_card card_img_src="/assets/img/ner_cover.svg" card_img_bg="#9c9c9c" card_title="Entitätsanalyse" card_text="Automatisierte Identifikation und Klassifikation von Entitäten und Eigennamen. [...]" card_href="/methods/ner" >}}}
+        {{{< bs_card card_img_src="/assets/img/ner_cover.svg" card_img_bg="#9c9c9c" card_title="Entitätsanalyse" card_text="Automatisierte Identifikation und Klassifikation von Entitäten und Eigennamen. …" card_href="/methods/ner" >}}}
       {{{< /div >}}} 
     {{{< /div >}}} 
   {{{< /div >}}}
@@ -85,7 +85,7 @@ readr::read_rds(here::here("content", "data", "wordcloud_data.rds")) |>
         {{{< bs_card card_img_src="/assets/img/support_tickets_cover.svg" card_img_bg="#9c9c9c" card_title="Support-Tickets" card_text="Dieses Fallbeispiel zeigt, wie sich Support-Anfragen allein anhand der Texte automatisiert nach Dringlichkeit klassifizieren lassen. Durch den gezielten Einsatz von Textanalyse und Machine Learning werden besonders kritische Anliegen frühzeitig erkannt, um den Kundenservice effizienter zu gestalten." card_href="/case_studies/support_tickets" >}}}
       {{{< /div >}}} 
       {{{< div class="g-col-12 g-col-md-6 g-col-xl-4" >}}} 
-        {{{< bs_card card_img_src="/assets/img/network_analysis_cover.svg" card_img_bg="#9c9c9c" card_title="Netzwerkanalyse" card_text="Eine Netzwerkanalyse basierend auf der ORG-Entität: Justus Liebig Universität. [...]" card_href="/case_studies/network_analysis" >}}} 
+        {{{< bs_card card_img_src="/assets/img/network_analysis_cover.svg" card_img_bg="#9c9c9c" card_title="Netzwerkanalyse" card_text="Eine Netzwerkanalyse basierend auf der ORG-Entität: Justus Liebig Universität. …" card_href="/case_studies/network_analysis" >}}} 
       {{{< /div >}}} 
     {{{< /div >}}}
   {{{< /div >}}}

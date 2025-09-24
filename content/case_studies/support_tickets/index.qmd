@@ -8,7 +8,7 @@ toc_show: true
 execute:
   echo: false
   message: false
-  cache: true
+  cache: false
 ---
 
 
@@ -310,8 +310,11 @@ freq_plot <- top_words |>
 ```
 
 ```{r}
-#| fig-height: 3.173071
+#| fig-height: 3.176543
 
+# if (interactive()) {
+#   10 * 0.25 + calc_panel_margin_y_in(freq_plot)
+# }
 freq_plot
 ```
 
@@ -348,8 +351,11 @@ freq_per_class_plot <-
 ```
 
 ```{r}
-#| fig-height: 3.173071
+#| fig-height: 3.512073
 
+# if (interactive()) {
+#   10 * 0.25 + calc_panel_margin_y_in(freq_per_class_plot)
+# }
 freq_per_class_plot
 ```
 
@@ -403,6 +409,12 @@ tfidf_plot <-
 ```
 
 ```{r}
+#| fig-height: 3.512073
+
+# if (interactive()) {
+#   10 * 0.25 + calc_panel_margin_y_in(tfidf_plot)
+# }
+
 tfidf_plot
 ```
 
